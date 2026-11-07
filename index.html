@@ -174,9 +174,37 @@ td, th { text-align: left; padding: 6px 4px; border-bottom: 1px solid var(--line
 .fhead b { font-size: 20px; color: var(--bad); }
 .fhead .i { font-family: var(--ipa); color: var(--teal); font-size: 15px; }
 .fix .btn { justify-self: start; }
-.vid { display: grid; grid-template-columns: minmax(0, 150px) 1fr; gap: 14px; align-items: center; }
-.vid video { width: 100%; aspect-ratio: 9 / 16; border-radius: 14px; background: var(--paper2); display: block; }
-.vid .side { display: grid; gap: 8px; justify-items: start; }
+/* a video in big, with the « À toi ! » panel over its lower part */
+.vid { display: grid; gap: 10px; justify-items: center; }
+.vid .frame { position: relative; width: min(100%, calc(74vh * 9 / 16), 430px); }
+.vid video { width: 100%; aspect-ratio: 9 / 16; border-radius: 18px; background: var(--paper2); display: block;
+  box-shadow: 0 10px 24px rgba(122, 74, 32, .16); }
+.vid .side { display: grid; gap: 8px; justify-items: center; text-align: center; }
+.vid .side p { margin: 0; }
+.vid .toi { position: absolute; left: 10px; right: 10px; bottom: 58px; z-index: 2; box-shadow: 0 10px 26px rgba(31, 42, 68, .28); }
+
+/* the list of sounds, then one page per sound */
+.sonlist { display: grid; gap: 10px; }
+.sonitem { display: grid; grid-template-columns: 76px 1fr auto; gap: 12px; align-items: center; text-align: left; width: 100%;
+  background: var(--card); border: 2px solid var(--line); border-radius: 20px; padding: 8px 12px 8px 8px; }
+.sonitem img { width: 76px; height: 56px; object-fit: cover; border-radius: 12px; display: block; background: var(--paper2); }
+.sonitem b { display: block; font-family: var(--display); font-size: 18px; line-height: 1.15; }
+.sonitem small { display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; color: var(--muted); font-size: 14px; }
+.sonitem .st { font-size: 13px; font-weight: 800; white-space: nowrap; }
+.sonitem .st.ok { color: var(--good); }
+.sonitem .st.todo { width: 34px; height: 34px; border-radius: 50%; display: grid; place-items: center; background: var(--action-soft); color: var(--action); }
+.sonitem.done { border-color: var(--good-soft); }
+.sonitem.next { border-color: var(--action); box-shadow: 0 6px 16px rgba(229, 127, 28, .18); }
+.sonitem.next .st.todo { background: var(--action); color: #fff; }
+.sonview { display: grid; gap: 12px; }
+.sonhead { display: flex; justify-content: space-between; align-items: center; gap: 8px; }
+.sonview h2 { font-size: clamp(28px, 7vw, 36px); font-weight: 800; }
+.sonview > .lead { margin: 0; }
+.sonend { display: grid; justify-items: center; gap: 8px; }
+.sonend .go { width: 100%; max-width: 460px; }
+.lockcard { justify-items: center; text-align: center; padding: 24px 18px; }
+.lockic { font-size: 54px; line-height: 1; }
+.stepper .locked .num { background: var(--line); }
 a.btn { text-decoration: none; }
 /* screens */
 .screen { display: grid; gap: 16px; }
@@ -419,12 +447,13 @@ canvas.confetti { position: fixed; inset: 0; pointer-events: none; z-index: 50; 
   <nav class="stepper" id="stepper" aria-label="Étapes" hidden></nav>
 
   <section id="sons" class="screen stage" hidden>
-    <div class="intro">
+    <div class="intro" id="sonsIntro">
       <span class="eyebrow" data-step="sons"></span>
       <h2>Les 10 sons</h2>
-      <p class="lead">Une petite vidéo par son : on voit la bouche de face et de côté, on écoute le mot seul puis dans la phrase, et on répète à voix haute. Tu peux aussi les télécharger pour les regarder sans internet.</p>
+      <p class="lead">Choisis un son : sa vidéo s'ouvre en grand. On voit la bouche de face et de côté, et à chaque « À toi ! » tu répètes à voix haute. Les 10 sons sont à finir avant de passer aux répliques.</p>
     </div>
-    <div id="sonsList" class="stage"></div>
+    <div id="sonsList" class="sonlist"></div>
+    <div id="sonView" class="sonview" hidden></div>
     <div class="nextbar" id="nextSons"></div>
   </section>
 
@@ -469,6 +498,16 @@ canvas.confetti { position: fixed; inset: 0; pointer-events: none; z-index: 50; 
     </div>
     <div id="fullStage" class="stage"></div>
     <div class="nextbar" id="nextFull"></div>
+  </section>
+
+  <!-- ===== a step that is not open yet ===== -->
+  <section id="locked" class="screen" hidden>
+    <div class="card lockcard">
+      <div class="lockic" aria-hidden="true">🔒</div>
+      <h2>D'abord les 10 sons</h2>
+      <p class="lead" id="lockMsg"></p>
+      <button class="go" id="lockGo"></button>
+    </div>
   </section>
 
   <!-- ===== every video, to download ===== -->
@@ -1008,20 +1047,18 @@ function renderTrain() {
 }
 
 /* The lesson video of this line (published next to the page: videos/, with its cover in videos/covers/). */
-const VIDEO_MB = [13, 12.3, 13.4, 14.1, 10.6, 14.3, 5.9];
-function videoBlock(src, poster, mb, name, text, onDone) {
-  const v = el("div", "vid");
+const VIDEO_MB = [13, 12.3, 13.4, 14.1, 10.6, 14.3, 5.9];   // for the « Vidéos » corner, where they are downloaded
+function videoBlock(src, poster, text, onDone) {
+  const v = el("div", "vid"), frame = el("div", "frame");
   const video = el("video");
   Object.assign(video, { src, controls: true, preload: "none", playsInline: true, poster });
   video.onplay = () => { stopPlay(); document.querySelectorAll("video").forEach((o) => { if (o !== video) o.pause(); }); };
   if (onDone) video.ontimeupdate = () => { if (video.duration && video.currentTime > video.duration * .9) { video.ontimeupdate = null; onDone(); } };
+  frame.append(video);
   const side = el("div", "side");
-  side.append(el("p", "note", text + (CUES[src] && SR ? " Sur cette page, à chaque « À toi ! », la vidéo t'attend et le micro t'écoute." : "")));
-  const dl = el("a", "btn rec", ICON.down + `Télécharger (${String(mb).replace(".", ",")} Mo)`);
-  dl.href = src; dl.download = name;
-  side.append(dl);
-  v.append(video, side);
-  interactiveVideo(video, side, src);
+  side.append(el("p", "note", text + (CUES[src] && SR ? " À chaque « À toi ! », la vidéo t'attend et le micro t'écoute." : "")));
+  v.append(frame, side);
+  interactiveVideo(video, frame, side, src);
   return v;
 }
 
@@ -1034,18 +1071,16 @@ function paintToggle(b) {
   b.innerHTML = `🎤 Le micro m'écoute : <b>${interactive ? "oui" : "non"}</b>`;
 }
 const paintToggles = () => document.querySelectorAll(".chip-toggle").forEach(paintToggle);
-function interactiveVideo(video, side, src) {
+function interactiveVideo(video, frame, side, src) {
   const cues = CUES[src];
   if (!cues || !SR) return;
-  const rest = [...side.children];
   const sw = el("button", "chip-toggle");
   sw.onclick = () => { interactive = !interactive; store.set("interactive", interactive); paintToggles(); };
   side.append(sw);
-  rest.push(sw);
   paintToggle(sw);
   const panel = el("div", "toi");
   panel.hidden = true;
-  side.prepend(panel);
+  frame.append(panel);
   let handled = new Set(), busy = false;
   const arm = () => { const t = video.currentTime; handled = new Set(cues.flatMap((c, i) => (c.t < t - 0.1 ? [i] : []))); };
   video.addEventListener("seeking", () => { if (!busy) arm(); });
@@ -1056,7 +1091,7 @@ function interactiveVideo(video, side, src) {
     const i = cues.findIndex((c, k) => !handled.has(k) && t >= c.t && t < c.t + 1);
     if (i >= 0) { handled.add(i); ask(cues[i]); }
   });
-  const showPanel = (on) => { panel.hidden = !on; rest.forEach((e) => { e.hidden = on; }); };
+  const showPanel = (on) => { panel.hidden = !on; };
   function resume(at) {
     showPanel(false);
     video.currentTime = at;
@@ -1080,7 +1115,7 @@ function interactiveVideo(video, side, src) {
     row.append(fin, skip);
     panel.append(row);
     showPanel(true);
-    panel.scrollIntoView({ block: "nearest", behavior: "smooth" });
+    frame.scrollIntoView({ block: "nearest", behavior: "smooth" });
     const words = c.text.split(" ");
     const heardEl = panel.querySelector(".heard");
     let heard = null, error = null;
@@ -1111,26 +1146,58 @@ function interactiveVideo(video, side, src) {
 function renderVideo() {
   const n = cur + 1, box = $("video");
   box.replaceChildren(el("h3", null, `La vidéo de la réplique ${n}`),
-    videoBlock(`videos/Mia_partie2_replique${n}.mp4`, `videos/covers/replique${n}.jpg`, VIDEO_MB[cur], `Mia_replique${n}.mp4`,
-      "Mia montre la bouche mot par mot, puis te fait répéter. Télécharge-la pour la regarder sans internet."));
+    videoBlock(`videos/Mia_partie2_replique${n}.mp4`, `videos/covers/replique${n}.jpg`,
+      "Mia montre la bouche mot par mot, puis te fait répéter."));
 }
 
 /* Part 1: one video per sound (videos/Mia_partie1_sonNN.mp4). */
 const SONS = [{"title": "Le H qui souffle", "tip": "Ouvre la bouche et souffle, comme pour faire de la buée sur un miroir.", "mb": 9.8}, {"title": "Le TH qui souffle", "tip": "Le bout de la langue entre les dents. On souffle, sans bruit dans la gorge.", "mb": 4.0}, {"title": "Le TH qui vibre", "tip": "Même position de la langue. Main sur la gorge : ça doit vibrer.", "mb": 7.6}, {"title": "Le R anglais", "tip": "Lèvres un peu rondes. La langue recule et ne touche rien.", "mb": 11.6}, {"title": "I long et i court", "tip": "Long : grand sourire, on tient le son.  Court : bouche molle, très rapide.", "mb": 11.5}, {"title": "Le son « eu » anglais", "tip": "Bouche à moitié ouverte. Lèvres molles, pas en rond. Langue au milieu.", "mb": 10.6}, {"title": "Le A grand ouvert", "tip": "Mâchoire bien en bas, comme chez le dentiste.", "mb": 7.4}, {"title": "Les sons qui glissent", "tip": "Pendant le son, la bouche bouge d'une position à l'autre.", "mb": 11.5}, {"title": "Les lettres muettes", "tip": "Les lettres en gris sont écrites, mais on ne les dit pas.", "mb": 9.0}, {"title": "Le coup de tambour", "tip": "Dans un mot long, une partie est plus forte. Tape dans tes mains dessus !", "mb": 11.3}];
 const sonsSeen = store.get("sons", []);
-function renderSons() {
-  $("sonsList").replaceChildren(...SONS.map((s, i) => {
-    const n = String(i + 1).padStart(2, "0");
-    const card = el("div", "card");
-    const head = el("div", "shead2", `<h3>Son ${i + 1} · ${s.title}</h3>`);
-    const badge = el("span", "seen", "✓ Vu");
-    badge.hidden = !sonsSeen[i];
-    head.append(badge);
-    card.append(head, videoBlock(`videos/Mia_partie1_son${n}.mp4`, `videos/covers/son${n}.jpg`, s.mb, `Mia_son${n}.mp4`, s.tip,
-      () => { sonsSeen[i] = true; store.set("sons", sonsSeen); badge.hidden = false; renderStepper(); }));
-    return card;
+const pad2 = (i) => String(i).padStart(2, "0");
+function renderSons(open) {
+  const list = $("sonsList"), view = $("sonView");
+  const one = open >= 1 && open <= SONS.length;
+  list.hidden = one; $("sonsIntro").hidden = one; $("nextSons").hidden = one; view.hidden = !one;
+  if (one) { renderSon(open - 1); return; }
+  view.replaceChildren();
+  const nextTodo = SONS.findIndex((_, i) => !sonsSeen[i]);
+  list.replaceChildren(...SONS.map((s, i) => {
+    const b = el("button", "sonitem" + (sonsSeen[i] ? " done" : "") + (i === nextTodo ? " next" : ""),
+      `<img src="videos/covers/son${pad2(i + 1)}-mini.jpg" alt="" loading="lazy"><span><b>Son ${i + 1} · ${s.title}</b><small>${s.tip}</small></span>`
+      + (sonsSeen[i] ? `<span class="st ok">✓ Vu</span>` : `<span class="st todo" aria-hidden="true">▶</span>`));
+    b.setAttribute("aria-label", `Son ${i + 1} : ${s.title}${sonsSeen[i] ? " (vu)" : ""}`);
+    b.onclick = () => { location.hash = "son-" + (i + 1); };
+    return b;
   }));
-  nextBar("nextSons", "train");
+  const left = SONS.filter((_, i) => !sonsSeen[i]).length;
+  if (!left) nextBar("nextSons", "train");
+  else $("nextSons").replaceChildren(el("p", "note", `Encore ${left} son${left > 1 ? "s" : ""} à regarder jusqu'au bout avant de passer aux répliques.`));
+}
+function renderSon(i) {
+  const s = SONS[i], view = $("sonView");
+  const head = el("div", "sonhead");
+  const back = el("button", "btn ghost", "← Tous les sons");
+  back.onclick = () => { location.hash = "sons"; };
+  head.append(back, el("span", "eyebrow", `Son ${i + 1} sur ${SONS.length}`));
+  const end = el("div", "sonend");
+  const paintEnd = () => {
+    const last = i === SONS.length - 1, all = SONS.every((_, k) => sonsSeen[k]);
+    const b = el("button", "go" + (sonsSeen[i] ? "" : " soft"));
+    if (!last) { b.innerHTML = `Son suivant : ${SONS[i + 1].title}` + ICON.next; b.onclick = () => { location.hash = "son-" + (i + 2); }; }
+    else if (all) { b.innerHTML = "Étape suivante : Réplique par réplique" + ICON.next; b.onclick = () => go("train"); }
+    else { b.innerHTML = "Revenir à la liste des sons" + ICON.next; b.onclick = () => { location.hash = "sons"; }; }
+    end.replaceChildren(...(sonsSeen[i] ? [el("span", "seen", "✓ Son terminé")] : []), b);
+  };
+  const done = () => {
+    sonsSeen[i] = true; store.set("sons", sonsSeen);
+    paintEnd(); renderStepper();
+    if (SONS.every((_, k) => sonsSeen[k])) confetti();
+  };
+  view.replaceChildren(head, el("h2", null, s.title), el("p", "lead", s.tip),
+    videoBlock(`videos/Mia_partie1_son${pad2(i + 1)}.mp4`, `videos/covers/son${pad2(i + 1)}.jpg`,
+      "Regarde la vidéo jusqu'au bout et répète à voix haute à chaque « À toi ! ».", done), end);
+  paintEnd();
+  view.querySelector("video").play().catch(() => {});   // it starts by itself: she just tapped the sound
 }
 
 function renderScope() {
@@ -1330,6 +1397,8 @@ const CAST = [["Mia", "toi, la patiente", "var(--action)"], ["Léa", "sa mère",
 const colorOf = (who) => (CAST.find((c) => c[0] === who) || [0, 0, "var(--teal)"])[2];
 let screen = null;
 
+const unlockedAll = () => store.get("unlocked", false);   // ?debloquer in the address opens every step (to check the site)
+const locked = (step) => step === "train" && SONS.length > 0 && !done("sons") && !unlockedAll();
 function done(step) {
   if (step === "sons") return SONS.every((_, i) => sonsSeen[i]);
   if (step === "train") return best.every((n) => n > 0);
@@ -1350,8 +1419,8 @@ function renderStepper() {
   dl.setAttribute("aria-label", "Télécharger les vidéos"); dl.onclick = () => go("videos");
   if (screen === "videos") dl.setAttribute("aria-current", "page");
   nav.replaceChildren(home, ...STEPS.map((st, i) => {
-    const b = el("button", done(st) ? "done" : "", `<span class="num">${done(st) ? "✓" : i + 1}</span>${SHORT[st]}`);
-    if (st === screen) b.setAttribute("aria-current", "step");
+    const b = el("button", done(st) ? "done" : locked(st) ? "locked" : "", `<span class="num">${done(st) ? "✓" : locked(st) ? "🔒" : i + 1}</span>${SHORT[st]}`);
+    if (st === screen || (screen === "locked" && st === "train")) b.setAttribute("aria-current", "step");
     b.onclick = () => go(st);
     return b;
   }), dl);
@@ -1466,7 +1535,7 @@ function renderHome() {
   const DESC = { sons: "Une vidéo par son : la bouche de face et de côté.", train: "Chaque réplique mot par mot, avec le micro.",
     full: "Toute la scène, comme le jour de l'oral." };
   $("path").replaceChildren(...STEPS.map((st, i) => el("li", done(st) ? "done" : "",
-    `<span class="num">${done(st) ? "✓" : i + 1}</span><span><b>${NAMES[st]}</b><small>${DESC[st]}</small></span><span class="state">${done(st) ? "fait" : ""}</span>`)),
+    `<span class="num">${done(st) ? "✓" : locked(st) ? "🔒" : i + 1}</span><span><b>${NAMES[st]}</b><small>${locked(st) ? "S'ouvre quand les 10 sons sont finis." : DESC[st]}</small></span><span class="state">${done(st) ? "fait" : ""}</span>`)),
     el("li", "", `<span class="num">🎉</span><span><b>Félicitations !</b><small>Tu seras prête pour l'oral.</small></span><span></span>`));
   const last = store.get("screen", null), started = last && last !== "home";
   $("startBtn").innerHTML = (started ? "Continuer là où j'en étais" : "Oui, je commence") + ICON.next;
@@ -1572,9 +1641,17 @@ function track(name) {
 $("gc") && $("gc").addEventListener("load", () => { gcWaiting.forEach((n) => window.goatcounter.count && window.goatcounter.count({ path: "/mia-entrainement/" + HASH[n], title: "Mia · " + HASH[n] })); gcWaiting = []; });
 
 function go(name) { if (location.hash.slice(1) === HASH[name]) show(name); else location.hash = HASH[name]; }
-function show(name) {
+function renderLocked() {
+  const k = SONS.filter((_, i) => sonsSeen[i]).length, next = SONS.findIndex((_, i) => !sonsSeen[i]);
+  $("lockMsg").textContent = `Les répliques s'ouvrent quand les 10 sons sont terminés. Tu en as fait ${k} sur ${SONS.length} : encore ${SONS.length - k}, courage !`;
+  $("lockGo").innerHTML = `Continuer avec le son ${next + 1}` + ICON.next;
+  $("lockGo").onclick = () => { location.hash = "son-" + (next + 1); };
+}
+function show(name, sub) {
   $("boot").hidden = true;
   if (!HASH[name] || (name === "sons" && !SONS.length)) name = "home";
+  const asked = name;
+  if (locked(name)) name = "locked";
   if (running) { running = false; stopPlay(); stopListen(); }
   if (rec) stopListen();
   if (mediaRec) mediaRec.stop();
@@ -1582,20 +1659,21 @@ function show(name) {
   stopPlay();
   document.querySelectorAll("video").forEach((v) => v.pause());
   screen = name;
-  if (name !== "videos") store.set("screen", name);
-  track(name);
-  for (const id of ["home", "sons", "train", "full", "bravo", "videos"]) {
+  if (name !== "videos" && name !== "locked") store.set("screen", name);
+  track(asked);
+  for (const id of ["home", "sons", "train", "full", "bravo", "videos", "locked"]) {
     const sec = $(id);
     sec.hidden = id !== name;
     sec.classList.remove("enter");
   }
   void $(name).offsetWidth;  // restart the entrance animation
   $(name).classList.add("enter");
-  $("stepper").hidden = !STEPS.includes(name) && name !== "videos";
+  $("stepper").hidden = !STEPS.includes(name) && name !== "videos" && name !== "locked";
   $("dock").hidden = name !== "train";
   $("scope").hidden = name !== "train";
   if (name === "home") renderHome();
-  if (name === "sons" && !$("sonsList").children.length) renderSons();
+  if (name === "sons") renderSons(sub);
+  if (name === "locked") renderLocked();
   if (name === "train") renderScope();
   if (name === "full" && !$("nextFull").children.length) nextBar("nextFull", "bravo");
   if (name === "bravo") renderBravo();
@@ -1603,7 +1681,12 @@ function show(name) {
   renderStepper();
   scrollTo(0, 0);
 }
-addEventListener("hashchange", () => checkTransfer() || show(Object.keys(HASH).find((k) => HASH[k] === location.hash.slice(1)) || "home"));
+function route() {
+  const h = location.hash.slice(1), m = h.match(/^son-(\d+)$/);
+  if (m) show("sons", +m[1]);
+  else show(Object.keys(HASH).find((k) => HASH[k] === h) || "home");
+}
+addEventListener("hashchange", () => checkTransfer() || route());
 $("micBtn").onclick = () => { if (!$("full").hidden) { if (rec) stopListen(); return; } testLine(); };
 $("fullStart").innerHTML = ICON.play + "Commencer la répétition";
 $("fullStart").onclick = runFull;
@@ -1640,7 +1723,8 @@ renderInstall();
 if (!SR) $("live").textContent = "Astuce : ouvre cette page dans Google Chrome pour le test au micro.";
 collectNotes();
 renderTrain();
-checkTransfer() || show(Object.keys(HASH).find((k) => HASH[k] === location.hash.slice(1)) || "home");  // always opens on the welcome screen
+if (/[?&]debloquer\b/.test(location.search)) store.set("unlocked", true);
+checkTransfer() || route();  // opens on the welcome screen, unless the address names a screen
 </script>
 </body>
 </html>
