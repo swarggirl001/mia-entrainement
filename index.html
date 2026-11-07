@@ -322,6 +322,13 @@ h2 { font-size: 22px; }
 .install h3 { color: var(--teal); }
 .install p { margin: 2px 0 0; }
 .install .go { grid-column: 1 / -1; background: var(--teal); box-shadow: 0 8px 20px rgba(31, 143, 130, .25); }
+/* progress on another device */
+.carry h3 { color: var(--teal); }
+.carry p { margin: 0; }
+.carrylink { font: inherit; font-size: 13px; width: 100%; border: 2px solid var(--line); border-radius: 12px; padding: 8px 10px; background: #fffdf9; color: var(--muted); }
+.import { background: var(--good-soft); border-color: transparent; }
+.import h3 { color: var(--good); }
+.import p { margin: 0; }
 canvas.confetti { position: fixed; inset: 0; pointer-events: none; z-index: 50; }
 @media (prefers-reduced-motion: reduce) { .mic.on { animation: none; } }
 </style>
@@ -342,6 +349,8 @@ canvas.confetti { position: fixed; inset: 0; pointer-events: none; z-index: 50; 
       <p class="lead">Le jour de l'oral, tu joues <b>Mia</b>. Ici, tu apprends à bien prononcer ses 7 répliques, pas à pas, jusqu'à les dire d'un seul trait.</p>
       <button class="linkbtn" id="editMe" hidden>Ce n'est pas toi ? Modifier mon prénom</button>
     </div>
+
+    <div class="card import" id="import" hidden></div>
 
     <form class="card idform" id="who" novalidate hidden>
       <h2>Présente-toi</h2>
@@ -388,6 +397,15 @@ canvas.confetti { position: fixed; inset: 0; pointer-events: none; z-index: 50; 
         <p class="note" id="installHow">Une icône « Mia » sur ton écran d'accueil : elle s'ouvre en plein écran, sans passer par Google.</p>
       </div>
       <button class="go" id="installBtn" hidden></button>
+    </div>
+    <div class="card carry" id="carry">
+      <h3>Continuer sur un autre appareil</h3>
+      <p class="note">Ta progression (étoiles, vidéos vues, mots difficiles) est gardée sur cet appareil. Pour la retrouver sur un autre téléphone ou un ordinateur, envoie-toi ce lien et ouvre-le là-bas.</p>
+      <div class="row">
+        <button class="btn listen" id="carryBtn"></button>
+      </div>
+      <input class="carrylink" id="carryLink" readonly hidden aria-label="Lien de ta progression">
+      <p class="note" id="carryMsg" aria-live="polite"></p>
     </div>
     <button class="dlcorner" id="homeVideos"></button>
     </div>
@@ -1354,6 +1372,59 @@ function renderTrainNext() {
   } else nextBar("nextTrain", "full");
 }
 
+/* ---------- progress on another device: everything is packed into a link (#transfert=…).
+   The part after # never leaves the phone that opens it: nothing is stored on the internet. ---------- */
+const b64url = {
+  enc: (str) => btoa(String.fromCharCode(...new TextEncoder().encode(str))).replace(/\+/g, "-").replace(/\//g, "_").replace(/=+$/, ""),
+  dec: (b) => new TextDecoder().decode(Uint8Array.from(atob(b.replace(/-/g, "+").replace(/_/g, "/")), (c) => c.charCodeAt(0))),
+};
+function carryLink() {
+  const pack = { v: 1, me, best, sons: sonsSeen, hard, full: store.get("fullBest", -1) };
+  return location.origin + location.pathname + "#transfert=" + b64url.enc(JSON.stringify(pack));
+}
+$("carryBtn").innerHTML = ICON.next + "Envoyer ma progression";
+$("carryBtn").onclick = async () => {
+  const url = carryLink(), msg = $("carryMsg");
+  if (navigator.share) {
+    try { await navigator.share({ title: "Ma progression · Entraînement de Mia", text: "Ouvre ce lien sur ton autre appareil :", url }); msg.textContent = "Ouvre ce lien sur ton autre appareil."; return; }
+    catch (err) { if (err.name === "AbortError") return; }
+  }
+  $("carryLink").value = url; $("carryLink").hidden = false;
+  try { await navigator.clipboard.writeText(url); msg.textContent = "Lien copié ! Colle-le dans un message ou un e-mail pour toi, puis ouvre-le sur l'autre appareil."; }
+  catch { $("carryLink").select(); msg.textContent = "Copie ce lien, envoie-le-toi, puis ouvre-le sur l'autre appareil."; }
+};
+function summary(p) {
+  const stars = (p.best || []).reduce((a, b) => a + (b || 0), 0), seen = (p.sons || []).filter(Boolean).length;
+  return `${stars} étoile${stars > 1 ? "s" : ""} · ${seen} vidéo${seen > 1 ? "s" : ""} de sons vue${seen > 1 ? "s" : ""}` + (p.full >= 0 ? ` · répétition générale ${Math.round(p.full * 100)} %` : "");
+}
+function receive(code) {
+  let p;
+  try { p = JSON.parse(b64url.dec(code)); } catch { p = null; }
+  const box = $("import");
+  box.hidden = false;
+  if (!p || p.v !== 1) { box.innerHTML = `<h3>Lien incomplet</h3><p class="note">Ce lien de progression est abîmé. Renvoie-le depuis l'autre appareil.</p>`; return; }
+  const name = p.me && p.me.first ? clean(p.me.first, 40) : "";
+  box.innerHTML = `<h3>📲 Progression reçue${name ? " de " + name : ""}</h3><p class="note">${summary(p)}. La mettre sur cet appareil ?</p>`;
+  const row = el("div", "row");
+  const yes = el("button", "btn listen", "Oui, la récupérer");
+  const no = el("button", "btn ghost", "Non");
+  yes.onclick = () => {
+    // keep the best of both devices
+    (p.best || []).forEach((n, i) => { if (i < best.length && n > best[i]) best[i] = Math.min(3, n | 0); });
+    (p.sons || []).forEach((v, i) => { if (v) sonsSeen[i] = true; });
+    Object.entries(p.hard || {}).forEach(([k, v]) => { if (UNIT_OF[k] && !hard[k]) hard[k] = { miss: v.miss | 0, streak: v.streak | 0, n: UNIT_OF[k].n }; });
+    if (p.full > store.get("fullBest", -1)) store.set("fullBest", Math.min(1, +p.full));
+    if (p.me && p.me.first) me = { first: clean(p.me.first, 40), last: clean(p.me.last, 60), mail: clean(p.me.mail, 120) };
+    store.set("best", best); store.set("sons", sonsSeen); store.set("hard", hard); if (me) store.set("me", me);
+    box.innerHTML = `<h3>✓ C'est fait !</h3><p class="note">Ta progression est maintenant aussi sur cet appareil.</p>`;
+    confetti();
+    renderHome(); renderStepper(); renderReps(); renderHard();
+  };
+  no.onclick = () => { box.hidden = true; };
+  row.append(yes, no);
+  box.append(row);
+}
+
 function askName(edit) {
   $("who").hidden = false; $("homeMain").hidden = true; $("editMe").hidden = true;
   $("hello").textContent = "Bienvenue !";
@@ -1479,6 +1550,15 @@ $("homeVideos").onclick = () => go("videos");
 $("bravoVideos").innerHTML = ICON.down + "Télécharger toutes les vidéos";
 $("bravoVideos").onclick = () => go("videos");
 
+function checkTransfer() {   // opened from a progress link: offer to take it, then forget the link
+  const m = location.hash.match(/^#transfert=([\w-]+)$/);
+  if (!m) return false;
+  history.replaceState(null, "", location.pathname + location.search + "#accueil");
+  show("home");
+  receive(m[1]);
+  return true;
+}
+
 function go(name) { if (location.hash.slice(1) === HASH[name]) show(name); else location.hash = HASH[name]; }
 function show(name) {
   $("boot").hidden = true;
@@ -1510,7 +1590,7 @@ function show(name) {
   renderStepper();
   scrollTo(0, 0);
 }
-addEventListener("hashchange", () => show(Object.keys(HASH).find((k) => HASH[k] === location.hash.slice(1)) || "home"));
+addEventListener("hashchange", () => checkTransfer() || show(Object.keys(HASH).find((k) => HASH[k] === location.hash.slice(1)) || "home"));
 $("micBtn").onclick = () => { if (!$("full").hidden) { if (rec) stopListen(); return; } testLine(); };
 $("fullStart").innerHTML = ICON.play + "Commencer la répétition";
 $("fullStart").onclick = runFull;
@@ -1547,7 +1627,7 @@ renderInstall();
 if (!SR) $("live").textContent = "Astuce : ouvre cette page dans Google Chrome pour le test au micro.";
 collectNotes();
 renderTrain();
-show(Object.keys(HASH).find((k) => HASH[k] === location.hash.slice(1)) || "home");  // always opens on the welcome screen
+checkTransfer() || show(Object.keys(HASH).find((k) => HASH[k] === location.hash.slice(1)) || "home");  // always opens on the welcome screen
 </script>
 </body>
 </html>
