@@ -274,6 +274,28 @@ h2 { font-size: 22px; }
 .chip-toggle { border: 2px solid var(--line); background: var(--card); border-radius: 999px; padding: 5px 10px; font-size: 13px; font-weight: 700; }
 .chip-toggle[aria-pressed="true"] { border-color: var(--teal); background: var(--teal-soft); color: var(--teal); }
 .boot { text-align: center; color: var(--muted); font-weight: 700; padding: 40vh 0 0; margin: 0; }
+/* « Lis avec Mia »: the word being said lights up */
+.w .t { border-radius: 8px; padding: 0 2px; transition: background .12s, color .12s; }
+.w.now .t { background: var(--action); color: #fff; }
+.w.said .t { color: var(--teal); }
+.w.guide .t { box-shadow: inset 0 -4px 0 var(--action); }
+.ra { background: var(--violet-soft); border-color: transparent; }
+.ra h3 { color: var(--violet); }
+.ra ol { margin: 0; padding-left: 20px; display: grid; gap: 2px; font-size: 15px; }
+.ra .phase { font-family: var(--display); font-weight: 800; font-size: 20px; color: var(--violet); }
+.btn.violet { background: var(--violet); color: #fff; }
+.rhythm { display: grid; gap: 4px; background: var(--paper); border-radius: 14px; padding: 10px 12px; }
+.rhythm b { font-family: var(--display); font-size: 17px; }
+.bar2 { position: relative; height: 10px; border-radius: 5px; background: var(--line); }
+.bar2 i { position: absolute; inset: 0 auto 0 0; border-radius: 5px; background: var(--teal); }
+.bar2 i.me { background: var(--action); }
+.hrow { display: grid; grid-template-columns: 1fr auto; gap: 8px; align-items: center; padding: 8px 0; border-top: 1px solid var(--line); }
+.hrow:first-of-type { border-top: 0; }
+.hrow b { font-family: var(--display); font-size: 18px; }
+.hrow small { display: block; color: var(--muted); font-size: 13px; }
+.hrow .row { flex-wrap: nowrap; gap: 6px; }
+.hrow .btn { min-height: 36px; padding: 6px 10px; font-size: 14px; }
+.hrow.win b { color: var(--good); }
 canvas.confetti { position: fixed; inset: 0; pointer-events: none; z-index: 50; }
 @media (prefers-reduced-motion: reduce) { .mic.on { animation: none; } }
 </style>
@@ -338,6 +360,7 @@ canvas.confetti { position: fixed; inset: 0; pointer-events: none; z-index: 50; 
     </div>
     <nav class="reps" id="reps" aria-label="Répliques"></nav>
     <div class="card cue" id="cue"></div>
+    <div class="card ra" id="ra"></div>
     <div class="card" id="line"></div>
     <div class="card result" id="result" hidden></div>
     <div class="card" id="video"></div>
@@ -349,6 +372,7 @@ canvas.confetti { position: fixed; inset: 0; pointer-events: none; z-index: 50; 
         <button class="btn listen" id="cmpBtn" disabled></button>
       </div>
     </div>
+    <div class="card" id="hard"></div>
     <div class="nextbar" id="nextTrain"></div>
   </section>
 
@@ -423,6 +447,7 @@ canvas.confetti { position: fixed; inset: 0; pointer-events: none; z-index: 50; 
 const DATA = {"reps": [{"fr": "Oui, bien sûr. Je n'ai pas très bien dormi. Mon poignet me fait encore mal, et je m'inquiète pour l'opération.", "sentences": [{"text": "Yes, of course.", "chunks": [{"note": "course : « ô » long, R muet", "units": [{"text": "Yes", "audio": "audio/45b686733408.mp3", "words": [{"w": "Yes,", "ipa": "jes", "stress": false, "k": "0-0-0"}]}, {"text": "of course", "audio": "audio/e87d4413af2d.mp3", "words": [{"w": "of", "ipa": "əv", "stress": false, "k": "0-0-1"}, {"w": "course.", "ipa": "ˈkɔːs", "stress": true, "k": "0-0-2", "end": "down"}]}]}], "audio": "audio/74609048d3b2.mp3", "slow": null}, {"text": "I didn't sleep very well.", "chunks": [{"note": "sleep : i long, grand sourire · very : un vrai V", "units": [{"text": "I", "audio": "audio/2504e1c380ad.mp3", "words": [{"w": "I", "ipa": "aɪ", "stress": false, "k": "0-1-0"}]}, {"text": "didn't", "audio": "audio/c4da53ae700a.mp3", "words": [{"w": "didn't", "ipa": "ˈdɪdnt", "stress": true, "k": "0-1-1"}]}, {"text": "sleep", "audio": "audio/dadab812860d.mp3", "words": [{"w": "sleep", "ipa": "ˈsliːp", "stress": true, "k": "0-1-2"}]}, {"text": "very", "audio": "audio/87a867572ac9.mp3", "words": [{"w": "very", "ipa": "ˈveri", "stress": true, "k": "0-1-3"}]}, {"text": "well", "audio": "audio/6b04d4e6cf92.mp3", "words": [{"w": "well.", "ipa": "ˈwel", "stress": true, "k": "0-1-4", "end": "down"}]}]}], "audio": "audio/9d5f7606cf34.mp3", "slow": "audio/47ef54f6d8aa.mp3"}, {"text": "My wrist still hurts, and I'm worried about the operation.", "chunks": [{"note": "wrist : W muet · hurts : H soufflé", "units": [{"text": "My wrist", "audio": "audio/b20aea95414d.mp3", "words": [{"w": "My", "ipa": "maɪ", "stress": false, "k": "0-2-0"}, {"w": "wrist", "ipa": "ˈrɪst", "stress": true, "k": "0-2-1"}]}, {"text": "still", "audio": "audio/ca825b34d79f.mp3", "words": [{"w": "still", "ipa": "stɪl", "stress": false, "k": "0-2-2"}]}, {"text": "hurts", "audio": "audio/8dd37ec1cbea.mp3", "words": [{"w": "hurts,", "ipa": "ˈhɜːts", "stress": true, "k": "0-2-3"}]}]}, {"note": "the + voyelle = « dhi » · operation : accent sur RA", "units": [{"text": "and I'm", "audio": "audio/52e37432d14f.mp3", "words": [{"w": "and", "ipa": "ənd", "stress": false, "k": "0-2-4"}, {"w": "I'm", "ipa": "aɪm", "stress": false, "k": "0-2-5"}]}, {"text": "worried", "audio": "audio/4805f17b2fa3.mp3", "words": [{"w": "worried", "ipa": "ˈwʌrid", "stress": true, "k": "0-2-6"}]}, {"text": "about", "audio": "audio/78ed3755e31f.mp3", "words": [{"w": "about", "ipa": "əˈbaʊt", "stress": true, "k": "0-2-7"}]}, {"text": "the operation", "audio": "audio/dc167dc7a942.mp3", "words": [{"w": "the", "ipa": "ði", "stress": false, "k": "0-2-8"}, {"w": "operation.", "ipa": "ˌɒpəˈreɪʃn", "stress": true, "k": "0-2-9", "end": "down"}]}]}], "audio": "audio/d08016bf8235.mp3", "slow": "audio/12b275cda366.mp3"}], "full": "audio/7745ada9c737.mp3", "fullSlow": "audio/6f31e1e884b5.mp3", "cues": [{"who": "Lola", "text": "Good morning, Mia. I'm Lola, your nurse, and this is Tess, a nursing student. Is it okay if we check how you're feeling?", "audio": "audio/fbc915819c5b.mp3", "color": "#1f8f82"}]}, {"fr": "Environ six sur dix. C'est une douleur vive du côté droit, surtout quand je bouge les doigts.", "sentences": [{"text": "About six out of ten.", "chunks": [{"note": "six‿out‿of : les mots s'enchaînent", "units": [{"text": "About", "audio": "audio/78ed3755e31f.mp3", "words": [{"w": "About", "ipa": "əˈbaʊt", "stress": true, "k": "1-0-0"}]}, {"text": "six", "audio": "audio/7b1d54c2c491.mp3", "words": [{"w": "six", "ipa": "ˈsɪks", "stress": true, "k": "1-0-1"}]}, {"text": "out", "audio": "audio/4553109e2d4e.mp3", "words": [{"w": "out", "ipa": "aʊt", "stress": false, "k": "1-0-2"}]}, {"text": "of ten", "audio": "audio/acbdea6ec304.mp3", "words": [{"w": "of", "ipa": "əv", "stress": false, "k": "1-0-3"}, {"w": "ten.", "ipa": "ˈten", "stress": true, "k": "1-0-4", "end": "down"}]}]}], "audio": "audio/4a61ff4c3016.mp3", "slow": "audio/304e14510d78.mp3"}, {"text": "It's a sharp pain on the right side, especially when I move my fingers.", "chunks": [{"note": "pain : la bouche glisse de « é » vers « i »", "units": [{"text": "It's a sharp", "audio": "audio/ae62ad22fda5.mp3", "words": [{"w": "It's", "ipa": "ɪts", "stress": false, "k": "1-1-0"}, {"w": "a", "ipa": "ə", "stress": false, "k": "1-1-1"}, {"w": "sharp", "ipa": "ˈʃɑːp", "stress": true, "k": "1-1-2"}]}, {"text": "pain", "audio": "audio/1596db8cc773.mp3", "words": [{"w": "pain", "ipa": "ˈpeɪn", "stress": true, "k": "1-1-3"}]}]}, {"note": "the : TH vibré · right : R sans rouler", "units": [{"text": "on the right", "audio": "audio/7075cfdc0dbb.mp3", "words": [{"w": "on", "ipa": "ɒn", "stress": false, "k": "1-1-4"}, {"w": "the", "ipa": "ðə", "stress": false, "k": "1-1-5"}, {"w": "right", "ipa": "ˈraɪt", "stress": true, "k": "1-1-6"}]}, {"text": "side", "audio": "audio/b065e2b55560.mp3", "words": [{"w": "side,", "ipa": "ˈsaɪd", "stress": true, "k": "1-1-7"}]}]}, {"note": "especially : accent sur SPE · fingers : G puis Z", "units": [{"text": "especially", "audio": "audio/22bfe8a59f8b.mp3", "words": [{"w": "especially", "ipa": "ɪˈspeʃəli", "stress": true, "k": "1-1-8"}]}, {"text": "when I", "audio": "audio/bbe623c0d3c7.mp3", "words": [{"w": "when", "ipa": "wen", "stress": false, "k": "1-1-9"}, {"w": "I", "ipa": "aɪ", "stress": false, "k": "1-1-10"}]}, {"text": "move", "audio": "audio/f932065d8693.mp3", "words": [{"w": "move", "ipa": "ˈmuːv", "stress": true, "k": "1-1-11"}]}, {"text": "my fingers", "audio": "audio/fa9371ff033c.mp3", "words": [{"w": "my", "ipa": "maɪ", "stress": false, "k": "1-1-12"}, {"w": "fingers.", "ipa": "ˈfɪŋɡəz", "stress": true, "k": "1-1-13", "end": "down"}]}]}], "audio": "audio/99290fabc182.mp3", "slow": "audio/619708dc3bae.mp3"}], "full": "audio/e6e804a6444e.mp3", "fullSlow": "audio/3e88a2f6b2f8.mp3", "cues": [{"who": "Tess", "text": "I'm sorry you had a difficult night. I'll check your blood pressure, pulse, temperature and oxygen level. Please keep your arm relaxed.", "audio": "audio/ef8cab0cc76a.mp3", "color": "#6c5ce0"}, {"who": "Léa", "text": "Thank you. She was in so much pain yesterday. I just want to know that she's safe.", "audio": "audio/8b8b1e6b7504.mp3", "color": "#c2577a"}, {"who": "Tess", "text": "Your readings look stable, Mia. I'll tell Lola the results and record them in your notes.", "audio": "audio/ee3243976f48.mp3", "color": "#6c5ce0"}, {"who": "Lola", "text": "On a scale from zero to ten, where ten is the worst pain imaginable, how painful is your wrist right now?", "audio": "audio/b53e0ffafa2c.mp3", "color": "#1f8f82"}]}, {"fr": "Ils sont chauds, et j'arrive à les bouger un peu. Je n'ai pas de picotements, mais j'ai peur d'aggraver la fracture.", "sentences": [{"text": "They feel warm, and I can move them a little.", "chunks": [{"note": "they : TH vibré · warm : lèvres rondes", "units": [{"text": "They", "audio": "audio/23a2c049a88c.mp3", "words": [{"w": "They", "ipa": "ðeɪ", "stress": false, "k": "2-0-0"}]}, {"text": "feel", "audio": "audio/66a58cdc8d9e.mp3", "words": [{"w": "feel", "ipa": "ˈfiːl", "stress": true, "k": "2-0-1"}]}, {"text": "warm", "audio": "audio/a55dc94fc3c1.mp3", "words": [{"w": "warm,", "ipa": "ˈwɔːm", "stress": true, "k": "2-0-2"}]}]}, {"note": "little : L final, sans voyelle après", "units": [{"text": "and I", "audio": "audio/ef2a2411f512.mp3", "words": [{"w": "and", "ipa": "ənd", "stress": false, "k": "2-0-3"}, {"w": "I", "ipa": "aɪ", "stress": false, "k": "2-0-4"}]}, {"text": "can move", "audio": "audio/924187de6ccf.mp3", "words": [{"w": "can", "ipa": "kən", "stress": false, "k": "2-0-5"}, {"w": "move", "ipa": "ˈmuːv", "stress": true, "k": "2-0-6"}]}, {"text": "them a little", "audio": "audio/c64d72f6f07e.mp3", "words": [{"w": "them", "ipa": "ðəm", "stress": false, "k": "2-0-7"}, {"w": "a", "ipa": "ə", "stress": false, "k": "2-0-8"}, {"w": "little.", "ipa": "ˈlɪtl", "stress": true, "k": "2-0-9", "end": "down"}]}]}], "audio": "audio/3ee08297b153.mp3", "slow": "audio/7fa6cda04fe0.mp3"}, {"text": "There's no tingling, but I'm scared of making the fracture worse.", "chunks": [{"note": "no : la bouche glisse vers « ou »", "units": [{"text": "There's", "audio": "audio/a958c34e6ea1.mp3", "words": [{"w": "There's", "ipa": "ðeəz", "stress": false, "k": "2-1-0"}]}, {"text": "no", "audio": "audio/5fdb1398a051.mp3", "words": [{"w": "no", "ipa": "ˈnəʊ", "stress": true, "k": "2-1-1"}]}, {"text": "tingling", "audio": "audio/a342630af823.mp3", "words": [{"w": "tingling,", "ipa": "ˈtɪŋɡlɪŋ", "stress": true, "k": "2-1-2"}]}]}, {"note": "scared : 1 seule syllabe · worse : lèvres molles", "units": [{"text": "but I'm", "audio": "audio/302ec85edc65.mp3", "words": [{"w": "but", "ipa": "bət", "stress": false, "k": "2-1-3"}, {"w": "I'm", "ipa": "aɪm", "stress": false, "k": "2-1-4"}]}, {"text": "scared", "audio": "audio/4bcaea645d3f.mp3", "words": [{"w": "scared", "ipa": "ˈskeəd", "stress": true, "k": "2-1-5"}]}, {"text": "of making", "audio": "audio/618cfde82af0.mp3", "words": [{"w": "of", "ipa": "əv", "stress": false, "k": "2-1-6"}, {"w": "making", "ipa": "ˈmeɪkɪŋ", "stress": true, "k": "2-1-7"}]}, {"text": "the fracture", "audio": "audio/a332c49bd9d8.mp3", "words": [{"w": "the", "ipa": "ðə", "stress": false, "k": "2-1-8"}, {"w": "fracture", "ipa": "ˈfræktʃə", "stress": true, "k": "2-1-9"}]}, {"text": "worse", "audio": "audio/c30cf0215ea4.mp3", "words": [{"w": "worse.", "ipa": "ˈwɜːs", "stress": true, "k": "2-1-10", "end": "down"}]}]}], "audio": "audio/bafc549bafc0.mp3", "slow": "audio/02c988ea4e95.mp3"}], "full": "audio/a533e121a1ff.mp3", "fullSlow": "audio/9a465b56b8c9.mp3", "cues": [{"who": "Tess", "text": "I can see some bruising and swelling. Do your fingers feel numb, cold or tingly? Can you move them gently?", "audio": "audio/1fe36aca9cd2.mp3", "color": "#6c5ce0"}]}, {"fr": "Hier matin, j'ai glissé sur du verglas en allant à l'école. Je suis tombée sur la main droite, et la douleur a été immédiate.", "sentences": [{"text": "Yesterday morning, I slipped on ice on my way to school.", "chunks": [{"note": "morning : R muet, NG à la fin", "units": [{"text": "Yesterday", "audio": "audio/40ec7cbda7a9.mp3", "words": [{"w": "Yesterday", "ipa": "ˈjestədeɪ", "stress": true, "k": "3-0-0"}]}, {"text": "morning", "audio": "audio/421949be6ec6.mp3", "words": [{"w": "morning,", "ipa": "ˈmɔːnɪŋ", "stress": true, "k": "3-0-1"}]}]}, {"note": "slipped : finit par un T, et on enchaîne", "units": [{"text": "I", "audio": "audio/2504e1c380ad.mp3", "words": [{"w": "I", "ipa": "aɪ", "stress": false, "k": "3-0-2"}]}, {"text": "slipped", "audio": "audio/b86f7b0d03d0.mp3", "words": [{"w": "slipped", "ipa": "ˈslɪpt", "stress": true, "k": "3-0-3"}]}, {"text": "on ice", "audio": "audio/fd9159b1a18b.mp3", "words": [{"w": "on", "ipa": "ɒn", "stress": false, "k": "3-0-4"}, {"w": "ice", "ipa": "ˈaɪs", "stress": true, "k": "3-0-5"}]}]}, {"note": "school : SK + « ou » long", "units": [{"text": "on my way", "audio": "audio/fe1c072ddeaf.mp3", "words": [{"w": "on", "ipa": "ɒn", "stress": false, "k": "3-0-6"}, {"w": "my", "ipa": "maɪ", "stress": false, "k": "3-0-7"}, {"w": "way", "ipa": "ˈweɪ", "stress": true, "k": "3-0-8"}]}, {"text": "to school", "audio": "audio/788ab0713f35.mp3", "words": [{"w": "to", "ipa": "tə", "stress": false, "k": "3-0-9"}, {"w": "school.", "ipa": "ˈskuːl", "stress": true, "k": "3-0-10", "end": "down"}]}]}], "audio": "audio/5a3fbad65b86.mp3", "slow": "audio/0e6535b4b79c.mp3"}, {"text": "I landed on my right hand, and the pain was immediate.", "chunks": [{"note": "landed : « id » · hand : H soufflé, bouche ouverte", "units": [{"text": "I", "audio": "audio/2504e1c380ad.mp3", "words": [{"w": "I", "ipa": "aɪ", "stress": false, "k": "3-1-0"}]}, {"text": "landed", "audio": "audio/1e0da6412269.mp3", "words": [{"w": "landed", "ipa": "ˈlændɪd", "stress": true, "k": "3-1-1"}]}, {"text": "on my right", "audio": "audio/241f18fb3222.mp3", "words": [{"w": "on", "ipa": "ɒn", "stress": false, "k": "3-1-2"}, {"w": "my", "ipa": "maɪ", "stress": false, "k": "3-1-3"}, {"w": "right", "ipa": "ˈraɪt", "stress": true, "k": "3-1-4"}]}, {"text": "hand", "audio": "audio/9387284f5971.mp3", "words": [{"w": "hand,", "ipa": "ˈhænd", "stress": true, "k": "3-1-5"}]}]}, {"note": "immediate : accent sur ME", "units": [{"text": "and the pain", "audio": "audio/aba40032668b.mp3", "words": [{"w": "and", "ipa": "ənd", "stress": false, "k": "3-1-6"}, {"w": "the", "ipa": "ðə", "stress": false, "k": "3-1-7"}, {"w": "pain", "ipa": "ˈpeɪn", "stress": true, "k": "3-1-8"}]}, {"text": "was immediate", "audio": "audio/7dc1fc4a0d39.mp3", "words": [{"w": "was", "ipa": "wəz", "stress": false, "k": "3-1-9"}, {"w": "immediate.", "ipa": "ɪˈmiːdiət", "stress": true, "k": "3-1-10", "end": "down"}]}]}], "audio": "audio/96088c12ba4f.mp3", "slow": "audio/75b62e3f660c.mp3"}], "full": "audio/3c26fe7451c2.mp3", "fullSlow": "audio/518efafb76a4.mp3", "cues": [{"who": "Lola", "text": "Don't force any movement. We'll keep your wrist supported, review your prescribed pain relief and reassess your pain shortly.", "audio": "audio/f4dc24a7ea4c.mp3", "color": "#1f8f82"}, {"who": "Léa", "text": "Could you explain why she needs surgery? I thought a broken wrist could simply be put in a cast.", "audio": "audio/0eaad103aca6.mp3", "color": "#c2577a"}]}, {"fr": "Oui, s'il vous plaît. Est-ce que je serai réveillée pendant l'opération ? Et est-ce que mon poignet fonctionnera à nouveau normalement ?", "sentences": [{"text": "Yes, please.", "chunks": [{"note": "please : finit par un Z", "units": [{"text": "Yes", "audio": "audio/45b686733408.mp3", "words": [{"w": "Yes,", "ipa": "jes", "stress": false, "k": "4-0-0"}]}, {"text": "please", "audio": "audio/18fb1361a370.mp3", "words": [{"w": "please.", "ipa": "ˈpliːz", "stress": true, "k": "4-0-1", "end": "down"}]}]}], "audio": "audio/cb5f4b50b290.mp3", "slow": "audio/02d11ecb8a9d.mp3"}, {"text": "Will I be awake during surgery?", "chunks": [{"note": "Question : la voix monte à la fin", "units": [{"text": "Will I", "audio": "audio/43cfeb420824.mp3", "words": [{"w": "Will", "ipa": "wɪl", "stress": false, "k": "4-1-0"}, {"w": "I", "ipa": "aɪ", "stress": false, "k": "4-1-1"}]}, {"text": "be awake", "audio": "audio/0aa4db5f2cfe.mp3", "words": [{"w": "be", "ipa": "bi", "stress": false, "k": "4-1-2"}, {"w": "awake", "ipa": "əˈweɪk", "stress": true, "k": "4-1-3"}]}, {"text": "during", "audio": "audio/d08876dee591.mp3", "words": [{"w": "during", "ipa": "ˈdjʊərɪŋ", "stress": true, "k": "4-1-4"}]}, {"text": "surgery", "audio": "audio/27fea9a7b824.mp3", "words": [{"w": "surgery?", "ipa": "ˈsɜːdʒəri", "stress": true, "k": "4-1-5", "end": "up"}]}]}], "audio": "audio/4b5891b3234d.mp3", "slow": "audio/7d718543e5a1.mp3"}, {"text": "And will my wrist work normally again?", "chunks": [{"note": "work ≠ walk · la voix monte à la fin", "units": [{"text": "And will my wrist", "audio": "audio/5bbae0c15456.mp3", "words": [{"w": "And", "ipa": "ənd", "stress": false, "k": "4-2-0"}, {"w": "will", "ipa": "wɪl", "stress": false, "k": "4-2-1"}, {"w": "my", "ipa": "maɪ", "stress": false, "k": "4-2-2"}, {"w": "wrist", "ipa": "ˈrɪst", "stress": true, "k": "4-2-3"}]}, {"text": "work", "audio": "audio/e86219839be4.mp3", "words": [{"w": "work", "ipa": "ˈwɜːk", "stress": true, "k": "4-2-4"}]}, {"text": "normally", "audio": "audio/c77057dbf22f.mp3", "words": [{"w": "normally", "ipa": "ˈnɔːməli", "stress": true, "k": "4-2-5"}]}, {"text": "again", "audio": "audio/e1693f3735a9.mp3", "words": [{"w": "again?", "ipa": "əˈɡen", "stress": true, "k": "4-2-6", "end": "up"}]}]}], "audio": "audio/02b181526234.mp3", "slow": "audio/b9d3a98118f7.mp3"}], "full": "audio/d30b021c9a97.mp3", "fullSlow": "audio/103466a0973d.mp3", "cues": [{"who": "Tess", "text": "That sounds frightening. You did the right thing by calling your mother and coming to the emergency department.", "audio": "audio/d5c9cb3fbe71.mp3", "color": "#6c5ce0"}, {"who": "Lola", "text": "The X-ray helped identify the fracture. Dr Johnson is coming to explain the treatment and answer your questions.", "audio": "audio/692535a5159c.mp3", "color": "#1f8f82"}, {"who": "Dr Johnson", "text": "Good morning, everyone. I'm Dr Johnson. Mia, may I discuss your X-ray and the planned procedure with you and your mother?", "audio": "audio/a201acc4cd87.mp3", "color": "#3e6fb0"}]}, {"fr": "Merci. Je suis encore nerveuse, mais je comprends ce qui se passe maintenant. Est-ce que je pourrais avoir un autre oreiller sous le bras ?", "sentences": [{"text": "Thank you.", "chunks": [{"note": "thank : langue entre les dents, on souffle", "units": [{"text": "Thank you", "audio": "audio/92c98516d6ca.mp3", "words": [{"w": "Thank", "ipa": "ˈθæŋk", "stress": true, "k": "5-0-0"}, {"w": "you.", "ipa": "juː", "stress": false, "k": "5-0-1", "end": "down"}]}]}], "audio": "audio/f327f075d1c8.mp3", "slow": "audio/a9765309148e.mp3"}, {"text": "I'm still nervous, but I understand what's happening now.", "chunks": [{"note": "nervous : le « eu » anglais, lèvres molles", "units": [{"text": "I'm", "audio": "audio/b49c98d64978.mp3", "words": [{"w": "I'm", "ipa": "aɪm", "stress": false, "k": "5-1-0"}]}, {"text": "still", "audio": "audio/ca825b34d79f.mp3", "words": [{"w": "still", "ipa": "stɪl", "stress": false, "k": "5-1-1"}]}, {"text": "nervous", "audio": "audio/a583986cccde.mp3", "words": [{"w": "nervous,", "ipa": "ˈnɜːvəs", "stress": true, "k": "5-1-2"}]}]}, {"note": "happening : H soufflé, accent sur HA", "units": [{"text": "but I", "audio": "audio/552aecc32490.mp3", "words": [{"w": "but", "ipa": "bət", "stress": false, "k": "5-1-3"}, {"w": "I", "ipa": "aɪ", "stress": false, "k": "5-1-4"}]}, {"text": "understand", "audio": "audio/6ed2320b969b.mp3", "words": [{"w": "understand", "ipa": "ˌʌndəˈstænd", "stress": true, "k": "5-1-5"}]}, {"text": "what's", "audio": "audio/31e8cc3358c9.mp3", "words": [{"w": "what's", "ipa": "wɒts", "stress": false, "k": "5-1-6"}]}, {"text": "happening", "audio": "audio/73428cc57f7b.mp3", "words": [{"w": "happening", "ipa": "ˈhæpənɪŋ", "stress": true, "k": "5-1-7"}]}, {"text": "now", "audio": "audio/d9c3cbcc50bd.mp3", "words": [{"w": "now.", "ipa": "ˈnaʊ", "stress": true, "k": "5-1-8", "end": "down"}]}]}], "audio": "audio/0196d5fe8d1d.mp3", "slow": "audio/3f893633ad08.mp3"}, {"text": "Could I have another pillow under my arm?", "chunks": [{"note": "could : L muet · another : TH vibré", "units": [{"text": "Could", "audio": "audio/55dacb9ed833.mp3", "words": [{"w": "Could", "ipa": "kʊd", "stress": false, "k": "5-2-0"}]}, {"text": "I", "audio": "audio/2504e1c380ad.mp3", "words": [{"w": "I", "ipa": "aɪ", "stress": false, "k": "5-2-1"}]}, {"text": "have", "audio": "audio/015661c9541b.mp3", "words": [{"w": "have", "ipa": "hæv", "stress": false, "k": "5-2-2"}]}, {"text": "another", "audio": "audio/be3e12518a1a.mp3", "words": [{"w": "another", "ipa": "əˈnʌðə", "stress": true, "k": "5-2-3"}]}, {"text": "pillow", "audio": "audio/533b90f52f51.mp3", "words": [{"w": "pillow", "ipa": "ˈpɪləʊ", "stress": true, "k": "5-2-4"}]}, {"text": "under", "audio": "audio/e0ebb6e38dad.mp3", "words": [{"w": "under", "ipa": "ˈʌndə", "stress": true, "k": "5-2-5"}]}, {"text": "my arm", "audio": "audio/ea59d6737e1a.mp3", "words": [{"w": "my", "ipa": "maɪ", "stress": false, "k": "5-2-6"}, {"w": "arm?", "ipa": "ˈɑːm", "stress": true, "k": "5-2-7", "end": "up"}]}]}], "audio": "audio/81eb6f3eb64e.mp3", "slow": "audio/c100ac6d35da.mp3"}], "full": "audio/900db8413b08.mp3", "fullSlow": "audio/f996442d16b2.mp3", "cues": [{"who": "Dr Johnson", "text": "Your X-ray shows that the broken bone is not correctly aligned. Surgery should help put it back into position and keep it stable while it heals.", "audio": "audio/21cb9d0b231a.mp3", "color": "#3e6fb0"}, {"who": "Léa", "text": "Is the operation dangerous? She is only seventeen, and we are both nervous.", "audio": "audio/2acc2710e2dd.mp3", "color": "#c2577a"}, {"who": "Dr Johnson", "text": "Every operation has risks, including infection, bleeding and anaesthetic complications. The team will explain these carefully. The anaesthetist will discuss which anaesthetic is suitable.", "audio": "audio/c8237127f08a.mp3", "color": "#3e6fb0"}, {"who": "Tess", "text": "Afterwards, will she need a splint and physiotherapy? She's worried about missing school.", "audio": "audio/722f552d3d30.mp3", "color": "#6c5ce0"}, {"who": "Dr Johnson", "text": "She will probably need protection for several weeks, followed by exercises or therapy if indicated. Recovery varies; we'll check her progress at follow-up visits.", "audio": "audio/efcb319e5014.mp3", "color": "#3e6fb0"}, {"who": "Lola", "text": "Before surgery, we'll confirm the instructions about eating and drinking with the surgical team. Please don't eat or drink until we clarify them.", "audio": "audio/77c42d80bb35.mp3", "color": "#1f8f82"}, {"who": "Léa", "text": "Can I stay with her while she waits? She feels calmer when I'm here.", "audio": "audio/1ec30bfdfe8e.mp3", "color": "#c2577a"}, {"who": "Dr Johnson", "text": "We'll do our best to keep you together before the procedure, according to ward rules. You can both ask questions at any time.", "audio": "audio/0d1abe43d495.mp3", "color": "#3e6fb0"}]}, {"fr": "Ça m'aide vraiment. Merci à tous.", "sentences": [{"text": "That really helps.", "chunks": [{"note": "helps : H soufflé, « lps » bien net", "units": [{"text": "That", "audio": "audio/ce0e488b2fa3.mp3", "words": [{"w": "That", "ipa": "ðæt", "stress": false, "k": "6-0-0"}]}, {"text": "really", "audio": "audio/2625a9b74263.mp3", "words": [{"w": "really", "ipa": "ˈrɪəli", "stress": true, "k": "6-0-1"}]}, {"text": "helps", "audio": "audio/e19482ad32bc.mp3", "words": [{"w": "helps.", "ipa": "ˈhelps", "stress": true, "k": "6-0-2", "end": "down"}]}]}], "audio": "audio/acc09b80296a.mp3", "slow": null}, {"text": "Thank you, everyone.", "chunks": [{"note": "everyone : 3 syllabes, accent sur EV", "units": [{"text": "Thank you", "audio": "audio/92c98516d6ca.mp3", "words": [{"w": "Thank", "ipa": "ˈθæŋk", "stress": true, "k": "6-1-0"}, {"w": "you,", "ipa": "juː", "stress": false, "k": "6-1-1"}]}, {"text": "everyone", "audio": "audio/1627b67dfaee.mp3", "words": [{"w": "everyone.", "ipa": "ˈevriwʌn", "stress": true, "k": "6-1-2", "end": "down"}]}]}], "audio": "audio/0ff2932d1dba.mp3", "slow": "audio/3b8e6a9b52a6.mp3"}], "full": "audio/d73d30d83e9b.mp3", "fullSlow": "audio/ccffab1a0d4c.mp3", "cues": [{"who": "Tess", "text": "Of course. I'll help you get comfortable. Please tell us immediately if the pain gets worse or your fingers become numb, pale or cold.", "audio": "audio/98687beda626.mp3", "color": "#6c5ce0"}, {"who": "Lola", "text": "You're not alone, Mia. We'll keep checking on you and make sure you know what happens next.", "audio": "audio/8e6b7ebf35b7.mp3", "color": "#1f8f82"}]}]};
 const DIALOGUE = [{"time": "00:00 – 01:00", "title": "Le premier bilan", "lines": [{"who": "Lola", "text": "Good morning, Mia. I'm Lola, your nurse, and this is Tess, a nursing student. Is it okay if we check how you're feeling?"}, {"who": "Mia", "text": "Yes, of course. I didn't sleep very well. My wrist still hurts, and I'm worried about the operation."}, {"who": "Tess", "text": "I'm sorry you had a difficult night. I'll check your blood pressure, pulse, temperature and oxygen level. Please keep your arm relaxed."}, {"who": "Léa", "text": "Thank you. She was in so much pain yesterday. I just want to know that she's safe."}, {"who": "Tess", "text": "Your readings look stable, Mia. I'll tell Lola the results and record them in your notes."}]}, {"time": "01:00 – 02:00", "title": "La douleur", "lines": [{"who": "Lola", "text": "On a scale from zero to ten, where ten is the worst pain imaginable, how painful is your wrist right now?"}, {"who": "Mia", "text": "About six out of ten. It's a sharp pain on the right side, especially when I move my fingers."}, {"who": "Tess", "text": "I can see some bruising and swelling. Do your fingers feel numb, cold or tingly? Can you move them gently?"}, {"who": "Mia", "text": "They feel warm, and I can move them a little. There's no tingling, but I'm scared of making the fracture worse."}, {"who": "Lola", "text": "Don't force any movement. We'll keep your wrist supported, review your prescribed pain relief and reassess your pain shortly."}]}, {"time": "02:00 – 03:00", "title": "La chute et les questions", "lines": [{"who": "Léa", "text": "Could you explain why she needs surgery? I thought a broken wrist could simply be put in a cast."}, {"who": "Mia", "text": "Yesterday morning, I slipped on ice on my way to school. I landed on my right hand, and the pain was immediate."}, {"who": "Tess", "text": "That sounds frightening. You did the right thing by calling your mother and coming to the emergency department."}, {"who": "Lola", "text": "The X-ray helped identify the fracture. Dr Johnson is coming to explain the treatment and answer your questions."}, {"who": "Dr Johnson", "text": "Good morning, everyone. I'm Dr Johnson. Mia, may I discuss your X-ray and the planned procedure with you and your mother?"}]}, {"time": "03:00 – 04:00", "title": "Le médecin explique", "lines": [{"who": "Mia", "text": "Yes, please. Will I be awake during surgery? And will my wrist work normally again?"}, {"who": "Dr Johnson", "text": "Your X-ray shows that the broken bone is not correctly aligned. Surgery should help put it back into position and keep it stable while it heals."}, {"who": "Léa", "text": "Is the operation dangerous? She is only seventeen, and we are both nervous."}, {"who": "Dr Johnson", "text": "Every operation has risks, including infection, bleeding and anaesthetic complications. The team will explain these carefully. The anaesthetist will discuss which anaesthetic is suitable."}, {"who": "Tess", "text": "Afterwards, will she need a splint and physiotherapy? She's worried about missing school."}, {"who": "Dr Johnson", "text": "She will probably need protection for several weeks, followed by exercises or therapy if indicated. Recovery varies; we'll check her progress at follow-up visits."}]}, {"time": "04:00 – 05:00", "title": "Rassurer Mia", "lines": [{"who": "Lola", "text": "Before surgery, we'll confirm the instructions about eating and drinking with the surgical team. Please don't eat or drink until we clarify them."}, {"who": "Léa", "text": "Can I stay with her while she waits? She feels calmer when I'm here."}, {"who": "Dr Johnson", "text": "We'll do our best to keep you together before the procedure, according to ward rules. You can both ask questions at any time."}, {"who": "Mia", "text": "Thank you. I'm still nervous, but I understand what's happening now. Could I have another pillow under my arm?"}, {"who": "Tess", "text": "Of course. I'll help you get comfortable. Please tell us immediately if the pain gets worse or your fingers become numb, pale or cold."}, {"who": "Lola", "text": "You're not alone, Mia. We'll keep checking on you and make sure you know what happens next."}, {"who": "Mia", "text": "That really helps. Thank you, everyone."}]}];
 const MIA = {"smile": "<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 700 900\" aria-hidden=\"true\"><defs><radialGradient id=\"msmile_face\" cx=\".5\" cy=\".42\" r=\".62\"><stop offset=\"0\" stop-color=\"#C98B62\"/><stop offset=\".8\" stop-color=\"#C98B62\"/><stop offset=\"1\" stop-color=\"#9C6440\"/></radialGradient><radialGradient id=\"msmile_blush\" cx=\".5\" cy=\".5\" r=\".5\"><stop offset=\"0\" stop-color=\"#E0707A\" stop-opacity=\".55\"/><stop offset=\"1\" stop-color=\"#E0707A\" stop-opacity=\"0\"/></radialGradient><radialGradient id=\"msmile_iris\" cx=\".45\" cy=\".4\" r=\".6\"><stop offset=\"0\" stop-color=\"#8A5A3A\"/><stop offset=\"1\" stop-color=\"#3E2416\"/></radialGradient><linearGradient id=\"msmile_gown\" x1=\"0\" y1=\"0\" x2=\"0\" y2=\"1\"><stop offset=\"0\" stop-color=\"#BFE3F2\"/><stop offset=\"1\" stop-color=\"#A7D6EA\"/></linearGradient></defs><path d=\"M150,330 C130,170 230,70 350,70 C470,70 572,170 552,330 C562,450 588,560 570,660 C560,700 520,712 480,700 L220,700 C180,712 140,700 130,660 C112,560 138,450 150,330 Z\" fill=\"#2B1B17\"/><path d=\"M70,900 C70,760 140,690 250,672 L450,672 C560,690 630,760 630,900 Z\" fill=\"url(#msmile_gown)\"/><circle cx=\"160\" cy=\"800\" r=\"7\" fill=\"#8CC4DD\" opacity=\".6\"/><circle cx=\"230\" cy=\"760\" r=\"7\" fill=\"#8CC4DD\" opacity=\".6\"/><circle cx=\"300\" cy=\"840\" r=\"7\" fill=\"#8CC4DD\" opacity=\".6\"/><circle cx=\"420\" cy=\"780\" r=\"7\" fill=\"#8CC4DD\" opacity=\".6\"/><circle cx=\"520\" cy=\"820\" r=\"7\" fill=\"#8CC4DD\" opacity=\".6\"/><circle cx=\"470\" cy=\"870\" r=\"7\" fill=\"#8CC4DD\" opacity=\".6\"/><circle cx=\"200\" cy=\"880\" r=\"7\" fill=\"#8CC4DD\" opacity=\".6\"/><circle cx=\"560\" cy=\"760\" r=\"7\" fill=\"#8CC4DD\" opacity=\".6\"/><path d=\"M296,560 L296,690 C320,720 380,720 404,690 L404,560 Z\" fill=\"#C98B62\"/><path d=\"M296,600 C330,640 370,640 404,600 L404,560 L296,560 Z\" fill=\"#9C6440\" opacity=\".45\"/><path d=\"M270,676 L350,742 L430,676\" fill=\"none\" stroke=\"#8CC4DD\" stroke-width=\"10\" stroke-linejoin=\"round\"/><ellipse cx=\"182\" cy=\"380\" rx=\"34\" ry=\"48\" fill=\"#C98B62\"/><ellipse cx=\"178\" cy=\"382\" rx=\"16\" ry=\"26\" fill=\"#9C6440\" opacity=\".35\"/><circle cx=\"176\" cy=\"438\" r=\"14\" fill=\"none\" stroke=\"#E6B43C\" stroke-width=\"6\"/><ellipse cx=\"518\" cy=\"380\" rx=\"34\" ry=\"48\" fill=\"#C98B62\"/><ellipse cx=\"522\" cy=\"382\" rx=\"16\" ry=\"26\" fill=\"#9C6440\" opacity=\".35\"/><circle cx=\"524\" cy=\"438\" r=\"14\" fill=\"none\" stroke=\"#E6B43C\" stroke-width=\"6\"/><path d=\"M190,330 C190,200 260,150 350,150 C440,150 510,200 510,330 C510,450 450,560 350,568 C250,560 190,450 190,330 Z\" fill=\"url(#msmile_face)\"/><ellipse cx=\"250\" cy=\"440\" rx=\"50\" ry=\"30\" fill=\"url(#msmile_blush)\"/><ellipse cx=\"450\" cy=\"440\" rx=\"50\" ry=\"30\" fill=\"url(#msmile_blush)\"/><path d=\"M180,340 C160,170 270,96 370,104 C480,112 540,200 522,330 C500,262 470,230 420,214 C360,250 280,262 214,250 C200,280 190,310 180,340 Z\" fill=\"#2B1B17\"/><path d=\"M262,150 C310,124 380,120 430,140\" fill=\"none\" stroke=\"#4A302A\" stroke-width=\"14\" stroke-linecap=\"round\" opacity=\".8\"/><path d=\"M314,306.0 C288,290.0 248,290.0 222,304.0\" fill=\"none\" stroke=\"#2B1B17\" stroke-width=\"12\" stroke-linecap=\"round\"/><path d=\"M386,306.0 C412,290.0 452,290.0 478,304.0\" fill=\"none\" stroke=\"#2B1B17\" stroke-width=\"12\" stroke-linecap=\"round\"/><g transform=\"translate(268,356) scale(1,1.000)\"><ellipse cx=\"0\" cy=\"0\" rx=\"38\" ry=\"30\" fill=\"#FFFFFF\"/><circle cx=\"0.0\" cy=\"2.0\" r=\"22\" fill=\"url(#msmile_iris)\"/><circle cx=\"0.0\" cy=\"2.0\" r=\"11\" fill=\"#1A1210\"/><circle cx=\"7.0\" cy=\"-6.0\" r=\"6\" fill=\"#FFFFFF\"/></g><path d=\"M226,354 C238,320.0 298,320.0 310,354\" fill=\"none\" stroke=\"#2B1B17\" stroke-width=\"8\" stroke-linecap=\"round\"/><path d=\"M228,350 l-16,-12 M238,328.0 l-12,-14\" stroke=\"#2B1B17\" stroke-width=\"6\" stroke-linecap=\"round\"/><g transform=\"translate(432,356) scale(1,1.000)\"><ellipse cx=\"0\" cy=\"0\" rx=\"38\" ry=\"30\" fill=\"#FFFFFF\"/><circle cx=\"0.0\" cy=\"2.0\" r=\"22\" fill=\"url(#msmile_iris)\"/><circle cx=\"0.0\" cy=\"2.0\" r=\"11\" fill=\"#1A1210\"/><circle cx=\"7.0\" cy=\"-6.0\" r=\"6\" fill=\"#FFFFFF\"/></g><path d=\"M390,354 C402,320.0 462,320.0 474,354\" fill=\"none\" stroke=\"#2B1B17\" stroke-width=\"8\" stroke-linecap=\"round\"/><path d=\"M472,350 l16,-12 M462,328.0 l12,-14\" stroke=\"#2B1B17\" stroke-width=\"6\" stroke-linecap=\"round\"/><path d=\"M346,392 C340,420 334,438 344,446 C352,450 362,448 368,442\" fill=\"none\" stroke=\"#9C6440\" stroke-width=\"7\" stroke-linecap=\"round\"/><g transform=\"translate(350,496) scale(.56)\"><defs><linearGradient id=\"msmile_m_lipU\" x1=\"0\" y1=\"0\" x2=\"0\" y2=\"1\"><stop offset=\"0\" stop-color=\"#93303F\"/><stop offset=\"1\" stop-color=\"#C24D5E\"/></linearGradient><linearGradient id=\"msmile_m_lipL\" x1=\"0\" y1=\"0\" x2=\"0\" y2=\"1\"><stop offset=\"0\" stop-color=\"#C24D5E\"/><stop offset=\"1\" stop-color=\"#93303F\"/></linearGradient></defs><clipPath id=\"msmile_m_in\"><path d=\"M-130.0,0 C-71.5,-15.3 71.5,-15.3 130.0,0 C71.5,23.5 -71.5,23.5 -130.0,0 Z\"/></clipPath><path d=\"M-130.0,0 C-71.5,-15.3 71.5,-15.3 130.0,0 C71.5,23.5 -71.5,23.5 -130.0,0 Z\" fill=\"#5A1A28\"/><g clip-path=\"url(#msmile_m_in)\"><ellipse cx=\"0\" cy=\"17.1\" rx=\"80.6\" ry=\"22.7\" fill=\"#F08A9B\"/><rect x=\"-101.4\" y=\"-20.0\" width=\"202.8\" height=\"24.4\" rx=\"8\" fill=\"#FFFFFF\"/></g><path d=\"M-146.0,2 C-116.8,-23.3 -73.0,-44.3 -38.0,-42.3 C-17.5,-44.3 -8.0,-33.3 0,-31.3 C8,-33.3 17.5,-44.3 38.0,-42.3 C73.0,-44.3 116.8,-23.3 146.0,2 L130.0,0 C71.5,-15.3 -71.5,-15.3 -130.0,0 Z\" fill=\"url(#msmile_m_lipU)\"/><path d=\"M-146.0,2 L-130.0,0 C-71.5,23.5 71.5,23.5 130.0,0 L146.0,2 C109.5,48.6 51.1,58.0 0,58.0 C-51.1,58.0 -109.5,48.6 -146.0,2 Z\" fill=\"url(#msmile_m_lipL)\"/><ellipse cx=\"-26.3\" cy=\"34.2\" rx=\"29.2\" ry=\"5\" fill=\"#FFFFFF\" opacity=\".22\"/></g><path d=\"M110,760 C150,860 330,880 520,830 L536,900 L110,900 Z\" fill=\"#3E7CB1\"/><path d=\"M150,792 C240,812 360,806 470,778 C500,770 520,786 512,806 C500,830 470,836 440,840 C330,852 230,850 150,836 Z\" fill=\"#C98B62\"/><path d=\"M320,796 C380,792 440,778 476,770 C510,764 528,790 514,814 C500,836 450,842 410,846 C370,850 340,850 322,848 C312,830 312,810 320,796 Z\" fill=\"#FFFFFF\" stroke=\"#E2DCEB\" stroke-width=\"5\"/><path d=\"M344,798 C350,820 350,836 344,848\" fill=\"none\" stroke=\"#E2DCEB\" stroke-width=\"4\"/><path d=\"M382,792 C388,816 388,834 382,846\" fill=\"none\" stroke=\"#E2DCEB\" stroke-width=\"4\"/><path d=\"M420,786 C426,812 426,832 420,844\" fill=\"none\" stroke=\"#E2DCEB\" stroke-width=\"4\"/><path d=\"M458,780 C464,808 464,830 458,842\" fill=\"none\" stroke=\"#E2DCEB\" stroke-width=\"4\"/><path d=\"M524,846 C540,780 500,712 430,688\" fill=\"none\" stroke=\"#2D5E8A\" stroke-width=\"30\" stroke-linecap=\"round\"/></svg>", "wide": "<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 700 900\" aria-hidden=\"true\"><defs><radialGradient id=\"mwide_face\" cx=\".5\" cy=\".42\" r=\".62\"><stop offset=\"0\" stop-color=\"#C98B62\"/><stop offset=\".8\" stop-color=\"#C98B62\"/><stop offset=\"1\" stop-color=\"#9C6440\"/></radialGradient><radialGradient id=\"mwide_blush\" cx=\".5\" cy=\".5\" r=\".5\"><stop offset=\"0\" stop-color=\"#E0707A\" stop-opacity=\".55\"/><stop offset=\"1\" stop-color=\"#E0707A\" stop-opacity=\"0\"/></radialGradient><radialGradient id=\"mwide_iris\" cx=\".45\" cy=\".4\" r=\".6\"><stop offset=\"0\" stop-color=\"#8A5A3A\"/><stop offset=\"1\" stop-color=\"#3E2416\"/></radialGradient><linearGradient id=\"mwide_gown\" x1=\"0\" y1=\"0\" x2=\"0\" y2=\"1\"><stop offset=\"0\" stop-color=\"#BFE3F2\"/><stop offset=\"1\" stop-color=\"#A7D6EA\"/></linearGradient></defs><path d=\"M150,330 C130,170 230,70 350,70 C470,70 572,170 552,330 C562,450 588,560 570,660 C560,700 520,712 480,700 L220,700 C180,712 140,700 130,660 C112,560 138,450 150,330 Z\" fill=\"#2B1B17\"/><path d=\"M70,900 C70,760 140,690 250,672 L450,672 C560,690 630,760 630,900 Z\" fill=\"url(#mwide_gown)\"/><circle cx=\"160\" cy=\"800\" r=\"7\" fill=\"#8CC4DD\" opacity=\".6\"/><circle cx=\"230\" cy=\"760\" r=\"7\" fill=\"#8CC4DD\" opacity=\".6\"/><circle cx=\"300\" cy=\"840\" r=\"7\" fill=\"#8CC4DD\" opacity=\".6\"/><circle cx=\"420\" cy=\"780\" r=\"7\" fill=\"#8CC4DD\" opacity=\".6\"/><circle cx=\"520\" cy=\"820\" r=\"7\" fill=\"#8CC4DD\" opacity=\".6\"/><circle cx=\"470\" cy=\"870\" r=\"7\" fill=\"#8CC4DD\" opacity=\".6\"/><circle cx=\"200\" cy=\"880\" r=\"7\" fill=\"#8CC4DD\" opacity=\".6\"/><circle cx=\"560\" cy=\"760\" r=\"7\" fill=\"#8CC4DD\" opacity=\".6\"/><path d=\"M296,560 L296,690 C320,720 380,720 404,690 L404,560 Z\" fill=\"#C98B62\"/><path d=\"M296,600 C330,640 370,640 404,600 L404,560 L296,560 Z\" fill=\"#9C6440\" opacity=\".45\"/><path d=\"M270,676 L350,742 L430,676\" fill=\"none\" stroke=\"#8CC4DD\" stroke-width=\"10\" stroke-linejoin=\"round\"/><ellipse cx=\"182\" cy=\"380\" rx=\"34\" ry=\"48\" fill=\"#C98B62\"/><ellipse cx=\"178\" cy=\"382\" rx=\"16\" ry=\"26\" fill=\"#9C6440\" opacity=\".35\"/><circle cx=\"176\" cy=\"438\" r=\"14\" fill=\"none\" stroke=\"#E6B43C\" stroke-width=\"6\"/><ellipse cx=\"518\" cy=\"380\" rx=\"34\" ry=\"48\" fill=\"#C98B62\"/><ellipse cx=\"522\" cy=\"382\" rx=\"16\" ry=\"26\" fill=\"#9C6440\" opacity=\".35\"/><circle cx=\"524\" cy=\"438\" r=\"14\" fill=\"none\" stroke=\"#E6B43C\" stroke-width=\"6\"/><path d=\"M190,330 C190,200 260,150 350,150 C440,150 510,200 510,330 C510,450 450,560 350,568 C250,560 190,450 190,330 Z\" fill=\"url(#mwide_face)\"/><ellipse cx=\"250\" cy=\"440\" rx=\"50\" ry=\"30\" fill=\"url(#mwide_blush)\"/><ellipse cx=\"450\" cy=\"440\" rx=\"50\" ry=\"30\" fill=\"url(#mwide_blush)\"/><path d=\"M180,340 C160,170 270,96 370,104 C480,112 540,200 522,330 C500,262 470,230 420,214 C360,250 280,262 214,250 C200,280 190,310 180,340 Z\" fill=\"#2B1B17\"/><path d=\"M262,150 C310,124 380,120 430,140\" fill=\"none\" stroke=\"#4A302A\" stroke-width=\"14\" stroke-linecap=\"round\" opacity=\".8\"/><path d=\"M314,306.0 C288,290.0 248,290.0 222,304.0\" fill=\"none\" stroke=\"#2B1B17\" stroke-width=\"12\" stroke-linecap=\"round\"/><path d=\"M386,306.0 C412,290.0 452,290.0 478,304.0\" fill=\"none\" stroke=\"#2B1B17\" stroke-width=\"12\" stroke-linecap=\"round\"/><g transform=\"translate(268,356) scale(1,1.000)\"><ellipse cx=\"0\" cy=\"0\" rx=\"38\" ry=\"30\" fill=\"#FFFFFF\"/><circle cx=\"0.0\" cy=\"2.0\" r=\"22\" fill=\"url(#mwide_iris)\"/><circle cx=\"0.0\" cy=\"2.0\" r=\"11\" fill=\"#1A1210\"/><circle cx=\"7.0\" cy=\"-6.0\" r=\"6\" fill=\"#FFFFFF\"/></g><path d=\"M226,354 C238,320.0 298,320.0 310,354\" fill=\"none\" stroke=\"#2B1B17\" stroke-width=\"8\" stroke-linecap=\"round\"/><path d=\"M228,350 l-16,-12 M238,328.0 l-12,-14\" stroke=\"#2B1B17\" stroke-width=\"6\" stroke-linecap=\"round\"/><g transform=\"translate(432,356) scale(1,1.000)\"><ellipse cx=\"0\" cy=\"0\" rx=\"38\" ry=\"30\" fill=\"#FFFFFF\"/><circle cx=\"0.0\" cy=\"2.0\" r=\"22\" fill=\"url(#mwide_iris)\"/><circle cx=\"0.0\" cy=\"2.0\" r=\"11\" fill=\"#1A1210\"/><circle cx=\"7.0\" cy=\"-6.0\" r=\"6\" fill=\"#FFFFFF\"/></g><path d=\"M390,354 C402,320.0 462,320.0 474,354\" fill=\"none\" stroke=\"#2B1B17\" stroke-width=\"8\" stroke-linecap=\"round\"/><path d=\"M472,350 l16,-12 M462,328.0 l12,-14\" stroke=\"#2B1B17\" stroke-width=\"6\" stroke-linecap=\"round\"/><path d=\"M346,392 C340,420 334,438 344,446 C352,450 362,448 368,442\" fill=\"none\" stroke=\"#9C6440\" stroke-width=\"7\" stroke-linecap=\"round\"/><g transform=\"translate(350,496) scale(.56)\"><defs><linearGradient id=\"mwide_m_lipU\" x1=\"0\" y1=\"0\" x2=\"0\" y2=\"1\"><stop offset=\"0\" stop-color=\"#93303F\"/><stop offset=\"1\" stop-color=\"#C24D5E\"/></linearGradient><linearGradient id=\"mwide_m_lipL\" x1=\"0\" y1=\"0\" x2=\"0\" y2=\"1\"><stop offset=\"0\" stop-color=\"#C24D5E\"/><stop offset=\"1\" stop-color=\"#93303F\"/></linearGradient></defs><clipPath id=\"mwide_m_in\"><path d=\"M-106.2,0 C-58.4,-53.9 58.4,-53.9 106.2,0 C58.4,91.4 -58.4,91.4 -106.2,0 Z\"/></clipPath><path d=\"M-106.2,0 C-58.4,-53.9 58.4,-53.9 106.2,0 C58.4,91.4 -58.4,91.4 -106.2,0 Z\" fill=\"#5A1A28\"/><g clip-path=\"url(#mwide_m_in)\"><ellipse cx=\"0\" cy=\"66.8\" rx=\"65.8\" ry=\"40.1\" fill=\"#F08A9B\"/><rect x=\"-82.8\" y=\"-60.0\" width=\"165.7\" height=\"30.0\" rx=\"8\" fill=\"#FFFFFF\"/><rect x=\"-70.4\" y=\"52.3\" width=\"140.8\" height=\"34.0\" rx=\"8\" fill=\"#FFFFFF\"/></g><path d=\"M-122.2,2 C-97.8,-40.2 -61.1,-75.1 -31.8,-73.1 C-14.7,-75.1 -8.0,-64.1 0,-62.1 C8,-64.1 14.7,-75.1 31.8,-73.1 C61.1,-75.1 97.8,-40.2 122.2,2 L106.2,0 C58.4,-53.9 -58.4,-53.9 -106.2,0 Z\" fill=\"url(#mwide_m_lipU)\"/><path d=\"M-122.2,2 L-106.2,0 C-58.4,91.4 58.4,91.4 106.2,0 L122.2,2 C91.7,95.7 42.8,110.3 0,110.3 C-42.8,110.3 -91.7,95.7 -122.2,2 Z\" fill=\"url(#mwide_m_lipL)\"/><ellipse cx=\"-22.0\" cy=\"86.5\" rx=\"24.4\" ry=\"5\" fill=\"#FFFFFF\" opacity=\".22\"/></g><path d=\"M110,760 C150,860 330,880 520,830 L536,900 L110,900 Z\" fill=\"#3E7CB1\"/><path d=\"M150,792 C240,812 360,806 470,778 C500,770 520,786 512,806 C500,830 470,836 440,840 C330,852 230,850 150,836 Z\" fill=\"#C98B62\"/><path d=\"M320,796 C380,792 440,778 476,770 C510,764 528,790 514,814 C500,836 450,842 410,846 C370,850 340,850 322,848 C312,830 312,810 320,796 Z\" fill=\"#FFFFFF\" stroke=\"#E2DCEB\" stroke-width=\"5\"/><path d=\"M344,798 C350,820 350,836 344,848\" fill=\"none\" stroke=\"#E2DCEB\" stroke-width=\"4\"/><path d=\"M382,792 C388,816 388,834 382,846\" fill=\"none\" stroke=\"#E2DCEB\" stroke-width=\"4\"/><path d=\"M420,786 C426,812 426,832 420,844\" fill=\"none\" stroke=\"#E2DCEB\" stroke-width=\"4\"/><path d=\"M458,780 C464,808 464,830 458,842\" fill=\"none\" stroke=\"#E2DCEB\" stroke-width=\"4\"/><path d=\"M524,846 C540,780 500,712 430,688\" fill=\"none\" stroke=\"#2D5E8A\" stroke-width=\"30\" stroke-linecap=\"round\"/></svg>"};
+const READ = [{"audio": "audio/9e15d86ec3d3.mp3", "times": [[0.38, 0.58], [0.62, 0.67], [0.72, 1.07], [1.15, 1.22], [1.27, 1.47], [1.52, 1.75], [1.8, 2.02], [2.07, 2.72], [2.85, 3.0], [3.05, 3.25], [3.3, 3.52], [3.57, 3.92], [3.97, 4.05], [4.1, 4.22], [4.28, 4.55], [4.58, 4.78], [4.8, 4.85], [4.88, 6.08]]}, {"audio": "audio/a353e2c1ccdc.mp3", "times": [[0.35, 0.65], [0.7, 0.93], [0.95, 1.11], [1.11, 1.22], [1.27, 2.02], [2.2, 2.32], [2.35, 2.4], [2.47, 2.75], [2.8, 3.05], [3.07, 3.14], [3.14, 3.2], [3.25, 3.5], [3.55, 4.0], [4.1, 4.62], [4.65, 4.73], [4.78, 4.85], [4.9, 5.1], [5.15, 5.3], [5.35, 6.33]]}, {"audio": "audio/5469937b6d34.mp3", "times": [[0.35, 0.5], [0.55, 0.75], [0.82, 1.18], [1.27, 1.35], [1.4, 1.47], [1.52, 1.62], [1.67, 1.85], [1.87, 1.97], [2.0, 2.02], [2.05, 2.85], [2.97, 3.17], [3.22, 3.4], [3.47, 3.97], [4.02, 4.12], [4.17, 4.3], [4.38, 4.68], [4.7, 4.75], [4.8, 5.05], [5.08, 5.13], [5.18, 5.55], [5.6, 6.48]]}, {"audio": "audio/de79cec48b8b.mp3", "times": [[0.38, 0.88], [0.93, 1.27], [1.35, 1.45], [1.52, 1.75], [1.77, 1.87], [1.92, 2.17], [2.2, 2.27], [2.3, 2.45], [2.5, 2.67], [2.72, 2.8], [2.85, 3.7], [3.87, 3.97], [4.02, 4.35], [4.38, 4.45], [4.48, 4.63], [4.68, 4.93], [4.98, 5.4], [5.5, 5.58], [5.6, 5.65], [5.7, 5.98], [6.0, 6.1], [6.15, 7.18]]}, {"audio": "audio/3c84d6dd4845.mp3", "times": [[0.38, 0.58], [0.65, 1.0], [1.05, 1.12], [1.17, 1.25], [1.3, 1.37], [1.42, 1.72], [1.77, 2.05], [2.12, 2.95], [3.07, 3.15], [3.17, 3.27], [3.32, 3.47], [3.52, 3.75], [3.8, 4.02], [4.07, 4.43], [4.48, 5.33]]}, {"audio": "audio/a4a21d3e2815.mp3", "times": [[0.35, 0.6], [0.65, 0.8], [0.9, 1.05], [1.1, 1.32], [1.37, 1.77], [1.82, 1.92], [1.97, 2.05], [2.07, 2.58], [2.62, 2.8], [2.85, 3.22], [3.27, 4.0], [4.12, 4.25], [4.3, 4.4], [4.45, 4.58], [4.6, 4.9], [4.95, 5.25], [5.28, 5.43], [5.48, 5.68], [5.73, 6.55]]}, {"audio": "audio/b522dbac7e61.mp3", "times": [[0.32, 0.5], [0.55, 0.8], [0.85, 1.2], [1.33, 1.57], [1.62, 1.7], [1.75, 2.72]]}];   // per line: the audio of the videos + [start, end] of every word, in seconds
 
 /* ---------- small helpers ---------- */
 const $ = (id) => document.getElementById(id);
@@ -453,12 +478,14 @@ function play(src, btn, rate = 1) {
     player.playbackRate = rate;
     playingBtn = btn || null;
     if (btn) btn.classList.add("playing");
-    const done = () => { if (btn) btn.classList.remove("playing"); player.onended = player.onerror = null; resolve(); };
+    const done = () => { if (btn) btn.classList.remove("playing"); player.onended = player.onerror = null; playDone = null; resolve(); };
     player.onended = done; player.onerror = done;
+    playDone = done;   // stopping the sound also ends the wait (rehearsal, « Lis avec Mia »)
     player.play().catch(done);
   });
 }
-function stopPlay() { player.pause(); if (playingBtn) playingBtn.classList.remove("playing"); playingBtn = null; }
+let playDone = null;
+function stopPlay() { player.pause(); if (playingBtn) playingBtn.classList.remove("playing"); playingBtn = null; if (playDone) playDone(); }
 const pauseVideos = () => document.querySelectorAll("video").forEach((v) => v.pause());
 const wait = (ms) => new Promise((r) => setTimeout(r, ms));
 
@@ -634,15 +661,179 @@ function stopListen() { if (rec) rec.stop(); }
 /* listen() that ends by itself: right after the last word of the target is heard,
    or once she has been quiet for a moment (she can still tap « J'ai fini »). */
 function listenFor(words, onLive, quietMs = 2200) {
-  let quiet = null, done = false;
+  let quiet = null, done = false, first = 0, last = 0;
   const limit = setTimeout(stopListen, Math.max(6000, words.length * 1100 + 5000));
   return listen((t) => {
     onLive && onLive(t);
     clearTimeout(quiet);
     if (!t || done) return;
+    const now = performance.now();
+    if (!first) first = now;
+    last = now;
     if (scoreWords(words, [t]).score >= 1) { done = true; quiet = setTimeout(stopListen, 500); }
     else quiet = setTimeout(stopListen, quietMs);
-  }).finally(() => { clearTimeout(quiet); clearTimeout(limit); });
+  }).then((finals) => { finals.span = first ? (last - first) / 1000 + 0.5 : 0; return finals; })
+    .finally(() => { clearTimeout(quiet); clearTimeout(limit); });
+}
+
+/* ---------- rhythm: her reading time against Mia's ---------- */
+const flatWords = (n) => DATA.reps[n].sentences.flatMap(wordsOf);
+function modelSpan(n, si) {   // seconds Mia takes for the whole line (si = "all") or one sentence
+  const tm = READ[n] && READ[n].times;
+  if (!tm) return 0;
+  let a = 0, b = tm.length;
+  if (si !== "all") {
+    a = DATA.reps[n].sentences.slice(0, si).reduce((x, s) => x + wordsOf(s).length, 0);
+    b = a + wordsOf(DATA.reps[n].sentences[si]).length;
+  }
+  return tm[b - 1][1] - tm[a][0];
+}
+function rhythmOf(span, model) {
+  if (!span || !model) return null;
+  const r = span / model;
+  if (r < 0.7) return ["🐇", "Un peu rapide", "Prends le temps de bien articuler chaque mot.", r];
+  if (r <= 1.35) return ["✅", "Bon rythme, c'est fluide !", "Tu lis à peu près à la vitesse de Mia.", r];
+  if (r <= 1.75) return ["🐢", "Un peu lent", "Enchaîne les mots d'un même groupe, sans t'arrêter entre eux.", r];
+  return ["🐢", "Beaucoup de pauses", "Fais « Lis avec Mia » pour prendre son rythme, puis réessaie.", r];
+}
+const sec = (x) => x.toFixed(1).replace(".", ",") + " s";
+function rhythmBox(span, model) {
+  const rh = rhythmOf(span, model);
+  if (!rh) return null;
+  const max = Math.max(span, model);
+  return el("div", "rhythm", `<b>${rh[0]} Rythme : ${rh[1]}</b>
+    <span class="note">Toi : ${sec(span)} · Mia : ${sec(model)}. ${rh[2]}</span>
+    <div class="bar2" title="Mia"><i style="width:${(model / max) * 100}%"></i></div>
+    <div class="bar2" title="Toi"><i class="me" style="width:${(span / max) * 100}%"></i></div>`);
+}
+
+/* ---------- « Mes mots difficiles »: every group of words the microphone missed, until said right twice ---------- */
+const UNIT_OF = {};   // word key -> { u: the group of words it belongs to, n: line }
+DATA.reps.forEach((r, n) => r.sentences.forEach((s) => s.chunks.forEach((c) => c.units.forEach((u) => u.words.forEach((w) => { UNIT_OF[w.k] = { u, n }; })))));
+const hard = store.get("hard", {});
+function noteHard(words, ok) {
+  const seen = new Set();
+  words.forEach((w, i) => {
+    const { u, n } = UNIT_OF[w.k] || {};
+    if (!u) return;
+    const key = u.words[0].k;
+    const missed = u.words.some((x) => { const j = words.indexOf(x); return j >= 0 && !ok[j]; });
+    if (seen.has(key)) return;
+    seen.add(key);
+    if (missed) hard[key] = { miss: (hard[key]?.miss || 0) + 1, streak: 0, n };
+    else if (hard[key] && ++hard[key].streak >= 2) delete hard[key];
+  });
+  store.set("hard", hard);
+  renderHard();
+}
+function renderHard() {
+  const box = $("hard");
+  const keys = Object.keys(hard).sort((a, b) => hard[a].n - hard[b].n || a.localeCompare(b, undefined, { numeric: true }));
+  box.replaceChildren(el("h3", null, `Mes mots difficiles${keys.length ? ` (${keys.length})` : ""}`));
+  if (!keys.length) {
+    box.append(el("p", "note", "Pas encore de mot difficile. Quand le micro ne comprend pas un mot, il vient ici pour que tu le retravailles."));
+    return;
+  }
+  box.append(el("p", "note", "Écoute, puis teste au micro. Un mot dit juste 2 fois de suite sort de la liste."));
+  keys.forEach((key) => {
+    const { u } = UNIT_OF[key];
+    const ipa = u.words.map((w) => w.ipa).join(" ");
+    const row = el("div", "hrow", `<span><b>${u.text}</b><small>/${ipa}/ · réplique ${hard[key].n + 1}${hard[key].streak ? " · ✓ 1 fois" : ""}</small></span>`);
+    const btns = el("div", "row");
+    const lis = el("button", "btn listen", ICON.play + "Écouter");
+    lis.onclick = () => play(u.audio, lis);
+    const test = el("button", "btn rec", ICON.mic + "Tester");
+    test.onclick = async () => {
+      if (rec) { stopListen(); return; }
+      stopPlay();
+      test.innerHTML = ICON.stop + "J'écoute…";
+      let res = null;
+      try { res = scoreWords(u.words.map((w) => w.w), (await listenFor(u.words.map((w) => w.w), null, 1500)).slice(0, 1)); }
+      catch (err) { row.querySelector("small").textContent = micError(err); test.innerHTML = ICON.mic + "Tester"; return; }
+      const good = res.score >= 1;
+      if (good && ++hard[key].streak >= 2) {
+        delete hard[key]; store.set("hard", hard);
+        row.className = "hrow win"; row.querySelector("small").textContent = "✓ Maîtrisé ! Bravo.";
+        btns.remove(); confetti(); setTimeout(renderHard, 1600);
+        return;
+      }
+      if (!good) hard[key].streak = 0;
+      store.set("hard", hard);
+      row.querySelector("small").textContent = good ? "✓ Bien dit ! Encore une fois pour le valider."
+        : `On a entendu « ${res.heard || "rien"} ». Réécoute et réessaie.`;
+      test.innerHTML = ICON.mic + "Tester";
+    };
+    btns.append(lis, test);
+    row.append(btns);
+    box.append(row);
+  });
+}
+
+/* ---------- « Lis avec Mia »: 1. the words light up as Mia says them; 2. your turn, at her pace ---------- */
+let raRunning = false;
+function lightWords(words, times, t, cls = "now") {
+  words.forEach((w, i) => {
+    const n = document.querySelector(`.w[data-k="${w.k}"]`);
+    if (!n) return;
+    n.classList.toggle(cls, t >= times[i][0] - 0.05 && t < (times[i + 1] ? times[i + 1][0] - 0.05 : times[i][1] + 0.3));
+    if (cls === "now") n.classList.toggle("said", t >= times[i][1]);
+  });
+}
+const clearLights = () => document.querySelectorAll(".w").forEach((n) => n.classList.remove("now", "said", "guide", "ok", "ko"));
+function renderRA() {
+  const box = $("ra");
+  if (!READ[cur]) { box.hidden = true; return; }
+  box.hidden = false;
+  box.innerHTML = `<h3>Lis avec Mia</h3><ol><li>Écoute Mia et suis des yeux les mots qui s'allument.</li>
+    <li>À toi : lis toute la réplique au même rythme. Le trait orange avance à la vitesse de Mia, les mots compris passent en vert.</li></ol>`;
+  const b = el("button", "btn violet", ICON.play + "Commencer");
+  b.onclick = readAlong;
+  box.append(b);
+}
+async function readAlong() {
+  if (raRunning) { raRunning = false; stopPlay(); stopListen(); return; }
+  const n = cur, words = flatWords(n), { audio, times } = READ[n], box = $("ra");
+  raRunning = true;
+  scope = "all"; renderScope();
+  $("result").hidden = true;
+  clearLights();
+  const stopBtn = el("button", "btn ghost", ICON.stop + "Arrêter");
+  stopBtn.onclick = readAlong;
+  const phase = (txt) => { box.replaceChildren(el("div", "phase", txt), stopBtn); $("live").textContent = txt; };
+  $("line").scrollIntoView({ behavior: "smooth", block: "start" });
+  // 1. listen and follow
+  phase("1. Écoute et suis les mots…");
+  let raf = 0;
+  const follow = () => { lightWords(words, times, player.currentTime); raf = requestAnimationFrame(follow); };
+  raf = requestAnimationFrame(follow);
+  await play(audio);
+  cancelAnimationFrame(raf);
+  clearLights();
+  if (!raRunning || cur !== n) { raRunning = false; $("live").textContent = ""; renderRA(); return; }
+  // 2. her turn, with a guide at Mia's pace
+  for (const k of [3, 2, 1]) { phase(`2. À toi dans ${k}…`); await wait(700); if (!raRunning) break; }
+  if (!raRunning) { $("live").textContent = ""; renderRA(); return; }
+  phase("2. À toi ! Lis au rythme du trait orange.");
+  const pace = 1.1, t0 = performance.now();
+  const guide = () => { lightWords(words, times.map(([a, b]) => [a * pace, b * pace]), (performance.now() - t0) / 1000 + times[0][0] * pace, "guide"); raf = requestAnimationFrame(guide); };
+  raf = requestAnimationFrame(guide);
+  let heard = null;
+  try {
+    heard = await listenFor(words.map((w) => w.w), (t) => {
+      const r = scoreWords(words.map((w) => w.w), [t]);
+      words.forEach((w, i) => { if (r.ok[i]) document.querySelector(`.w[data-k="${w.k}"]`)?.classList.add("ok"); });
+    }, 2500);
+  } catch (err) {
+    cancelAnimationFrame(raf); raRunning = false; renderRA();
+    const res = $("result"); res.hidden = false; res.innerHTML = `<div class="warn">${micError(err)}</div>`;
+    return;
+  }
+  cancelAnimationFrame(raf);
+  document.querySelectorAll(".w").forEach((x) => x.classList.remove("guide"));
+  $("live").textContent = "";
+  raRunning = false;
+  renderRA();
+  if (cur === n) showResult(words, heard, DATA.reps[n].sentences);
 }
 function micError(err) {
   if (err.message === "unsupported") return "Le test au micro marche dans Google Chrome (sur Android) ou Safari, avec internet. Tu peux quand même écouter et t'enregistrer.";
@@ -688,6 +879,11 @@ function renderTrain() {
   const bAllSlow = el("button", "btn slow", ICON.slow + "Lentement");
   bAllSlow.onclick = () => (r.fullSlow ? play(r.fullSlow, bAllSlow) : play(r.full, bAllSlow, 0.85));
   top.append(bAll, bAllSlow);
+  if (READ[cur]) {
+    const bRA = el("button", "btn violet", ICON.play + "Lis avec Mia");
+    bRA.onclick = readAlong;
+    top.append(bRA);
+  }
   line.append(top);
   r.sentences.forEach((s, si) => {
     const box = el("div", "sentence" + (scope === si ? " scoped" : ""));
@@ -719,8 +915,10 @@ function renderTrain() {
     line.append(box);
   });
   renderScope();
+  renderRA();
   renderVideo();
   renderTrainNext();
+  renderHard();
   $("result").hidden = true;
   if (mediaRec) { mediaRec.onstop = null; mediaRec.stream.getTracks().forEach((t) => t.stop()); mediaRec.stop(); mediaRec = null; }
   recBlob = null; updateRec();
@@ -907,6 +1105,7 @@ function fixCards(words, res, max = 5) {
 function showResult(words, heard, sents) {
   // only Chrome's first guess counts: stricter, closer to an exam bot
   const res = scoreWords(words.map((w) => w.w), heard.slice(0, 1));
+  noteHard(words, res.ok);
   document.querySelectorAll(".w").forEach((n) => n.classList.remove("ok", "ko"));
   words.forEach((w, i) => { const n = document.querySelector(`.w[data-k="${w.k}"]`); if (n) n.classList.add(res.ok[i] ? "ok" : "ko"); });
   const n = starsFor(res.score), pct = Math.round(res.score * 100);
@@ -917,6 +1116,8 @@ function showResult(words, heard, sents) {
   box.innerHTML = `<div class="score"><span class="emo" aria-hidden="true">${emo}</span><span class="big">${pct} %</span><span class="st">${starStr(n)}</span></div>
     <h3>${title}${record ? " Nouveau record !" : ""}</h3><p class="note">${msg}</p>
     <div class="heard">Chrome a compris : <b>« ${res.heard || "rien"} »</b></div>`;
+  const rb = res.score >= 0.5 ? rhythmBox(heard.span, modelSpan(cur, scope)) : null;
+  if (rb) box.append(rb);
   if (res.score < 1) box.append(fixCards(words, res));
   if (res.score >= 0.9) confetti();
   box.scrollIntoView({ behavior: "smooth", block: "nearest" });
@@ -964,7 +1165,7 @@ async function runFull() {
   running = true;
   $("fullStart").innerHTML = ICON.stop + "Arrêter";
   const stage = $("fullStage"); stage.innerHTML = "";
-  const scores = [], misses = [];
+  const scores = [], misses = [], rhythms = [];
   for (let i = 0; i < DATA.reps.length && running; i++) {
     const r = DATA.reps[i];
     for (const c of r.cues) {
@@ -990,13 +1191,15 @@ async function runFull() {
     $("dock").hidden = false;
     $("live").textContent = "Je t'écoute… appuie sur « J'ai fini » quand c'est dit.";
     $("micBtn").classList.add("on"); $("micBtn").innerHTML = ICON.stop + "J'ai fini";
-    let res;
-    try { res = scoreWords(words.map((w) => w.w), (await listenFor(words.map((w) => w.w), (t) => { $("live").textContent = t ? "« " + t + " »" : "Je t'écoute…"; }, 3000)).slice(0, 1)); }
+    let res, span = 0;
+    try { const hd = await listenFor(words.map((w) => w.w), (t) => { $("live").textContent = t ? "« " + t + " »" : "Je t'écoute…"; }, 3000); span = hd.span; res = scoreWords(words.map((w) => w.w), hd.slice(0, 1)); }
     catch (err) { stage.append(el("div", "warn", micError(err))); running = false; break; }
     finally { $("micBtn").classList.remove("on"); $("live").textContent = ""; $("dock").hidden = true; }
     units.querySelectorAll(".w").forEach((n, k) => n.classList.add(res.ok[k] ? "ok" : "ko"));
     mine.classList.remove("hidden-text");
     scores.push(res.score);
+    rhythms.push(res.score >= 0.5 ? rhythmOf(span, modelSpan(i, "all")) : null);
+    noteHard(words, res.ok);
     words.forEach((w, k) => { if (!res.ok[k]) misses.push([w, res.sub[k], i]); });
     const n = starsFor(res.score);
     if (n > best[i]) { best[i] = n; store.set("best", best); renderStepper(); }
@@ -1007,11 +1210,12 @@ async function runFull() {
   running = false;
   $("fullStart").innerHTML = ICON.play + "Recommencer la répétition";
   if (scores.length) {
-    const rows = scores.map((s, i) => `<tr><td>Réplique ${i + 1}</td><td>${Math.round(s * 100)} %</td><td class="stars" style="font-size:16px">${starStr(starsFor(s))}</td></tr>`).join("");
+    const rows = scores.map((s, i) => `<tr><td>Réplique ${i + 1}</td><td>${Math.round(s * 100)} %</td><td class="stars" style="font-size:16px">${starStr(starsFor(s))}</td><td>${rhythms[i] ? rhythms[i][0] : "–"}</td></tr>`).join("");
     const avgS = scores.reduce((a, b) => a + b, 0) / scores.length, avg = Math.round(avgS * 100);
     const [emo, title] = cheer(avgS);
     const card = el("div", "card", `<div class="score"><span class="emo" aria-hidden="true">${emo}</span><h3>Bilan : ${avg} % · ${title}</h3></div>
-      <table><tr><th>Réplique</th><th>Compris</th><th>Étoiles</th></tr>${rows}</table>`);
+      <table><tr><th>Réplique</th><th>Compris</th><th>Étoiles</th><th>Rythme</th></tr>${rows}</table>
+      <p class="note">Rythme : ✅ fluide · 🐢 trop lent ou trop de pauses · 🐇 trop rapide.</p>`);
     if (misses.length) {
       card.append(el("h3", null, "Les mots à retravailler"));
       const fx = el("div", "fixes");
@@ -1021,7 +1225,9 @@ async function runFull() {
           <div class="heard">${d.said}</div>` + d.tips.map(([e, t]) => `<p><span aria-hidden="true">${e}</span> ${t}</p>`).join("")));
       });
       card.append(fx);
-      card.append(el("p", "note", "Va dans « Réplique par réplique » pour écouter ces mots seuls et les répéter."));
+      const back = el("button", "btn rec", "Retravailler mes mots difficiles");
+      back.onclick = () => { go("train"); setTimeout(() => $("hard").scrollIntoView({ behavior: "smooth" }), 400); };
+      card.append(back);
     }
     $("fullStage").replaceChildren(card);
     if (avgS >= 0.9) confetti();
@@ -1123,6 +1329,13 @@ function renderBravo() {
     if (!done(st)) { li.style.cursor = "pointer"; li.onclick = () => go(st); }
     return li;
   }));
+  const left = Object.keys(hard).length;
+  if (left) {
+    const li = el("li", "", `<span class="ic">${left}</span><span><b>Mes mots difficiles</b><small>${left} mot(s) à revoir encore : touche ici</small></span>`);
+    li.style.cursor = "pointer";
+    li.onclick = () => { go("train"); setTimeout(() => $("hard").scrollIntoView({ behavior: "smooth" }), 400); };
+    $("recap").append(li);
+  }
   $("againBtn").innerHTML = ICON.play + "Refaire la répétition générale";
   $("againBtn").onclick = () => go("full");
   confetti(); setTimeout(confetti, 900); if (all) setTimeout(confetti, 1900);
@@ -1191,6 +1404,7 @@ function show(name) {
   if (running) { running = false; stopPlay(); stopListen(); }
   if (rec) stopListen();
   if (mediaRec) mediaRec.stop();
+  raRunning = false;
   stopPlay();
   document.querySelectorAll("video").forEach((v) => v.pause());
   screen = name;
