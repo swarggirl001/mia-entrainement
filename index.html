@@ -48,7 +48,7 @@ h1 { font-size: clamp(28px, 7vw, 40px); font-weight: 800; }
 .lead { margin: 0; color: var(--muted); }
 
 /* steps bar: home, then the 3 steps; a tick once a step is done */
-.stepper { display: grid; grid-template-columns: auto repeat(var(--n, 3), minmax(0, 1fr)); gap: 6px; background: var(--card); padding: 6px;
+.stepper { display: grid; grid-template-columns: auto repeat(var(--n, 3), minmax(0, 1fr)) auto; gap: 6px; background: var(--card); padding: 6px;
   border-radius: 18px; border: 2px solid var(--line); position: sticky; top: 8px; z-index: 5; box-shadow: 0 6px 16px rgba(31, 42, 68, .06); }
 .stepper button { border: 0; background: transparent; border-radius: 13px; padding: 7px 4px; font-weight: 800; color: var(--muted);
   display: grid; justify-items: center; gap: 2px; font-size: 13px; line-height: 1.15; }
@@ -57,7 +57,22 @@ h1 { font-size: clamp(28px, 7vw, 40px); font-weight: 800; }
 .stepper .done .num { background: var(--good); color: #fff; }
 .stepper button[aria-current="step"] { background: var(--ink); color: #fff; }
 .stepper button[aria-current="step"] .num { background: var(--action); color: #fff; }
-.stepper .home { padding-inline: 10px; }
+.stepper .home, .stepper .dl { padding-inline: 10px; }
+.stepper .dl svg { width: 22px; height: 22px; }
+.stepper .dl[aria-current="page"] { background: var(--ink); color: #fff; }
+.dlcorner { justify-self: center; border: 2px solid var(--line); background: var(--card); border-radius: 999px; padding: 8px 16px; font-weight: 800;
+  display: inline-flex; gap: 8px; align-items: center; color: var(--ink); }
+.dlcorner svg, .vrow a svg { width: 20px; height: 20px; }
+.dlall { justify-items: center; text-align: center; }
+.dlall .go { width: 100%; max-width: 460px; }
+.vlist { display: grid; gap: 0; }
+.vrow { display: grid; grid-template-columns: 1fr auto; gap: 10px; align-items: center; padding: 9px 0; border-top: 1px solid var(--line); }
+.vrow:first-child { border-top: 0; }
+.vrow b { font-family: var(--display); font-size: 16px; display: block; }
+.vrow small { color: var(--muted); font-size: 13px; }
+.vrow a { display: inline-flex; gap: 6px; align-items: center; text-decoration: none; background: var(--action-soft); color: #9a4f08;
+  font-weight: 800; border-radius: 999px; padding: 8px 12px; font-size: 14px; }
+.vrow a.got { background: var(--good-soft); color: var(--good); }
 .stepper .home svg { width: 22px; height: 22px; }
 
 .reps { display: grid; grid-template-columns: repeat(7, minmax(0, 1fr)); gap: 6px; }
@@ -282,6 +297,7 @@ canvas.confetti { position: fixed; inset: 0; pointer-events: none; z-index: 50; 
       <button class="go" id="startBtn"></button>
       <button class="linkbtn" id="restartBtn" hidden>Recommencer depuis le début</button>
     </div>
+    <button class="dlcorner" id="homeVideos"></button>
   </section>
 
   <!-- ===== the steps ===== -->
@@ -338,6 +354,21 @@ canvas.confetti { position: fixed; inset: 0; pointer-events: none; z-index: 50; 
     <div class="nextbar" id="nextFull"></div>
   </section>
 
+  <!-- ===== every video, to download ===== -->
+  <section id="videos" class="screen" hidden>
+    <div class="intro">
+      <span class="eyebrow">Téléchargements</span>
+      <h2>Toutes les vidéos</h2>
+      <p class="lead">Choisis une vidéo pour la télécharger, ou prends-les toutes d'un coup. Une fois sur le téléphone, elles se regardent sans internet.</p>
+    </div>
+    <div class="card dlall">
+      <button class="go" id="dlAll"></button>
+      <p class="note">Mieux vaut être en Wi-Fi. Si le téléphone demande l'autorisation de télécharger plusieurs fichiers, appuie sur « Autoriser ».</p>
+    </div>
+    <div id="vidLists" class="stage"></div>
+    <div class="nextbar"><button class="linkbtn" id="vidBack">Retour</button></div>
+  </section>
+
   <!-- ===== the end ===== -->
   <section id="bravo" class="screen" hidden>
     <div class="bravo">
@@ -357,6 +388,7 @@ canvas.confetti { position: fixed; inset: 0; pointer-events: none; z-index: 50; 
     </div>
     <div class="nextbar">
       <button class="go" id="againBtn"></button>
+      <button class="btn ghost" id="bravoVideos"></button>
       <button class="linkbtn" id="homeBtn">Revenir à l'accueil</button>
     </div>
   </section>
@@ -885,7 +917,7 @@ async function runFull() {
 const NAMES = { sons: "Les 10 sons", train: "Réplique par réplique", full: "Répétition générale" };
 const SHORT = { sons: "Les sons", train: "Répliques", full: "Répétition" };
 const STEPS = (SONS.length ? ["sons"] : []).concat(["train", "full"]);
-const HASH = { home: "accueil", sons: "sons", train: "repliques", full: "repetition", bravo: "bravo" };
+const HASH = { home: "accueil", sons: "sons", train: "repliques", full: "repetition", bravo: "bravo", videos: "videos" };
 const CAST = [["Mia", "toi, la patiente", "var(--action)"], ["Léa", "sa mère", "#c2577a"], ["Lola", "l'infirmière", "#1f8f82"],
   ["Tess", "l'étudiante infirmière", "#6c5ce0"], ["Dr Johnson", "le médecin", "#3e6fb0"]];
 const colorOf = (who) => (CAST.find((c) => c[0] === who) || [0, 0, "var(--teal)"])[2];
@@ -907,12 +939,15 @@ function renderStepper() {
   const nav = $("stepper"); nav.style.setProperty("--n", STEPS.length);
   const home = el("button", "home", ICON.home);
   home.setAttribute("aria-label", "Accueil"); home.onclick = () => go("home");
+  const dl = el("button", "dl", ICON.down);
+  dl.setAttribute("aria-label", "Télécharger les vidéos"); dl.onclick = () => go("videos");
+  if (screen === "videos") dl.setAttribute("aria-current", "page");
   nav.replaceChildren(home, ...STEPS.map((st, i) => {
     const b = el("button", done(st) ? "done" : "", `<span class="num">${done(st) ? "✓" : i + 1}</span>${SHORT[st]}`);
     if (st === screen) b.setAttribute("aria-current", "step");
     b.onclick = () => go(st);
     return b;
-  }));
+  }), dl);
   document.querySelectorAll("[data-step]").forEach((e) => { e.textContent = `Étape ${STEPS.indexOf(e.dataset.step) + 1} sur ${STEPS.length}`; });
 }
 
@@ -976,6 +1011,61 @@ function renderBravo() {
 }
 $("homeBtn").onclick = () => go("home");
 
+/* every video in one list: each one, or all of them one after the other */
+function allVideos() {
+  const p1 = SONS.map((s, i) => { const n = String(i + 1).padStart(2, "0");
+    return { title: `Son ${i + 1} · ${s.title}`, sub: s.tip, mb: s.mb, src: `videos/Mia_partie1_son${n}.mp4`, name: `Mia_son${n}.mp4` }; });
+  const p2 = DATA.reps.map((r, i) => ({ title: `Réplique ${i + 1}`, sub: r.sentences[0].text + (r.sentences.length > 1 ? " …" : ""),
+    mb: VIDEO_MB[i], src: `videos/Mia_partie2_replique${i + 1}.mp4`, name: `Mia_replique${i + 1}.mp4` }));
+  return [["Partie 1 · Les 10 sons", p1], ["Partie 2 · Les 7 répliques", p2]].filter(([, l]) => l.length);
+}
+const mbText = (mb) => String(Math.round(mb)).replace(".", ",") + " Mo";
+function fetchFile(v) { const a = el("a"); a.href = v.src; a.download = v.name; document.body.append(a); a.click(); a.remove(); }
+let downloading = false;
+async function downloadMany(list, btn, label) {
+  if (downloading) return;
+  downloading = true;
+  for (let i = 0; i < list.length; i++) {
+    btn.innerHTML = ICON.down + `Téléchargement ${i + 1} / ${list.length}…`;
+    fetchFile(list[i]);
+    document.querySelector(`.vrow a[href="${list[i].src}"]`)?.classList.add("got");
+    await wait(1500);  // one at a time, so the phone does not drop any
+  }
+  btn.innerHTML = "✓ " + label;
+  downloading = false;
+}
+function renderVideos() {
+  const groups = allVideos(), every = groups.flatMap(([, l]) => l);
+  const total = every.reduce((a, v) => a + v.mb, 0);
+  const all = $("dlAll");
+  all.innerHTML = ICON.down + `Tout télécharger (${every.length} vidéos, ${mbText(total)})`;
+  all.onclick = () => downloadMany(every, all, `Tout télécharger (${every.length} vidéos, ${mbText(total)})`);
+  $("vidLists").replaceChildren(...groups.map(([name, list]) => {
+    const card = el("div", "card");
+    const head = el("div", "shead2", `<h3>${name}</h3>`);
+    const part = el("button", "btn ghost", ICON.down + `Toute la partie (${mbText(list.reduce((a, v) => a + v.mb, 0))})`);
+    part.onclick = () => downloadMany(list, part, "Toute la partie");
+    head.append(part);
+    const rows = el("div", "vlist");
+    list.forEach((v) => {
+      const row = el("div", "vrow", `<span><b>${v.title}</b><small>${v.sub}</small></span>`);
+      const a = el("a", null, ICON.down + mbText(v.mb));
+      a.href = v.src; a.download = v.name;
+      a.setAttribute("aria-label", `Télécharger ${v.title} (${mbText(v.mb)})`);
+      a.onclick = () => a.classList.add("got");
+      row.append(a);
+      rows.append(row);
+    });
+    card.append(head, rows);
+    return card;
+  }));
+}
+$("vidBack").onclick = () => (history.length > 1 ? history.back() : go("home"));
+$("homeVideos").innerHTML = ICON.down + "Télécharger les vidéos";
+$("homeVideos").onclick = () => go("videos");
+$("bravoVideos").innerHTML = ICON.down + "Télécharger toutes les vidéos";
+$("bravoVideos").onclick = () => go("videos");
+
 function go(name) { if (location.hash.slice(1) === HASH[name]) show(name); else location.hash = HASH[name]; }
 function show(name) {
   if (!HASH[name] || (name === "sons" && !SONS.length)) name = "home";
@@ -983,15 +1073,15 @@ function show(name) {
   stopPlay();
   document.querySelectorAll("video").forEach((v) => v.pause());
   screen = name;
-  store.set("screen", name);
-  for (const id of ["home", "sons", "train", "full", "bravo"]) {
+  if (name !== "videos") store.set("screen", name);
+  for (const id of ["home", "sons", "train", "full", "bravo", "videos"]) {
     const sec = $(id);
     sec.hidden = id !== name;
     sec.classList.remove("enter");
   }
   void $(name).offsetWidth;  // restart the entrance animation
   $(name).classList.add("enter");
-  $("stepper").hidden = !STEPS.includes(name);
+  $("stepper").hidden = !STEPS.includes(name) && name !== "videos";
   $("dock").hidden = name !== "train";
   $("scope").hidden = name !== "train";
   if (name === "home") renderHome();
@@ -999,6 +1089,7 @@ function show(name) {
   if (name === "train") renderScope();
   if (name === "full" && !$("nextFull").children.length) nextBar("nextFull", "bravo");
   if (name === "bravo") renderBravo();
+  if (name === "videos") renderVideos();
   renderStepper();
   scrollTo(0, 0);
 }
