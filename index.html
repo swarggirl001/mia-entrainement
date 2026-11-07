@@ -4,10 +4,14 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>Entraînement de Mia</title>
-<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src https://fonts.gstatic.com; img-src 'self' data:; media-src 'self' data: blob:; connect-src 'self'; object-src 'none'; base-uri 'none'; form-action 'none'">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline' https://gc.zgo.at; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src https://fonts.gstatic.com; img-src 'self' data: https://mia-entrainement.goatcounter.com; media-src 'self' data: blob:; connect-src 'self' https://mia-entrainement.goatcounter.com; object-src 'none'; base-uri 'none'; form-action 'none'">
 <meta name="referrer" content="no-referrer">
 <meta name="theme-color" content="#e57f1c">
 <link rel="manifest" href="manifest.webmanifest">
+<!-- visit counter (GoatCounter: no cookies, anonymous). The page counts each screen itself, by its name only:
+     the address after # can hold a progress link, which must never leave the phone. -->
+<script id="gc" data-goatcounter="https://mia-entrainement.goatcounter.com/count" data-goatcounter-settings='{"no_onload": true}'
+        async src="https://gc.zgo.at/count.js"></script>
 <link rel="icon" href="icons/icon-192.png">
 <link rel="apple-touch-icon" href="icons/apple-touch-icon.png">
 <meta name="apple-mobile-web-app-title" content="Mia">
@@ -1559,6 +1563,14 @@ function checkTransfer() {   // opened from a progress link: offer to take it, t
   return true;
 }
 
+/* ---------- visit counter: one count per screen opened (accueil, sons, repliques, …) ---------- */
+let gcWaiting = [];
+function track(name) {
+  const send = (n) => window.goatcounter.count({ path: "/mia-entrainement/" + HASH[n], title: "Mia · " + HASH[n] });
+  if (window.goatcounter && window.goatcounter.count) send(name); else gcWaiting.push(name);
+}
+$("gc") && $("gc").addEventListener("load", () => { gcWaiting.forEach((n) => window.goatcounter.count && window.goatcounter.count({ path: "/mia-entrainement/" + HASH[n], title: "Mia · " + HASH[n] })); gcWaiting = []; });
+
 function go(name) { if (location.hash.slice(1) === HASH[name]) show(name); else location.hash = HASH[name]; }
 function show(name) {
   $("boot").hidden = true;
@@ -1571,6 +1583,7 @@ function show(name) {
   document.querySelectorAll("video").forEach((v) => v.pause());
   screen = name;
   if (name !== "videos") store.set("screen", name);
+  track(name);
   for (const id of ["home", "sons", "train", "full", "bravo", "videos"]) {
     const sec = $(id);
     sec.hidden = id !== name;
