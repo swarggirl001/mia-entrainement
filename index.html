@@ -824,7 +824,7 @@ function renderVideo() {
 }
 
 /* Part 1: one video per sound (videos/Mia_partie1_sonNN.mp4). */
-const SONS = [];
+const SONS = [{"title": "Le H qui souffle", "tip": "Ouvre la bouche et souffle, comme pour faire de la buée sur un miroir.", "mb": 9.8}, {"title": "Le TH qui souffle", "tip": "Le bout de la langue entre les dents. On souffle, sans bruit dans la gorge.", "mb": 4.0}, {"title": "Le TH qui vibre", "tip": "Même position de la langue. Main sur la gorge : ça doit vibrer.", "mb": 7.6}, {"title": "Le R anglais", "tip": "Lèvres un peu rondes. La langue recule et ne touche rien.", "mb": 11.6}, {"title": "I long et i court", "tip": "Long : grand sourire, on tient le son.  Court : bouche molle, très rapide.", "mb": 11.5}, {"title": "Le son « eu » anglais", "tip": "Bouche à moitié ouverte. Lèvres molles, pas en rond. Langue au milieu.", "mb": 10.6}, {"title": "Le A grand ouvert", "tip": "Mâchoire bien en bas, comme chez le dentiste.", "mb": 7.4}, {"title": "Les sons qui glissent", "tip": "Pendant le son, la bouche bouge d'une position à l'autre.", "mb": 11.5}, {"title": "Les lettres muettes", "tip": "Les lettres en gris sont écrites, mais on ne les dit pas.", "mb": 9.0}, {"title": "Le coup de tambour", "tip": "Dans un mot long, une partie est plus forte. Tape dans tes mains dessus !", "mb": 11.3}];
 const sonsSeen = store.get("sons", []);
 function renderSons() {
   $("sonsList").replaceChildren(...SONS.map((s, i) => {
