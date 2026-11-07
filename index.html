@@ -139,6 +139,10 @@ td, th { text-align: left; padding: 6px 4px; border-bottom: 1px solid var(--line
 .fhead b { font-size: 20px; color: var(--bad); }
 .fhead .i { font-family: var(--ipa); color: var(--teal); font-size: 15px; }
 .fix .btn { justify-self: start; }
+.vid { display: grid; grid-template-columns: minmax(0, 150px) 1fr; gap: 14px; align-items: center; }
+.vid video { width: 100%; aspect-ratio: 9 / 16; border-radius: 14px; background: var(--paper2); display: block; }
+.vid .side { display: grid; gap: 8px; justify-items: start; }
+a.btn { text-decoration: none; }
 canvas.confetti { position: fixed; inset: 0; pointer-events: none; z-index: 50; }
 @media (prefers-reduced-motion: reduce) { .mic.on { animation: none; } }
 </style>
@@ -161,6 +165,7 @@ canvas.confetti { position: fixed; inset: 0; pointer-events: none; z-index: 50; 
     <div class="card cue" id="cue"></div>
     <div class="card" id="line"></div>
     <div class="card result" id="result" hidden></div>
+    <div class="card" id="video"></div>
     <div class="card" id="self">
       <h3>M'enregistrer et comparer</h3>
       <p class="note">Enregistre-toi, puis écoute le modèle et ta voix l'un après l'autre.</p>
@@ -205,6 +210,7 @@ const ICON = {
   mic: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><rect x="9" y="2" width="6" height="12" rx="3" fill="currentColor"/><path d="M5 11a7 7 0 0 0 14 0M12 18v4M8 22h8"/></svg>',
   stop: '<svg viewBox="0 0 24 24" fill="currentColor"><rect x="6" y="6" width="12" height="12" rx="2"/></svg>',
   rec: '<svg viewBox="0 0 24 24" fill="currentColor"><circle cx="12" cy="12" r="7"/></svg>',
+  down: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M12 4v11m-5-5 5 5 5-5M5 20h14"/></svg>',
 };
 const store = {
   get(k, d) { try { const v = localStorage.getItem("mia." + k); return v == null ? d : JSON.parse(v); } catch { return d; } },
@@ -473,8 +479,28 @@ function renderTrain() {
     line.append(box);
   });
   renderScope();
+  renderVideo();
   $("result").hidden = true;
   recBlob = null; updateRec();
+}
+
+/* The lesson video of this line (published next to the page: videos/, with its cover in videos/covers/). */
+const VIDEO_MB = [13, 12.3, 13.4, 14.1, 10.6, 14.3, 5.9];
+function renderVideo() {
+  const n = cur + 1, src = `videos/Mia_partie2_replique${n}.mp4`;
+  const box = $("video"); box.innerHTML = "";
+  box.append(el("h3", null, `La vidéo de la réplique ${n}`));
+  const v = el("div", "vid");
+  const video = el("video");
+  Object.assign(video, { src, controls: true, preload: "none", playsInline: true, poster: `videos/covers/replique${n}.jpg` });
+  video.onplay = stopPlay;
+  const side = el("div", "side");
+  side.append(el("p", "note", "Mia montre la bouche mot par mot, puis te fait répéter. Télécharge-la pour la regarder sans internet."));
+  const dl = el("a", "btn rec", ICON.down + `Télécharger (${String(VIDEO_MB[cur]).replace(".", ",")} Mo)`);
+  dl.href = src; dl.download = `Mia_replique${n}.mp4`;
+  side.append(dl);
+  v.append(video, side);
+  box.append(v);
 }
 
 function renderScope() {
