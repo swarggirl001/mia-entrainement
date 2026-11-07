@@ -11,4 +11,5 @@ Lien : https://swarggirl001.github.io/mia-entrainement/
 
 Le test au micro marche dans Google Chrome (Android) avec internet.
 
-`index.html` est généré par `src/build_practice.py` dans le projet `mia-prononciation` ; ne pas le modifier à la main.
+`index.html` et les sons de `audio/` sont générés par `src/build_practice.py` dans le projet `mia-prononciation`
+(`python src/build_practice.py models --template-only --site ../mia-entrainement-site`) ; ne pas les modifier à la main.
