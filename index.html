@@ -202,6 +202,25 @@ td, th { text-align: left; padding: 6px 4px; border-bottom: 1px solid var(--line
 .sonview > .lead { margin: 0; }
 .sonend { display: grid; justify-items: center; gap: 8px; }
 .sonend .go { width: 100%; max-width: 460px; }
+/* end of a sound: a congratulation card laid over the video, the video still visible around it */
+.celebrate { position: absolute; inset: 0; z-index: 3; border-radius: 18px; display: grid; place-items: center; padding: 14px;
+  background: rgba(255, 247, 238, .62); backdrop-filter: blur(4px); -webkit-backdrop-filter: blur(4px); animation: fadein .35s ease both; }
+@keyframes fadein { from { opacity: 0; } }
+.celebrate .ovcard { position: relative; width: 100%; max-width: 330px; background: #fff; border-radius: 24px; padding: 18px 16px 16px;
+  display: grid; justify-items: center; gap: 8px; text-align: center; box-shadow: 0 16px 40px rgba(31, 42, 68, .25);
+  animation: pop .55s .1s cubic-bezier(.2, .8, .3, 1.4) both; }
+.celebrate .mia-wrap { width: 120px; height: 130px; }
+.celebrate .rays { width: 200px; height: 200px; }
+.celebrate .spark { font-size: 20px; }
+.celebrate .medal { position: absolute; top: -14px; right: 14px; background: var(--good); color: #fff; font-weight: 800; font-size: 13px;
+  border-radius: 999px; padding: 4px 10px; box-shadow: 0 4px 10px rgba(31, 157, 85, .3); animation: pop .5s .6s cubic-bezier(.2, .8, .3, 1.6) both; }
+.celebrate h3 { font-size: 24px; color: var(--action); }
+.celebrate p { margin: 0; }
+.celebrate .dots { display: flex; gap: 6px; justify-content: center; flex-wrap: wrap; }
+.celebrate .dots i { width: 14px; height: 14px; border-radius: 50%; background: var(--line); }
+.celebrate .dots i.on { background: var(--good); }
+.celebrate .dots i.now { background: var(--action); animation: pop .5s .8s cubic-bezier(.2, .8, .3, 1.8) both; }
+.celebrate .go { width: 100%; }
 .lockcard { justify-items: center; text-align: center; padding: 24px 18px; }
 .lockic { font-size: 54px; line-height: 1; }
 .stepper .locked .num { background: var(--line); }
@@ -1180,13 +1199,41 @@ function renderSon(i) {
   back.onclick = () => { location.hash = "sons"; };
   head.append(back, el("span", "eyebrow", `Son ${i + 1} sur ${SONS.length}`));
   const end = el("div", "sonend");
-  const paintEnd = () => {
+  const nextStep = () => {   // where the arrow leads: the next sound, the lines once all are done, or back to the list
     const last = i === SONS.length - 1, all = SONS.every((_, k) => sonsSeen[k]);
-    const b = el("button", "go" + (sonsSeen[i] ? "" : " soft"));
-    if (!last) { b.innerHTML = `Son suivant : ${SONS[i + 1].title}` + ICON.next; b.onclick = () => { location.hash = "son-" + (i + 2); }; }
-    else if (all) { b.innerHTML = "Étape suivante : Réplique par réplique" + ICON.next; b.onclick = () => go("train"); }
-    else { b.innerHTML = "Revenir à la liste des sons" + ICON.next; b.onclick = () => { location.hash = "sons"; }; }
+    if (all && (last || sonsSeen.slice(i + 1, SONS.length).every(Boolean))) return ["Étape suivante : Réplique par réplique", () => go("train")];
+    if (!last) return [`Son suivant : ${SONS[i + 1].title}`, () => { location.hash = "son-" + (i + 2); }];
+    return ["Revenir à la liste des sons", () => { location.hash = "sons"; }];
+  };
+  const paintEnd = () => {
+    const [label, fn] = nextStep();
+    const b = el("button", "go" + (sonsSeen[i] ? "" : " soft"), label + ICON.next);
+    b.onclick = fn;
     end.replaceChildren(...(sonsSeen[i] ? [el("span", "seen", "✓ Son terminé")] : []), b);
+  };
+  // the video is over: a congratulation card comes over it
+  const celebrate = (frame, video) => {
+    if (document.fullscreenElement) document.exitFullscreen().catch(() => {});
+    const all = SONS.every((_, k) => sonsSeen[k]);
+    const [label, fn] = nextStep();
+    const ov = el("div", "celebrate");
+    const card = el("div", "ovcard");
+    card.innerHTML = `<span class="medal">✓ Son ${i + 1} / ${SONS.length}</span>
+      <div class="mia-wrap"><div class="rays" aria-hidden="true"></div><div class="mia">${MIA.wide || MIA.smile || ""}</div>
+        <span class="spark s1" aria-hidden="true">★</span><span class="spark s2" aria-hidden="true">★</span><span class="spark s4" aria-hidden="true">★</span></div>
+      <h3>${withName("Félicitations !")}</h3>
+      <p>${all ? "Tu maîtrises les <b>10 sons</b> du texte de Mia ! Les répliques sont débloquées 🔓"
+        : `Tu maîtrises le son <b>« ${s.title} »</b>.`}</p>
+      <div class="dots" aria-label="${SONS.filter((_, k) => sonsSeen[k]).length} sons sur ${SONS.length}">${SONS.map((_, k) =>
+        `<i class="${k === i ? "now" : sonsSeen[k] ? "on" : ""}"></i>`).join("")}</div>`;
+    const nx = el("button", "go", label + ICON.next);
+    nx.onclick = fn;
+    const again = el("button", "linkbtn", "Revoir la vidéo");
+    again.onclick = () => { ov.remove(); video.currentTime = 0; video.play().catch(() => {}); };
+    card.append(nx, again);
+    ov.append(card);
+    frame.append(ov);
+    confetti(); if (all) setTimeout(confetti, 800);
   };
   const done = () => {
     sonsSeen[i] = true; store.set("sons", sonsSeen);
@@ -1195,9 +1242,11 @@ function renderSon(i) {
   };
   view.replaceChildren(head, el("h2", null, s.title), el("p", "lead", s.tip),
     videoBlock(`videos/Mia_partie1_son${pad2(i + 1)}.mp4`, `videos/covers/son${pad2(i + 1)}.jpg`,
-      "Regarde la vidéo jusqu'au bout et répète à voix haute à chaque « À toi ! ».", done), end);
+      "Regarde la vidéo jusqu'au bout et répète à voix haute.", done), end);
   paintEnd();
-  view.querySelector("video").play().catch(() => {});   // it starts by itself: she just tapped the sound
+  const video = view.querySelector("video");
+  video.addEventListener("ended", () => { if (!sonsSeen[i]) done(); celebrate(video.closest(".frame"), video); });
+  video.play().catch(() => {});   // it starts by itself: she just tapped the sound
 }
 
 function renderScope() {
