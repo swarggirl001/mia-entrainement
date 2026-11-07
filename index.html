@@ -4,6 +4,8 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>Entraînement de Mia</title>
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src https://fonts.gstatic.com; img-src 'self' data:; media-src 'self' data: blob:; connect-src 'self'; object-src 'none'; base-uri 'none'; form-action 'none'">
+<meta name="referrer" content="no-referrer">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <!-- fonts load in the background: with a weak connection the page shows at once, in the system font -->
 <link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@600;800&family=Nunito+Sans:wght@400;600;700;800&display=swap" rel="stylesheet" media="print" onload="this.media='all'">
@@ -296,6 +298,19 @@ h2 { font-size: 22px; }
 .hrow .row { flex-wrap: nowrap; gap: 6px; }
 .hrow .btn { min-height: 36px; padding: 6px 10px; font-size: 14px; }
 .hrow.win b { color: var(--good); }
+/* welcome form */
+.idform label { display: flex; flex-wrap: wrap; align-items: center; gap: 6px; font-weight: 800; }
+.idform label input { flex-basis: 100%; }
+.idform input { font: inherit; font-weight: 600; color: var(--ink); background: #fffdf9; border: 2px solid var(--line); border-radius: 14px;
+  padding: 12px 14px; min-height: 50px; width: 100%; }
+.idform input:focus { outline: none; border-color: var(--violet); box-shadow: 0 0 0 3px var(--violet-soft); }
+.idform input[aria-invalid="true"] { border-color: var(--bad); }
+.idform .req, .idform .opt { font-size: 12px; font-weight: 700; border-radius: 999px; padding: 1px 8px; margin-left: 4px; }
+.idform .req { background: var(--action-soft); color: #9a4f08; }
+.idform .opt { background: var(--paper2); color: var(--muted); }
+.idform .err { margin: 0; color: var(--bad); font-weight: 700; }
+.idform .privacy { margin: 0; font-size: 14px; color: var(--muted); }
+.idform .go { justify-self: stretch; }
 canvas.confetti { position: fixed; inset: 0; pointer-events: none; z-index: 50; }
 @media (prefers-reduced-motion: reduce) { .mic.on { animation: none; } }
 </style>
@@ -312,10 +327,29 @@ canvas.confetti { position: fixed; inset: 0; pointer-events: none; z-index: 50; 
         <div class="bubble" aria-hidden="true">Hello!</div>
       </div>
       <span class="eyebrow">Oral infirmier · Anglais</span>
-      <h1>Bonjour Tantie Aïcha !</h1>
+      <h1 id="hello">Bienvenue !</h1>
       <p class="lead">Le jour de l'oral, tu joues <b>Mia</b>. Ici, tu apprends à bien prononcer ses 7 répliques, pas à pas, jusqu'à les dire d'un seul trait.</p>
+      <button class="linkbtn" id="editMe" hidden>Ce n'est pas toi ? Modifier mon prénom</button>
     </div>
 
+    <form class="card idform" id="who" novalidate hidden>
+      <h2>Présente-toi</h2>
+      <p class="note">Ton prénom s'affichera sur ta page et dans tes encouragements.</p>
+      <label>Prénom <span class="req">obligatoire</span>
+        <input id="fFirst" name="first" maxlength="40" autocomplete="given-name" autocapitalize="words" enterkeyhint="next" required>
+      </label>
+      <label>Nom <span class="opt">facultatif</span>
+        <input id="fLast" name="last" maxlength="60" autocomplete="family-name" autocapitalize="words" enterkeyhint="next">
+      </label>
+      <label>E-mail <span class="opt">facultatif</span>
+        <input id="fMail" name="mail" type="email" maxlength="120" autocomplete="email" inputmode="email" enterkeyhint="done">
+      </label>
+      <p class="err" id="fErr" role="alert" hidden></p>
+      <p class="privacy">🔒 Ces informations restent seulement sur ce téléphone : elles ne sont envoyées à personne.</p>
+      <button class="go" type="submit" id="fGo"></button>
+    </form>
+
+    <div id="homeMain" class="screen">
     <div class="card story">
       <h2>L'histoire</h2>
       <p>Mia a 17 ans. Hier matin, elle a glissé sur du verglas en allant à l'école et s'est cassé le poignet droit. Elle est à l'hôpital de Liverpool, au service de traumatologie, et elle va être opérée. Autour d'elle :</p>
@@ -337,6 +371,7 @@ canvas.confetti { position: fixed; inset: 0; pointer-events: none; z-index: 50; 
       <button class="linkbtn" id="restartBtn" hidden>Recommencer depuis le début</button>
     </div>
     <button class="dlcorner" id="homeVideos"></button>
+    </div>
   </section>
 
   <!-- ===== the steps ===== -->
@@ -466,6 +501,13 @@ const store = {
   get(k, d) { try { const v = localStorage.getItem("mia." + k); return v == null ? d : JSON.parse(v); } catch { return d; } },
   set(k, v) { try { localStorage.setItem("mia." + k, JSON.stringify(v)); } catch {} },
 };
+
+/* ---------- who is training: first name shown everywhere, kept only on this phone ---------- */
+const clean = (x, n) => String(x || "").replace(/[<>&"'`\\]/g, "").replace(/\s+/g, " ").trim().slice(0, n);
+let me = store.get("me", null);
+if (me) me = { first: clean(me.first, 40), last: clean(me.last, 60), mail: clean(me.mail, 120) };
+const first = () => (me && me.first) || "";
+const withName = (txt) => (first() ? `${txt.replace(/ !$/, "")}, ${first()} !` : txt);   // « Parfait ! » -> « Parfait, Aïcha ! »
 
 /* ---------- audio ---------- */
 const player = new Audio();
@@ -605,11 +647,11 @@ function diagnose(word, heardSub) {
 
 /* ---------- encouragement ---------- */
 function cheer(score) {
-  if (score >= 1) return ["🎉", "Parfait !", "Tous les mots ont été compris. Recommence une fois pour gagner en fluidité."];
-  if (score >= 0.9) return ["🌟", "Excellent !", "Presque tout est parfait, regarde juste le petit détail ci-dessous."];
-  if (score >= 0.7) return ["👏", "Très bien !", "Encore un petit effort sur les mots en rouge et c'est gagné."];
-  if (score >= 0.5) return ["💪", "Bon début !", "Travaille les mots en rouge un par un, puis réessaie."];
-  return ["🙂", "On continue !", "Écoute d'abord la phrase en lent, puis dis-la doucement, mot par mot."];
+  if (score >= 1) return ["🎉", withName("Parfait !"), "Tous les mots ont été compris. Recommence une fois pour gagner en fluidité."];
+  if (score >= 0.9) return ["🌟", withName("Excellent !"), "Presque tout est parfait, regarde juste le petit détail ci-dessous."];
+  if (score >= 0.7) return ["👏", withName("Très bien !"), "Encore un petit effort sur les mots en rouge et c'est gagné."];
+  if (score >= 0.5) return ["💪", withName("Bon début !"), "Travaille les mots en rouge un par un, puis réessaie."];
+  return ["🙂", withName("On continue !"), "Écoute d'abord la phrase en lent, puis dis-la doucement, mot par mot."];
 }
 function confetti() {
   if (window.matchMedia && matchMedia("(prefers-reduced-motion: reduce)").matches) return;
@@ -753,7 +795,7 @@ function renderHard() {
       const good = res.score >= 1;
       if (good && ++hard[key].streak >= 2) {
         delete hard[key]; store.set("hard", hard);
-        row.className = "hrow win"; row.querySelector("small").textContent = "✓ Maîtrisé ! Bravo.";
+        row.className = "hrow win"; row.querySelector("small").textContent = "✓ Maîtrisé ! " + withName("Bravo !");
         btns.remove(); confetti(); setTimeout(renderHard, 1600);
         return;
       }
@@ -1010,7 +1052,7 @@ function interactiveVideo(video, side, src) {
     const res = heard && heard.some((h) => h.trim()) ? scoreWords(words, heard) : null;
     if (res && res.score >= 0.8) {
       panel.className = "toi ok";
-      panel.innerHTML = `<span class="eyebrow">${cheer(res.score)[0]} Bien dit !</span><p class="say">« ${c.text} »</p>`;
+      panel.innerHTML = `<span class="eyebrow">${cheer(res.score)[0]} ${withName("Bien dit !")}</span><p class="say">« ${c.text} »</p>`;
       setTimeout(() => resume(c.end), 1100);
       return;
     }
@@ -1293,8 +1335,29 @@ function renderTrainNext() {
   } else nextBar("nextTrain", "full");
 }
 
+function askName(edit) {
+  $("who").hidden = false; $("homeMain").hidden = true; $("editMe").hidden = true;
+  $("hello").textContent = "Bienvenue !";
+  $("fFirst").value = me ? me.first : ""; $("fLast").value = me ? me.last : ""; $("fMail").value = me ? me.mail : "";
+  $("fGo").innerHTML = (edit ? "Enregistrer" : "C'est parti") + ICON.next;
+  $("fErr").hidden = true; $("fFirst").removeAttribute("aria-invalid");
+}
+$("who").onsubmit = (e) => {
+  e.preventDefault();
+  const f = clean($("fFirst").value, 40), l = clean($("fLast").value, 60), m = clean($("fMail").value, 120);
+  const bad = (msg, input) => { $("fErr").textContent = msg; $("fErr").hidden = false; input.setAttribute("aria-invalid", "true"); input.focus(); };
+  if (!/\p{L}/u.test(f)) return bad("Écris ton prénom pour continuer.", $("fFirst"));
+  if (m && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(m)) return bad("Cette adresse e-mail ne semble pas juste. Corrige-la ou laisse la case vide.", $("fMail"));
+  me = { first: f, last: l, mail: m };
+  store.set("me", me);
+  renderHome();
+};
+$("editMe").onclick = () => askName(true);
 function renderHome() {
   $("heroMia").innerHTML = MIA.smile || "";
+  if (!first()) { askName(false); return; }
+  $("who").hidden = true; $("homeMain").hidden = false; $("editMe").hidden = false;
+  $("hello").textContent = `Bonjour ${first()} !`;
   $("cast").replaceChildren(...CAST.map(([who, role, col]) => el("span", null, `<i style="background:${col}">${who[0]}</i><b>${who}</b> ${role}`)));
   let mine = 0;
   $("dialogue").replaceChildren(...DIALOGUE.map((part) => {
@@ -1321,7 +1384,7 @@ $("restartBtn").onclick = () => go(STEPS[0]);
 function renderBravo() {
   $("bravoMia").innerHTML = MIA.wide || MIA.smile || "";
   const all = STEPS.every(done);
-  $("bravoTitle").textContent = all ? "Félicitations Tantie Aïcha !" : "Bravo, tu es arrivée au bout !";
+  $("bravoTitle").textContent = all ? withName("Félicitations !") : withName("Bravo, tu es arrivée au bout !");
   $("bravoLead").textContent = all ? "Tu as terminé tous les modules : tu sais dire toutes les répliques de Mia. Tu peux être fière de toi !"
     : "Tu as fait tout le parcours. Pour être parfaitement prête, termine ce qui n'a pas encore sa coche verte.";
   $("recap").replaceChildren(...STEPS.map((st) => {
