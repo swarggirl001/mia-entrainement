@@ -384,7 +384,7 @@ canvas.confetti { position: fixed; inset: 0; pointer-events: none; z-index: 50; 
     <div class="card install" id="install" hidden>
       <div class="appicon" aria-hidden="true"><img src="icons/icon-192.png" alt="" width="56" height="56"></div>
       <div>
-        <h3>Installer l'appli sur ton téléphone</h3>
+        <h3 id="installTitle">Installer l'appli sur ton téléphone</h3>
         <p class="note" id="installHow">Une icône « Mia » sur ton écran d'accueil : elle s'ouvre en plein écran, sans passer par Google.</p>
       </div>
       <button class="go" id="installBtn" hidden></button>
@@ -1522,6 +1522,10 @@ function renderInstall() {
   const box = $("install");
   if (standalone() || !/^https?:$/.test(location.protocol)) { box.hidden = true; return; }
   const ios = /iphone|ipad|ipod/i.test(navigator.userAgent);
+  if (!/android|iphone|ipad|ipod|mobile/i.test(navigator.userAgent)) {   // a computer (Chrome or Edge)
+    $("installTitle").textContent = "Installer l'appli sur ton ordinateur";
+    $("installHow").textContent = "Une icône « Mia » sur ton bureau : elle s'ouvre dans sa propre fenêtre, sans passer par Google.";
+  }
   box.hidden = !(installEvt || ios);
   $("installBtn").hidden = !installEvt;
   $("installBtn").innerHTML = ICON.down + "Installer l'appli";
