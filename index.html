@@ -135,7 +135,7 @@ h1 { font-size: clamp(28px, 7vw, 40px); font-weight: 800; }
 /* full rehearsal */
 .stage { display: grid; gap: 14px; }
 .count { font-family: var(--display); font-size: 64px; font-weight: 800; color: var(--action); text-align: center; line-height: 1; }
-.level { display: flex; gap: 8px; flex-wrap: wrap; }
+.option { display: grid; gap: 4px; justify-items: start; border-top: 2px dashed var(--line); padding-top: 10px; }
 table { width: 100%; border-collapse: collapse; font-variant-numeric: tabular-nums; }
 td, th { text-align: left; padding: 6px 4px; border-bottom: 1px solid var(--line); }
 .hidden-text .units { filter: blur(7px); }
@@ -327,9 +327,10 @@ canvas.confetti { position: fixed; inset: 0; pointer-events: none; z-index: 50; 
     <div class="card">
       <h3>Comme le jour de l'oral</h3>
       <p class="note">Toute la scène est jouée : Lola, Tess, Léa et le Dr Johnson disent leurs répliques, et quand c'est le tour de Mia, c'est à toi. Après un petit compte à rebours (3, 2, 1), dis ta réplique. Environ 5 minutes.</p>
-      <div class="level" role="group" aria-label="Niveau">
-        <button class="btn ghost" id="lvl-easy" aria-pressed="true">Avec le texte</button>
-        <button class="btn ghost" id="lvl-exam" aria-pressed="false">Sans le texte (examen)</button>
+      <p class="note">Tu lis tes répliques <b>avec le texte</b> sous les yeux, comme à l'examen.</p>
+      <div class="option">
+        <button class="btn ghost" id="lvl-exam" aria-pressed="false"></button>
+        <span class="note">Facultatif : le texte est caché pendant que tu parles. Ce n'est pas demandé à l'examen, c'est juste pour aller plus loin.</span>
       </div>
       <button class="mic" id="fullStart"></button>
     </div>
@@ -800,9 +801,13 @@ $("cmpBtn").onclick = async () => {
 
 /* ================= mode 2: full rehearsal ================= */
 let examLevel = false, running = false;
-function setLevel(exam) { examLevel = exam; $("lvl-easy").setAttribute("aria-pressed", String(!exam)); $("lvl-exam").setAttribute("aria-pressed", String(exam)); }
-$("lvl-easy").onclick = () => setLevel(false);
-$("lvl-exam").onclick = () => setLevel(true);
+function setLevel(exam) {
+  examLevel = exam;
+  $("lvl-exam").setAttribute("aria-pressed", String(exam));
+  $("lvl-exam").textContent = exam ? "✓ Option : sans le texte" : "Option : sans le texte";
+}
+setLevel(false);
+$("lvl-exam").onclick = () => setLevel(!examLevel);
 
 async function runFull() {
   if (running) { running = false; stopPlay(); stopListen(); return; }
