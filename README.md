@@ -14,5 +14,7 @@ Lien : https://swarggirl001.github.io/mia-entrainement/
 
 Le test au micro marche dans Google Chrome (Android) avec internet.
 
+C'est aussi une appli installable : sur l'accueil, « Installer l'appli » ajoute l'icône « Mia » à l'écran d'accueil du téléphone. La page, les sons et les images restent alors disponibles sans internet (`sw.js`) ; le micro, lui, a besoin d'internet.
+
 `index.html` et les sons de `audio/` sont générés par `src/build_practice.py` dans le projet `mia-prononciation`
 (`python src/build_practice.py models --template-only --site ../mia-entrainement-site`) ; ne pas les modifier à la main.

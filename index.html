@@ -6,6 +6,11 @@
 <title>Entraînement de Mia</title>
 <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src https://fonts.gstatic.com; img-src 'self' data:; media-src 'self' data: blob:; connect-src 'self'; object-src 'none'; base-uri 'none'; form-action 'none'">
 <meta name="referrer" content="no-referrer">
+<meta name="theme-color" content="#e57f1c">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="icon" href="icons/icon-192.png">
+<link rel="apple-touch-icon" href="icons/apple-touch-icon.png">
+<meta name="apple-mobile-web-app-title" content="Mia">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <!-- fonts load in the background: with a weak connection the page shows at once, in the system font -->
 <link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@600;800&family=Nunito+Sans:wght@400;600;700;800&display=swap" rel="stylesheet" media="print" onload="this.media='all'">
@@ -311,6 +316,12 @@ h2 { font-size: 22px; }
 .idform .err { margin: 0; color: var(--bad); font-weight: 700; }
 .idform .privacy { margin: 0; font-size: 14px; color: var(--muted); }
 .idform .go { justify-self: stretch; }
+/* install the app */
+.install { grid-template-columns: 56px 1fr; align-items: center; background: var(--teal-soft); border-color: transparent; }
+.install .appicon img { display: block; border-radius: 14px; box-shadow: 0 4px 10px rgba(31, 42, 68, .18); }
+.install h3 { color: var(--teal); }
+.install p { margin: 2px 0 0; }
+.install .go { grid-column: 1 / -1; background: var(--teal); box-shadow: 0 8px 20px rgba(31, 143, 130, .25); }
 canvas.confetti { position: fixed; inset: 0; pointer-events: none; z-index: 50; }
 @media (prefers-reduced-motion: reduce) { .mic.on { animation: none; } }
 </style>
@@ -369,6 +380,14 @@ canvas.confetti { position: fixed; inset: 0; pointer-events: none; z-index: 50; 
       <p class="ask">Es-tu prête à jouer le rôle de Mia ?</p>
       <button class="go" id="startBtn"></button>
       <button class="linkbtn" id="restartBtn" hidden>Recommencer depuis le début</button>
+    </div>
+    <div class="card install" id="install" hidden>
+      <div class="appicon" aria-hidden="true"><img src="icons/icon-192.png" alt="" width="56" height="56"></div>
+      <div>
+        <h3>Installer l'appli sur ton téléphone</h3>
+        <p class="note" id="installHow">Une icône « Mia » sur ton écran d'accueil : elle s'ouvre en plein écran, sans passer par Google.</p>
+      </div>
+      <button class="go" id="installBtn" hidden></button>
     </div>
     <button class="dlcorner" id="homeVideos"></button>
     </div>
@@ -1495,6 +1514,31 @@ addEventListener("hashchange", () => show(Object.keys(HASH).find((k) => HASH[k] 
 $("micBtn").onclick = () => { if (!$("full").hidden) { if (rec) stopListen(); return; } testLine(); };
 $("fullStart").innerHTML = ICON.play + "Commencer la répétition";
 $("fullStart").onclick = runFull;
+
+/* ---------- installable app (Android: Chrome or Samsung Internet; iPhone: Safari > Partager) ---------- */
+let installEvt = null;
+const standalone = () => matchMedia("(display-mode: standalone)").matches || navigator.standalone === true;
+function renderInstall() {
+  const box = $("install");
+  if (standalone() || !/^https?:$/.test(location.protocol)) { box.hidden = true; return; }
+  const ios = /iphone|ipad|ipod/i.test(navigator.userAgent);
+  box.hidden = !(installEvt || ios);
+  $("installBtn").hidden = !installEvt;
+  $("installBtn").innerHTML = ICON.down + "Installer l'appli";
+  if (ios && !installEvt) $("installHow").textContent = "Dans Safari, touche le bouton Partager (le carré avec une flèche), puis « Sur l'écran d'accueil ».";
+}
+addEventListener("beforeinstallprompt", (e) => { e.preventDefault(); installEvt = e; renderInstall(); });
+addEventListener("appinstalled", () => { installEvt = null; $("install").hidden = true; confetti(); });
+$("installBtn").onclick = async () => {
+  if (!installEvt) return;
+  installEvt.prompt();
+  await installEvt.userChoice;
+  installEvt = null;
+  renderInstall();
+};
+if ("serviceWorker" in navigator && (location.protocol === "https:" || location.hostname === "localhost"))
+  navigator.serviceWorker.register("sw.js").catch(() => {});
+renderInstall();
 
 if (!SR) $("live").textContent = "Astuce : ouvre cette page dans Google Chrome pour le test au micro.";
 collectNotes();
