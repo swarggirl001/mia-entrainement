@@ -131,7 +131,7 @@ button { font: inherit; color: inherit; cursor: pointer; border: 0; background: 
 .tile:nth-child(4) { background: var(--card); color: var(--fg); --r: -.9deg; --d: .35s; }
 .grid.in .tile { animation: pop-in .6s var(--d) cubic-bezier(.34,1.56,.64,1) backwards; }
 @keyframes pop-in { from { transform: translateY(22px) scale(.9) rotate(var(--r)); } }
-.tile .ic { font-size: 36px; display: inline-block; width: max-content; transition: transform .35s cubic-bezier(.34,1.56,.64,1); }
+.tile .ic { display: inline-block; width: max-content; transition: transform .35s cubic-bezier(.34,1.56,.64,1); }
 @media (hover: hover) { .tile:hover .ic { transform: translateY(-4px) scale(1.12); } }
 .tile.jump .ic { animation: jump .5s cubic-bezier(.34,1.56,.64,1); }
 @keyframes jump { 40% { transform: translateY(-10px) scale(1.15); } }
@@ -150,7 +150,7 @@ button { font: inherit; color: inherit; cursor: pointer; border: 0; background: 
 .goal-list { display: grid; gap: 8px; }
 .goal { display: grid; grid-template-columns: 40px 1fr auto; gap: 10px; align-items: center; padding: 8px 10px; border-radius: 14px; border: 2px solid var(--track); width: 100%; transition: transform .2s, background .3s; }
 .goal:active { transform: scale(.97); }
-.goal .gi { font-size: 22px; width: 40px; height: 40px; display: grid; place-items: center; border-radius: 12px; background: var(--t1); }
+.goal .gi { width: 40px; height: 40px; display: grid; place-items: center; border-radius: 12px; background: var(--t1); }
 .goal:nth-child(2) .gi { background: var(--t2); } .goal:nth-child(3) .gi { background: var(--t3); }
 .goal .gt { font-family: var(--title); font-size: 16px; display: grid; gap: 6px; }
 .goal .bar { height: 8px; border-radius: 99px; background: var(--track); overflow: hidden; display: block; }
@@ -186,7 +186,15 @@ button { font: inherit; color: inherit; cursor: pointer; border: 0; background: 
 .pal { flex: none; display: grid; gap: 4px; justify-items: center; padding: 8px 10px; border-radius: 14px; border: 2px solid var(--track); background: var(--card); font-family: var(--pixel); font-size: 12.5px; }
 .pal[aria-pressed="true"] { border: var(--bw) solid var(--line); box-shadow: 3px 3px 0 var(--shadow); }
 .pal .sw { display: flex; } .pal .sw i { width: 18px; height: 18px; border-radius: 50%; border: 2px solid var(--line); margin-left: -5px; } .pal .sw i:first-child { margin-left: 0; }
-.palbox { display: grid; gap: 6px; } .palbox p { font-family: var(--pixel); font-size: 13px; color: var(--muted); }
+.palbox { display: grid; gap: 6px; } .palrow { display: grid; grid-template-columns: 58px 1fr; align-items: center; gap: 6px; } .palrow b { font-family: var(--title); font-weight: 400; font-size: 15px; } .palrow .palettes { min-width: 0; } .palbox p { font-family: var(--pixel); font-size: 13px; color: var(--muted); }
+.ico { width: 1.25em; height: 1.25em; display: inline-block; vertical-align: -.28em; flex: none; overflow: visible; }
+.tile .ic .ico { width: 50px; height: 50px; }
+.goal .gi .ico { width: 28px; height: 28px; vertical-align: middle; }
+.goal.done .gs { background: none !important; width: auto !important; height: auto !important; } .goal .gs .ico { width: 30px; height: 30px; }
+.nav button b .ico { width: 26px; height: 26px; }
+.theme .ico { width: 24px; height: 24px; }
+.play { background: var(--card) !important; border: var(--bw) solid var(--line); } .play .ico { width: 26px; height: 26px; }
+.flame .ico { width: 18px; height: 18px; } .streak .ico { width: 22px; height: 22px; }
 .dg { font-family: var(--body); font-weight: 700; font-size: .95em; letter-spacing: 0; }
 .demo { font-family: var(--pixel); font-size: 13px; color: var(--muted); text-align: center; }
 
@@ -233,24 +241,24 @@ canvas#confetti { position: fixed; inset: 0; width: 100%; height: 100%; pointer-
       <button aria-current="page" data-nav="0">Accueil</button><button data-nav="1">Cours</button><button data-nav="2">Mes mots</button><button data-nav="3">Moi</button>
     </nav>
     <div class="spacer"></div>
-    <div class="pill" title="Jours d'affilée"><span class="flame">🔥</span> 3 jours</div>
-    <button class="theme" id="theme" aria-label="Passer en mode sombre">🌙</button>
+    <div class="pill" title="Jours d'affilée"><span class="flame"><i data-ic="flame"></i></span> 3 jours</div>
+    <button class="theme" id="theme" aria-label="Passer en mode sombre"><i data-ic="moon"></i></button>
   </header>
 
-  <div class="palbox"><p>🎨 Essaie les palettes (choix de démo, en clair et en sombre) :</p><div class="palettes" id="palettes"></div></div>
+  <div class="palbox"><p>Démo : choisis le fond et les cartes, puis compare en clair et en sombre.</p><div class="palrow"><b>Fond</b><div class="palettes" id="palBg"></div></div><div class="palrow"><b>Cartes</b><div class="palettes" id="palCards"></div></div></div>
 
   <section class="hero" data-replay>
     <button class="hero-kali" id="heroKali" aria-label="Kali, toucher pour la faire sauter"></button>
-    <span class="bubble">Hello! 👋</span>
+    <span class="bubble">Hello!</span>
     <h1>Salut Aya, prête à <span class="hl">briller<svg viewBox="0 0 100 16" preserveAspectRatio="none" aria-hidden="true"><path d="M2 10 Q25 2 50 9 T98 7" fill="none" stroke-width="5" stroke-linecap="round"/></svg></span> ?</h1>
-    <p class="streak"><span>🔥</span><span>Encore 1 leçon aujourd'hui pour garder ta série</span></p>
+    <p class="streak"><i data-ic="flame"></i><span>Encore 1 leçon aujourd'hui pour garder ta série</span></p>
   </section>
 
   <div class="cols">
     <button class="resume sticker" id="resume" data-replay aria-label="Continuer Unit 1, Past habits, 45 pour cent">
       <span class="ring"><svg viewBox="0 0 78 78" aria-hidden="true"><circle class="track" cx="39" cy="39" r="32" fill="none" stroke-width="9"/><circle class="val" id="ring" cx="39" cy="39" r="32" fill="none" stroke-width="9" stroke-linecap="round"/></svg><b id="pct">45%</b></span>
       <span>
-        <span class="eyebrow" style="display:block">▶ Continuer</span>
+        <span class="eyebrow" style="display:block"><i data-ic="play"></i> Continuer</span>
         <span class="ttl">Unit 1 · Past habits</span>
         <small>Encore 3 exercices · 10 min</small><br>
         <span class="go">C'est parti <span class="arr">→</span></span>
@@ -259,31 +267,31 @@ canvas#confetti { position: fixed; inset: 0; width: 100%; height: 100%; pointer-
     <div class="flip" id="flip">
       <div class="flip-inner">
         <div class="face front" id="front" role="button" tabindex="0" aria-label="Le mot du jour : resilience. Toucher pour voir le sens.">
-          <p class="eyebrow">✨ Le mot du jour</p>
+          <p class="eyebrow"><i data-ic="sparkle"></i> Le mot du jour</p>
           <p class="word">resilience</p>
           <p class="ipa">/rɪˈzɪliəns/ · nom</p>
           <p class="hint">Touche la carte pour voir le sens ↻</p>
-          <button class="play" data-say="resilience" aria-label="Écouter le mot">🔊</button>
+          <button class="play" data-say="resilience" aria-label="Écouter le mot"><i data-ic="speaker"></i></button>
         </div>
         <div class="face back" id="back" role="button" tabindex="-1" aria-label="Retourner la carte">
           <p class="eyebrow">Ça veut dire…</p>
           <p class="word" style="font-size:24px">la force de se relever</p>
           <p class="ipa">« Her resilience helped her pass the exam. »</p>
           <p class="hint">Touche pour retourner ↻</p>
-          <button class="play" data-say="Her resilience helped her pass the exam." aria-label="Écouter la phrase">🔊</button>
+          <button class="play" data-say="Her resilience helped her pass the exam." aria-label="Écouter la phrase"><i data-ic="speaker"></i></button>
         </div>
       </div>
     </div>
   </div>
 
   <section class="goals sticker" id="goals" data-replay>
-    <div class="goals-head"><p class="eyebrow">🎯 Objectifs du jour</p><small id="goalCount">1 / 3 atteint</small></div>
+    <div class="goals-head"><p class="eyebrow"><i data-ic="target"></i> Objectifs du jour</p><small id="goalCount">1 / 3 atteint</small></div>
     <div class="goal-list">
-      <button class="goal done" data-goal="0"><span class="gi">📖</span><span class="gt">Finir 1 leçon<span class="bar"><i style="width:100%"></i></span></span><span class="gs">✓</span></button>
-      <button class="goal" data-goal="1"><span class="gi">🔤</span><span class="gt">Apprendre 5 mots<span class="bar"><i style="width:60%"></i></span></span><span class="gs">3/5</span></button>
-      <button class="goal" data-goal="2"><span class="gi">🎧</span><span class="gt">10 min d'écoute<span class="bar"><i style="width:40%"></i></span></span><span class="gs">4/10</span></button>
+      <button class="goal done" data-goal="0"><span class="gi"><i data-ic="bookopen"></i></span><span class="gt">Finir 1 leçon<span class="bar"><i style="width:100%"></i></span></span><span class="gs"><i data-ic="check"></i></span></button>
+      <button class="goal" data-goal="1"><span class="gi"><i data-ic="letters"></i></span><span class="gt">Apprendre 5 mots<span class="bar"><i style="width:60%"></i></span></span><span class="gs">3/5</span></button>
+      <button class="goal" data-goal="2"><span class="gi"><i data-ic="headphones"></i></span><span class="gt">10 min d'écoute<span class="bar"><i style="width:40%"></i></span></span><span class="gs">4/10</span></button>
     </div>
-    <p class="goal-hint">Touche un objectif pour le terminer (démo) : un badge t'attend 🏅</p>
+    <p class="goal-hint">Touche un objectif pour le terminer (démo) : un badge t'attend.</p>
   </section>
 
   <div class="sec"><h2>Mes badges</h2><small id="badgeCount">3 sur 8</small></div>
@@ -291,10 +299,10 @@ canvas#confetti { position: fixed; inset: 0; width: 100%; height: 100%; pointer-
 
   <div class="sec"><h2>Tes modules</h2><small>4 au total</small></div>
   <div class="grid" data-replay>
-    <button class="tile sticker" data-msg="Ouverture des cours d'anglais…"><span class="tag">9 leçons</span><span class="ic">📚</span><span><span class="ttl">Cours d'anglais</span><p>Terminale · écouter, lire, parler, écrire</p></span><span class="arr">→</span></button>
-    <button class="tile sticker" data-msg="Ouverture du jeu de rôle de Mia…"><span class="tag">Oral</span><span class="ic">🎭</span><span><span class="ttl">Jeu de rôle de Mia</span><p>7 répliques à maîtriser</p></span><span class="arr">→</span></button>
-    <button class="tile sticker" data-msg="Tes 12 mots difficiles t'attendent."><span class="tag">12 mots</span><span class="ic">🔤</span><span><span class="ttl">Mes mots</span><p>Révise tes mots difficiles</p></span><span class="arr">→</span></button>
-    <button class="tile sticker soon" data-msg="D'autres matières arrivent bientôt ✨"><span class="ic">✨</span><span><span class="ttl">Bientôt…</span><p>D'autres matières</p></span></button>
+    <button class="tile sticker" data-msg="Ouverture des cours d'anglais…"><span class="tag">9 leçons</span><span class="ic"><i data-ic="books"></i></span><span><span class="ttl">Cours d'anglais</span><p>Terminale · écouter, lire, parler, écrire</p></span><span class="arr">→</span></button>
+    <button class="tile sticker" data-msg="Ouverture du jeu de rôle de Mia…"><span class="tag">Oral</span><span class="ic"><i data-ic="dialogue"></i></span><span><span class="ttl">Jeu de rôle de Mia</span><p>7 répliques à maîtriser</p></span><span class="arr">→</span></button>
+    <button class="tile sticker" data-msg="Tes 12 mots difficiles t'attendent."><span class="tag">12 mots</span><span class="ic"><i data-ic="letters"></i></span><span><span class="ttl">Mes mots</span><p>Révise tes mots difficiles</p></span><span class="arr">→</span></button>
+    <button class="tile sticker soon" data-msg="D'autres matières arrivent bientôt"><span class="ic"><i data-ic="sparkle"></i></span><span><span class="ttl">Bientôt…</span><p>D'autres matières</p></span></button>
   </div>
 
   <p class="demo">Démo : les boutons montrent les animations, ils n'ouvrent pas encore les vraies pages.</p>
@@ -302,10 +310,10 @@ canvas#confetti { position: fixed; inset: 0; width: 100%; height: 100%; pointer-
 
 <nav class="nav" aria-label="Menu">
   <span class="dot" id="dot"></span>
-  <button aria-current="page" data-nav="0"><b>🏠</b>Accueil</button>
-  <button data-nav="1"><b>📚</b>Cours</button>
-  <button data-nav="2"><b>🔤</b>Mes mots</button>
-  <button data-nav="3"><b>👤</b>Moi</button>
+  <button aria-current="page" data-nav="0"><b><i data-ic="home"></i></b>Accueil</button>
+  <button data-nav="1"><b><i data-ic="books"></i></b>Cours</button>
+  <button data-nav="2"><b><i data-ic="letters"></i></b>Mes mots</button>
+  <button data-nav="3"><b><i data-ic="user"></i></b>Moi</button>
 </nav>
 <div class="reward" id="reward" hidden>
   <div class="reward-card" role="dialog" aria-modal="true" aria-labelledby="rewardTitle">
@@ -321,6 +329,9 @@ canvas#confetti { position: fixed; inset: 0; width: 100%; height: 100%; pointer-
 
 <script>
 "use strict";
+@KALI_JS@
+@ICONS_JS@
+paintIcons();
 const $ = (s) => document.querySelector(s);
 const root = document.documentElement;
 const reduce = matchMedia("(prefers-reduced-motion: reduce)").matches;
@@ -349,12 +360,12 @@ document.querySelectorAll("[data-replay]").forEach((el) => io.observe(el));
 
 // light / dark: follows the phone, the moon button switches by hand
 const isDark = () => root.dataset.theme ? root.dataset.theme === "dark" : matchMedia("(prefers-color-scheme: dark)").matches;
-const paintBtn = () => { const d = isDark(); $("#theme").textContent = d ? "☀️" : "🌙"; $("#theme").setAttribute("aria-label", d ? "Passer en mode clair" : "Passer en mode sombre"); };
+const paintBtn = () => { const d = isDark(); $("#theme").innerHTML = icon(d ? "sun" : "moon"); $("#theme").setAttribute("aria-label", d ? "Passer en mode clair" : "Passer en mode sombre"); };
 paintBtn();
 $("#theme").addEventListener("click", () => {
   root.dataset.theme = isDark() ? "light" : "dark"; applyPalette();
   $("#theme").classList.toggle("spin"); paintBtn();
-  toast(isDark() ? "Mode sombre 🌙" : "Mode clair ☀️");
+  toast(isDark() ? "Mode sombre" : "Mode clair");
 });
 
 let tt;
@@ -374,7 +385,7 @@ document.querySelectorAll(".play").forEach((p) => p.addEventListener("click", (e
 }));
 
 // continue card: the whole card is the button
-$("#resume").addEventListener("click", (e) => { playRing(); confetti(e.clientX, e.clientY); toast("Bravo ! On reprend la leçon 🎉"); });
+$("#resume").addEventListener("click", (e) => { playRing(); confetti(e.clientX, e.clientY); toast("Bravo ! On reprend la leçon"); });
 $("#resume").addEventListener("mouseenter", playRing);
 
 // module tiles
@@ -388,54 +399,60 @@ function pick(i) {
   document.querySelectorAll("[data-nav]").forEach((b) => b.removeAttribute("aria-current"));
   document.querySelectorAll(`[data-nav="${i}"]`).forEach((b) => b.setAttribute("aria-current", "page"));
   $("#dot").style.transform = `translateX(${i * 100}%)`;
-  if (i) toast(["", "Les cours arrivent ici 📚", "Tes mots arrivent ici 🔤", "Ton profil arrive ici 👤"][i]);
+  if (i) toast(["", "Les cours arrivent ici", "Tes mots arrivent ici", "Ton profil arrive ici"][i]);
 }
 document.querySelectorAll("[data-nav]").forEach((b) => b.addEventListener("click", () => pick(+b.dataset.nav)));
 
 
-@KALI_JS@
+
 // ---- Kali in the hero
 $("#heroKali").innerHTML = kali("bow");
 $("#heroKali").addEventListener("click", () => kaliCheer($("#heroKali .kali")));
 
 // ---- palettes (demo): light and dark values for the page and the cards
-const PAL = [
-  { name: "Lavande douce", l: { bg: "#f8f5ff", t1: "#e3dcfb", t2: "#fde3d6", t3: "#d9efe7", lilac: "#dcd0f7", butter: "#fff0c7" }, d: { t1: "#b8a8e6", t2: "#efbfa8", t3: "#a5d8c6" } },
-  { name: "Sable & sauge", l: { bg: "#f7f2ea", t1: "#dfe8d3", t2: "#f1dccb", t3: "#d8e2ef", lilac: "#e5ddf5", butter: "#f8e8c3" }, d: { t1: "#b9cfae", t2: "#e8c4ab", t3: "#aec3dd" } },
-  { name: "Nuage", l: { bg: "#f5f7fc", t1: "#dbe5ff", t2: "#ebe3ff", t3: "#fde6ee", lilac: "#e4dcff", butter: "#fff3cf" }, d: { t1: "#a9bdf0", t2: "#c3b3f0", t3: "#f0b9c9" } },
-  { name: "Agrumes doux", l: { bg: "#fffaf1", t1: "#ffe9b8", t2: "#ffd8c6", t3: "#e2f1c8", lilac: "#e6defa", butter: "#fff2c4" }, d: { t1: "#f3d38c", t2: "#f2b49b", t3: "#bcd99a" } },
-  { name: "Bonbon", l: { bg: "#fdf7fb", t1: "#eadcff", t2: "#ffdbe9", t3: "#d7f0ff", lilac: "#e3d6fb", butter: "#fff1c9" }, d: { t1: "#c3aef0", t2: "#f2b0c8", t3: "#a8d6f0" } },
-  { name: "Ivoire chic", l: { bg: "#fbfaf7", t1: "#ece8f8", t2: "#f6ece4", t3: "#e6efe9", lilac: "#e7e1f7", butter: "#f7efd9" }, d: { t1: "#bdb3dc", t2: "#dcc2b2", t3: "#b3cdbf" } },
-  { name: "Actuelle", l: { bg: "#fff8e7", t1: "#c9d8ff", t2: "#ffd6bf", t3: "#c8f1dd", lilac: "#d9cdf6", butter: "#ffe8a3" }, d: { t1: "#a9bdf5", t2: "#f7c2a3", t3: "#a6e3c6" } },
+const BGS = [
+  { name: "Lavande", c: "#f8f5ff" }, { name: "Bonbon", c: "#fdf7fb" }, { name: "Ivoire", c: "#fbfaf7" },
 ];
-let palIdx = 0;
+const CARDS = [
+  { name: "Ivoire chic", l: { t1: "#ece8f8", t2: "#f6ece4", t3: "#e6efe9", lilac: "#e7e1f7", butter: "#f7efd9" }, d: { t1: "#bdb3dc", t2: "#dcc2b2", t3: "#b3cdbf" } },
+  { name: "Bonbon doux", l: { t1: "#efe6ff", t2: "#ffe6ef", t3: "#e3f4ff", lilac: "#e9ddfb", butter: "#fff3d6" }, d: { t1: "#c7b6ee", t2: "#eab4c8", t3: "#a9cfe6" } },
+  { name: "Nuage", l: { t1: "#dbe5ff", t2: "#ebe3ff", t3: "#fde6ee", lilac: "#e4dcff", butter: "#fff3cf" }, d: { t1: "#a9bdf0", t2: "#c3b3f0", t3: "#f0b9c9" } },
+  { name: "Sable & sauge", l: { t1: "#dfe8d3", t2: "#f1dccb", t3: "#d8e2ef", lilac: "#e5ddf5", butter: "#f8e8c3" }, d: { t1: "#b9cfae", t2: "#e8c4ab", t3: "#aec3dd" } },
+  { name: "Lavande douce", l: { t1: "#e3dcfb", t2: "#fde3d6", t3: "#d9efe7", lilac: "#dcd0f7", butter: "#fff0c7" }, d: { t1: "#b8a8e6", t2: "#efbfa8", t3: "#a5d8c6" } },
+];
+let bgIdx = 0, cardIdx = 0;
 function applyPalette() {
-  const P = PAL[palIdx], vals = isDark() ? P.d : P.l;
   ["bg", "t1", "t2", "t3", "lilac", "butter"].forEach((k) => root.style.removeProperty("--" + k));
-  Object.entries(vals).forEach(([k, v]) => root.style.setProperty("--" + k, v));
+  const C = CARDS[cardIdx];
+  Object.entries(isDark() ? C.d : C.l).forEach(([k, v]) => root.style.setProperty("--" + k, v));
+  if (!isDark()) root.style.setProperty("--bg", BGS[bgIdx].c);
 }
-$("#palettes").innerHTML = PAL.map((p, i) => `<button class="pal" data-pal="${i}" aria-pressed="${i === 0}"><span class="sw">${[p.l.bg, p.l.t1, p.l.t2, p.l.t3].map((c) => `<i style="background:${c}"></i>`).join("")}</span><span>${i + 1}. ${p.name}</span></button>`).join("");
-document.querySelectorAll(".pal").forEach((b) => b.addEventListener("click", () => {
-  palIdx = +b.dataset.pal; applyPalette();
-  document.querySelectorAll(".pal").forEach((x) => x.setAttribute("aria-pressed", String(x === b)));
+$("#palBg").innerHTML = BGS.map((p, i) => `<button class="pal" data-bg="${i}" aria-pressed="${i === bgIdx}"><span class="sw"><i style="background:${p.c};width:26px;height:26px"></i></span><span>${p.name}</span></button>`).join("");
+$("#palCards").innerHTML = CARDS.map((p, i) => `<button class="pal" data-cards="${i}" aria-pressed="${i === cardIdx}"><span class="sw">${[p.l.t1, p.l.t2, p.l.t3].map((c) => `<i style="background:${c}"></i>`).join("")}</span><span>${p.name}</span></button>`).join("");
+document.querySelectorAll("[data-bg]").forEach((b) => b.addEventListener("click", () => {
+  bgIdx = +b.dataset.bg; applyPalette(); document.querySelectorAll("[data-bg]").forEach((x) => x.setAttribute("aria-pressed", String(x === b)));
+  if (isDark()) toast("Le fond se voit en mode clair");
+}));
+document.querySelectorAll("[data-cards]").forEach((b) => b.addEventListener("click", () => {
+  cardIdx = +b.dataset.cards; applyPalette(); document.querySelectorAll("[data-cards]").forEach((x) => x.setAttribute("aria-pressed", String(x === b)));
 }));
 matchMedia("(prefers-color-scheme: dark)").addEventListener("change", applyPalette);
 applyPalette();
 
 // ---- badges
 const BADGES = [
-  ["👣", "Premier pas", "#c3b3f0", true], ["🔥", "3 jours", "#ffb38a", true], ["📖", "1re leçon", "#9fd3c0", true],
-  ["🔤", "50 mots", "#a9c2f5", false], ["🎧", "Oreille d'or", "#ffd27a", false], ["🗣️", "Belle voix", "#f2a7c3", false],
-  ["✍️", "Écrivain", "#b5d98e", false], ["🏆", "Unit 1 finie", "#e8c27a", false],
+  ["flag", "Premier pas", "#d9cdf6", true], ["flame", "3 jours", "#ffd9c4", true], ["bookopen", "1re leçon", "#cfeee0", true],
+  ["letters", "50 mots", "#d3e0fb", false], ["headphones", "Oreille d'or", "#ffe9b0", false], ["mic", "Belle voix", "#f8d3e1", false],
+  ["pencil", "Écrivain", "#dcefc6", false], ["trophy", "Unit 1 finie", "#f3dfb0", false],
 ];
 const medal = (ic, col) => `<svg viewBox="0 0 100 110" aria-hidden="true"><path d="M30 4 h16 l10 34 -14 6z" fill="#7b68c4" stroke="#141414" stroke-width="3.5" stroke-linejoin="round"/><path d="M70 4 h-16 l-10 34 14 6z" fill="#ffd27a" stroke="#141414" stroke-width="3.5" stroke-linejoin="round"/>
   <circle cx="50" cy="70" r="34" fill="${col}" stroke="#141414" stroke-width="4"/><circle cx="50" cy="70" r="25" fill="none" stroke="#141414" stroke-width="2" stroke-dasharray="3 4" opacity=".5"/>
-  <text x="50" y="81" text-anchor="middle" font-size="30">${ic}</text></svg>`;
+  ${icon(ic, "mi").replace("<svg ", '<svg x="29" y="49" width="42" height="42" ')}</svg>`;
 function drawBadges(fresh) {
-  $("#badges").innerHTML = BADGES.map(([ic, name, col, got], i) => `<button class="badge ${got ? "" : "locked"} ${i === fresh ? "new" : ""}" data-b="${i}">${medal(got ? ic : "🔒", col)}<span>${name}</span></button>`).join("");
+  $("#badges").innerHTML = BADGES.map(([ic, name, col, got], i) => `<button class="badge ${got ? "" : "locked"} ${i === fresh ? "new" : ""}" data-b="${i}">${medal(got ? ic : "lock", col)}<span>${name}</span></button>`).join("");
   $("#badgeCount").textContent = `${BADGES.filter((b) => b[3]).length} sur ${BADGES.length}`; if (typeof fixDigits === "function") { fixDigits($("#badges")); fixDigits($("#badgeCount")); }
   document.querySelectorAll(".badge").forEach((b) => b.addEventListener("click", () => {
-    const [, name, , got] = BADGES[+b.dataset.b]; toast(got ? `Badge « ${name} » ✓` : `Encore un effort pour « ${name} » !`);
+    const [, name, , got] = BADGES[+b.dataset.b]; toast(got ? `Badge « ${name} » gagné` : `Encore un effort pour « ${name} » !`);
   }));
 }
 drawBadges();
@@ -444,7 +461,7 @@ drawBadges();
 const GOALBADGE = { 1: 3, 2: 4 };
 document.querySelectorAll(".goal").forEach((g) => g.addEventListener("click", () => {
   if (g.classList.contains("done")) return toast("Déjà fait aujourd'hui ✓");
-  g.classList.add("done"); g.querySelector(".bar i").style.width = "100%"; g.querySelector(".gs").textContent = "✓";
+  g.classList.add("done"); g.querySelector(".bar i").style.width = "100%"; g.querySelector(".gs").innerHTML = icon("check");
   $("#goalCount").textContent = `${document.querySelectorAll(".goal.done").length} / 3 atteints`; fixDigits($("#goalCount"));
   const bi = GOALBADGE[g.dataset.goal]; BADGES[bi][3] = true;
   setTimeout(() => showReward(bi), 500);

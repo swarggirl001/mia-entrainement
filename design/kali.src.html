@@ -64,6 +64,7 @@ h2 { font-family: var(--title); font-weight: 400; font-size: 26px; margin: 6px 0
 
 .where { border: var(--bw) dashed var(--line); border-radius: 20px; padding: 14px 16px; font-family: var(--pixel); font-size: 15px; display: grid; gap: 4px; }
 .where b { font-family: var(--title); font-weight: 400; font-size: 18px; }
+.ico { width: 1.3em; height: 1.3em; display: inline-block; vertical-align: -.3em; }
 @KALI_CSS@
 @media (prefers-reduced-motion: reduce) { *, *::before, *::after { animation: none !important; transition: none !important; } }
 </style>
@@ -74,7 +75,7 @@ h2 { font-family: var(--title); font-weight: 400; font-size: 26px; margin: 6px 0
     <div class="id">
       <h1>Voici <span>Kali</span></h1>
       <p class="lead">L'éléphante de KalaLab. Toujours de bonne humeur, toujours prête à t'encourager. Touche-la : elle saute de joie.</p>
-      <div class="facts"><span>💜 Lilas, comme le logo</span><span>🎀 Son nœud, toujours sur la tête</span><span>✨ Elle bouge tout le temps</span></div>
+      <div class="facts"><span><i data-ic="star"></i> Lilas, comme le logo</span><span><i data-ic="sparkle"></i> Son nœud, toujours sur la tête</span><span><i data-ic="flame"></i> Elle bouge tout le temps</span></div>
     </div>
   </section>
 
@@ -97,7 +98,7 @@ h2 { font-family: var(--title); font-weight: 400; font-size: 26px; margin: 6px 0
         </g>
       </svg>
       <p class="cap">Elle sort de derrière l'arche, vient devant « Lab », fait coucou avec sa trompe, puis repart.</p>
-      <button class="btn" id="replay">↻ Revoir</button>
+      <button class="btn" id="replay">Revoir</button>
     </div>
 
     <div class="box lesson" id="lesson">
@@ -106,22 +107,24 @@ h2 { font-family: var(--title); font-weight: 400; font-size: 26px; margin: 6px 0
       <p class="q">I ___ to like maths.</p>
       <div class="opts"><span class="ko">used</span><span class="ko">use</span><span>didn't use</span></div>
       <button class="btn" id="stuck" style="justify-self:start">Simuler : 3 erreurs</button>
-      <p class="tip" id="tip">Courage ! Tu y es presque 💪</p>
+      <p class="tip" id="tip">Courage ! Tu y es presque !</p>
       <div class="visit" id="visit"></div>
     </div>
   </div>
 
   <div class="where">
     <b>Où on la voit</b>
-    <span>✅ Accueil, « Mes mots », « Moi », écrans de bravo et de badges, page d'erreur</span>
-    <span>⚡ Dans les cours : seulement un passage rapide pour encourager</span>
-    <span>❌ Jamais dans le jeu de rôle de Mia</span>
+    <span><i data-ic="check"></i> Accueil, « Mes mots », « Moi », écrans de bravo et de badges, page d'erreur</span>
+    <span><i data-ic="sparkle"></i> Dans les cours : seulement un passage rapide pour encourager</span>
+    <span><i data-ic="lock"></i> Jamais dans le jeu de rôle de Mia</span>
   </div>
 </div>
 
 <script>
 "use strict";
 @KALI_JS@
+@ICONS_JS@
+paintIcons();
 const $ = (s) => document.querySelector(s);
 $("#big").innerHTML = kali("bow");
 $("#big").addEventListener("click", () => kaliCheer($("#big .kali")));

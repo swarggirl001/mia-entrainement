@@ -5,7 +5,7 @@ D = os.path.dirname(os.path.abspath(__file__))
 name = sys.argv[1]
 s = open(f"{D}/{name}.src.html").read()
 k = open(f"{D}/kali.js").read()
-s = s.replace("@KALI_CSS@", re.search(r"const KALI_CSS = `(.*?)`;", k, re.S).group(1)).replace("@KALI_JS@", k)
+s = s.replace("@KALI_CSS@", re.search(r"const KALI_CSS = `(.*?)`;", k, re.S).group(1)).replace("@KALI_JS@", k).replace("@ICONS_JS@", open(f"{D}/icons.js").read())
 font = lambda f: base64.b64encode(open(f"{D}/fonts/{f}", "rb").read()).decode()
 s = s.replace("@@BLACK@@", font("GLF-Cikutra-Black.otf")).replace("@@BOLD@@", font("GLF-Cikutra-Bold.otf"))
 open(f"{D}/{name}.html", "w").write(s)

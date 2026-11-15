@@ -45,7 +45,7 @@ function kali(acc = "bow", label = "Kali, l'éléphante de KalaLab") {
     </g>
     ${bow}${extras[acc] || ""}
   </g>
-  <g class="hearts" font-size="22"><text x="150" y="40">💜</text><text x="38" y="34">✨</text><text x="160" y="82">💛</text></g>
+  <g class="hearts"><path transform="translate(146 18)" d="M0 6 C0 -1 9 -1 9 5 C9 -1 18 -1 18 6 C18 12 11 16 9 19 C7 16 0 12 0 6Z" fill="#c9b8f0" stroke="#141414" stroke-width="2.5" stroke-linejoin="round"/><path transform="translate(30 14)" d="M10 0 l3 7 7 3 -7 3 -3 7 -3-7 -7-3 7-3z" fill="#ffd27a" stroke="#141414" stroke-width="2.5" stroke-linejoin="round"/><path transform="translate(160 62)" d="M0 6 C0 -1 9 -1 9 5 C9 -1 18 -1 18 6 C18 12 11 16 9 19 C7 16 0 12 0 6Z" fill="#ffd27a" stroke="#141414" stroke-width="2.5" stroke-linejoin="round"/></g>
 </svg>`;
 }
 const KALI_CSS = `
@@ -74,9 +74,9 @@ const KALI_CSS = `
 @keyframes k-jump { 0% { transform: translateY(0) scale(1); } 20% { transform: translateY(4px) scale(1.06,.92); } 55% { transform: translateY(-26px) scale(.96,1.05); } 100% { transform: translateY(0) scale(1); } }
 @keyframes k-toot { 40% { transform: rotate(-28deg); } }
 @keyframes k-wave { 50% { transform: rotate(-24deg); } }
-.kali .hearts { pointer-events: none; } .kali .hearts text { opacity: 0; }
-.kali.happy .hearts text { animation: k-float 1s ease-out; }
-.kali.happy .hearts text:nth-child(2) { animation-delay: .12s; } .kali.happy .hearts text:nth-child(3) { animation-delay: .24s; }
+.kali .hearts { pointer-events: none; } .kali .hearts > * { opacity: 0; }
+.kali.happy .hearts > * { animation: k-float 1s ease-out; }
+.kali.happy .hearts > :nth-child(2) { animation-delay: .12s; } .kali.happy .hearts > :nth-child(3) { animation-delay: .24s; }
 @keyframes k-float { 0% { opacity: 0; transform: translateY(6px) scale(.6); } 30% { opacity: 1; } 100% { opacity: 0; transform: translateY(-30px) scale(1.1); } }
 `;
 function kaliCheer(svg) { if (!svg) return; svg.classList.remove("happy"); void svg.getBoundingClientRect(); svg.classList.add("happy"); setTimeout(() => svg.classList.remove("happy"), 1100); }
