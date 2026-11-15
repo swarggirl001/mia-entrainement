@@ -89,8 +89,6 @@ button { font: inherit; color: inherit; cursor: pointer; border: 0; background: 
   background: var(--butter); color: var(--tile-ink); border: var(--bw) dashed var(--line); border-radius: 14px; padding: 6px 12px; transform: rotate(-1deg); }
 .hero.in .streak { animation: slide-in .6s .6s cubic-bezier(.34,1.56,.64,1) backwards; }
 @keyframes slide-in { from { transform: translateX(-24px) rotate(-1deg); } }
-.bubble { position: absolute; right: 70px; top: -6px; z-index: 2; font-family: var(--title); font-size: 15px;
-  background: var(--sky); color: var(--tile-ink); padding: 6px 12px; border-radius: 16px 16px 16px 4px; border: var(--bw) solid var(--line);
   transform: rotate(7deg); animation: bob 3s ease-in-out infinite; }
 @keyframes bob { 0%,100% { transform: rotate(7deg) translateY(0); } 50% { transform: rotate(4deg) translateY(-6px); } }
 .spark { position: absolute; right: 150px; top: -14px; width: 32px; height: 32px; color: var(--fg); opacity: .55; animation: twinkle 2.4s ease-in-out infinite; }
@@ -296,13 +294,14 @@ body.corner .stage .kcorner { display: block; }
   -webkit-mask-composite: source-in; mask-image: linear-gradient(to right, transparent 0, #000 16%, #000 84%, transparent 100%), linear-gradient(to bottom, transparent 0, #000 28%, #000 80%, transparent 100%); mask-composite: intersect; }
 .hero-kali { position: absolute; z-index: 1; width: 150px; height: 150px; left: calc(50% - 30px); bottom: 12px; }
 body.corner .hero-kali { bottom: 20px; }
-/* the bubble speaks from Kali's mouth: its tail points down-right to her */
-.bubble { position: absolute; z-index: 2; right: calc(50% + 40px); left: auto; top: 26px; font-family: var(--title); font-size: 16px;
-  background: var(--sky); color: var(--tile-ink); padding: 6px 14px; border-radius: 16px; border: var(--bw) solid var(--line); transform: rotate(-3deg); animation: bob2 3s ease-in-out infinite; }
-.bubble::before, .bubble::after { content: ""; position: absolute; width: 0; height: 0; border-style: solid; }
-.bubble::before { right: -16px; bottom: -12px; border-width: 0 0 18px 22px; border-color: transparent transparent transparent var(--line); transform: rotate(18deg); transform-origin: 0 0; }
-.bubble::after { right: -10px; bottom: -6px; border-width: 0 0 11px 14px; border-color: transparent transparent transparent var(--sky); transform: rotate(18deg); transform-origin: 0 0; }
-@keyframes bob2 { 0%,100% { transform: rotate(-3deg) translateY(0); } 50% { transform: rotate(-1deg) translateY(-5px); } }
+/* the bubble is one drawn shape; its tail tip sits just beside Kali's head (--tipx / --tipy) */
+.bubble { --bw: 112px; --bh: 60px; --tipx: calc(50% - 18px); --tipy: 100px; position: absolute; z-index: 2; width: var(--bw); height: var(--bh);
+  left: calc(var(--tipx) - var(--bw) * .975); top: calc(var(--tipy) - var(--bh) * .94); right: auto;
+  transform-origin: 97.5% 94%; animation: bob3 3s ease-in-out infinite; }
+.bubble.long { --bw: 140px; }
+.bubble svg { position: absolute; inset: 0; width: 100%; height: 100%; overflow: visible; filter: drop-shadow(3px 3px 0 var(--shadow)); }
+.bubble .bt { position: absolute; left: 3%; right: 14%; top: 4%; height: 64%; display: grid; place-items: center; font-family: var(--title); font-size: 16px; color: var(--tile-ink); white-space: nowrap; }
+@keyframes bob3 { 0%,100% { transform: rotate(0) translateY(0); } 50% { transform: rotate(-3deg) translateY(-4px); } }
 @media (min-width: 900px) {
   .hero { grid-template-columns: 1fr 390px; grid-template-areas: "text stage" "streak stage"; column-gap: 40px; align-items: center; padding-top: 28px; }
   .hero h1 { align-self: end; }
@@ -311,7 +310,7 @@ body.corner .hero-kali { bottom: 20px; }
   .kc-mob { display: none !important; } body.corner .kc-desk { display: block !important; }
   .hero-kali { width: 196px; height: 196px; left: 158px; bottom: 34px; }
   body.corner .hero-kali { bottom: 30px; }
-  .bubble { right: auto; left: 34px; top: 62px; font-size: 18px; }
+  .bubble { --bw: 122px; --bh: 65px; --tipx: 172px; --tipy: 140px; } .bubble.long { --bw: 150px; } .bubble .bt { font-size: 18px; }
 }
 </style>
 </head>
@@ -333,7 +332,7 @@ body.corner .hero-kali { bottom: 20px; }
     <div class="stage" id="stage">
       <div class="kcorner" id="kcorner" aria-hidden="true"></div>
       <button class="hero-kali" id="heroKali" aria-label="Kali, toucher pour la faire sauter"></button>
-      <span class="bubble" id="bubble">Hello!</span>
+      <span class="bubble" id="bubble"><svg viewBox="0 0 120 64" aria-hidden="true"><path d="M16 3 H88 Q104 3 104 19 V27 Q104 40 90 42 Q100 50 117 60 Q97 58 80 43 H16 Q3 43 3 30 V16 Q3 3 16 3 Z" style="fill: var(--sky); stroke: #141414" stroke-width="3" stroke-linejoin="round"/></svg><span class="bt" id="bubbleText">Hello!</span></span>
     </div>
     <p class="streak"><i data-ic="flame"></i><span id="streakMsg">Fais un exercice aujourd'hui pour lancer ta série</span></p>
   </section>
@@ -441,7 +440,7 @@ matchMedia("(prefers-color-scheme: dark)").addEventListener("change", paintTheme
 // ---- greeting and Kali (she sleeps late in the evening)
 const name = KL.firstName(), hour = new Date().getHours(), late = hour >= 21 || hour < 5;
 $("#hello").firstChild.textContent = (late ? "Bonsoir" : "Salut") + (name ? " " + name : "") + ", prête à ";
-$("#bubble").textContent = late ? "Bonne nuit !" : "Hello!";
+$("#bubbleText").textContent = late ? "Bonne nuit !" : "Hello!"; $("#bubble").classList.toggle("long", late);
 $("#heroKali").innerHTML = kali(late ? "dodo" : "bonjour");
 $("#heroKali").addEventListener("click", () => kaliCheer($("#heroKali .kali")));
 
@@ -458,7 +457,7 @@ $("#kcorner").innerHTML = `
   <g class="kc-sun"><circle cx="318" cy="52" r="46" fill="url(#kcGlow)"/><g class="rays"><path d="M318 22 v-10 M318 82 v10 M288 52 h-10 M348 52 h10 M297 31 l-7 -7 M339 73 l7 7 M339 31 l7 -7 M297 73 l-7 7" stroke="#141414" stroke-width="3" stroke-linecap="round"/></g><circle cx="318" cy="52" r="18" fill="#ffd27a" stroke="#141414" stroke-width="3"/></g>
   <g class="kc-moon"><path d="M322 30 a22 22 0 1 0 16 34 a17 17 0 0 1 -16 -34 z" fill="#ffd27a" stroke="#141414" stroke-width="3" stroke-linejoin="round"/></g>
   <g class="kc-stars" fill="#fbeee0"><circle cx="70" cy="40" r="2.4"/><circle cx="130" cy="22" r="2"/><circle cx="250" cy="30" r="2.4"/><circle cx="370" cy="110" r="2"/><circle cx="40" cy="100" r="1.8"/></g>
-  ${cloud(70, 62, "")}${cloud(214, 28, "two")}
+  ${cloud(16, 28, "")}${cloud(214, 28, "two")}
   <path class="kc-h2" d="M-10 170 Q90 128 200 150 T410 140 V214 H-10 Z" stroke="#141414" stroke-width="3" stroke-linejoin="round"/>
   <path class="kc-h1" d="M-10 192 Q110 160 230 178 T410 176 V214 H-10 Z" stroke="#141414" stroke-width="3" stroke-linejoin="round"/>
   ${flower(70, 200, "var(--petal)")}${flower(110, 192, "#c9b8f0")}${flower(330, 196, "var(--petal)")}${flower(360, 204, "#ffd27a")}
@@ -472,7 +471,7 @@ $("#kcorner").innerHTML = `
     <g class="kc-sun"><g class="rays"><path d="M276 26 v-12 M276 94 v12 M242 60 h-12 M310 60 h12 M252 36 l-8 -8 M300 84 l8 8 M300 36 l8 -8 M252 84 l-8 8" stroke="#141414" stroke-width="3" stroke-linecap="round"/></g><circle cx="276" cy="60" r="22" fill="#ffd27a" stroke="#141414" stroke-width="3"/></g>
     <g class="kc-moon"><path d="M282 36 a26 26 0 1 0 18 40 a20 20 0 0 1 -18 -40 z" fill="#ffd27a" stroke="#141414" stroke-width="3" stroke-linejoin="round"/></g>
     <g class="kc-stars" fill="#fbeee0"><circle cx="60" cy="40" r="2.5"/><circle cx="120" cy="28" r="2"/><circle cx="190" cy="50" r="2.5"/><circle cx="230" cy="24" r="2"/><circle cx="34" cy="96" r="2"/><circle cx="160" cy="92" r="1.8"/></g>
-    ${cloud(40, 70, "")}${cloud(150, 40, "two")}
+    ${cloud(30, 30, "")}${cloud(160, 44, "two")}
     <path class="kc-h2" d="M0 200 Q80 150 170 176 T340 156 V270 H0 Z" stroke="#141414" stroke-width="3" stroke-linejoin="round"/>
     <path class="kc-h1" d="M0 226 Q120 186 220 206 T340 200 V270 H0 Z" stroke="#141414" stroke-width="3" stroke-linejoin="round"/>
     ${flower(36, 238, "var(--petal)")}${flower(78, 232, "#c9b8f0")}${flower(298, 230, "var(--petal)")}${flower(316, 244, "#ffd27a")}
