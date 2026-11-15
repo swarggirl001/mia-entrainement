@@ -87,12 +87,9 @@ function kali(outfit = "bonjour", label = "Kali, l'éléphante de KalaLab") {
       ${head}
     </g>
     ${arms}
-    <g class="head"><g class="trunk">${tube("M100 103 C100 126, 104 140, 120 138 C132 136, 138 124, 132 116", 20, 12.5)}<path d="M104 122 h6 M107 131 h6" stroke="${I}" stroke-width="2.5" stroke-linecap="round" opacity=".5"/></g>
-      <!-- the trunk grows out of the face: hide its round top and flare its sides into the cheeks -->
-      <path d="M91 114 C91 108, 94 104, 100 102.5 C106 104, 109 108, 109 114 Z" fill="${C.body}"/>
-      <ellipse cx="100" cy="102.5" rx="11.6" ry="11" fill="${C.body}"/>
-      <path d="M90.3 117 C90.2 112, 91.5 108.5, 94 106.5" fill="none" stroke="${I}" stroke-width="2.6" stroke-linecap="round" opacity=".45"/>
-      <path d="M109.7 117 C109.8 112, 108.5 108.5, 106 106.5" fill="none" stroke="${I}" stroke-width="2.6" stroke-linecap="round" opacity=".45"/></g>
+    <g class="head"><g class="trunk">${tube("M100 103 C100 126, 104 140, 120 138 C132 136, 138 124, 132 116", 20, 12.5)}<path d="M104 122 h6 M107 131 h6" stroke="${I}" stroke-width="2.5" stroke-linecap="round" opacity=".5"/>
+      <!-- the trunk grows out of the face: a patch the colour of her skin hides its round top and moves with it -->
+      <path d="M91 114 C91 108, 94 104, 100 102.5 C106 104, 109 108, 109 114 Z" fill="${C.body}"/><ellipse cx="100" cy="102.5" rx="11.6" ry="11" fill="${C.body}"/></g></g>
     ${front}
   </g>
   ${floats}
@@ -110,7 +107,7 @@ const KALI_CSS = `
 .kali .armR { transform-origin: 130px 139px; animation: k-armR 2.6s ease-in-out infinite; }
 .kali .earL { transform-origin: 100% 30%; animation: k-flapL 2.6s ease-in-out infinite; }
 .kali .earR { transform-origin: 0% 30%; animation: k-flapR 2.6s ease-in-out infinite; }
-.kali .trunk { transform-origin: 30% 0%; animation: k-swing 2.6s ease-in-out infinite; }
+.kali .trunk { transform-box: view-box; transform-origin: 100px 106px; animation: k-swing 2.6s ease-in-out infinite; }
 .kali .eyes:not(.sleep) { transform-origin: 50% 50%; animation: k-blink 4.2s infinite; }
 .kali .tail { transform-origin: 0% 100%; animation: k-wag 1.1s ease-in-out infinite; }
 .kali .bow { transform-origin: 50% 80%; animation: k-bow 2.6s ease-in-out infinite; }
