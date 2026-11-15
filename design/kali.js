@@ -2,6 +2,7 @@
 // each with its own animation (CSS classes .o-<outfit> on the <svg>, see KALI_CSS).
 const KALI_INK = "#141414";
 const KALI = { body: "#c9b8f0", inner: "#f7c9d9", light: "#fbeee0", bow: "#7b68c4", cheek: "#ff9fb8", butter: "#ffd27a", blue: "#a9c2f5", mint: "#a9e0c8", peach: "#f7b9a0", rose: "#f5a3bd" };
+let KALI_TUSKS = true;   // small cute tusks
 const KALI_OUTFITS = ["bonjour", "dj", "lecture", "diplomee", "sport", "dodo", "detective", "fete"];
 
 function kali(outfit = "bonjour", label = "Kali, l'éléphante de KalaLab") {
@@ -87,10 +88,12 @@ function kali(outfit = "bonjour", label = "Kali, l'éléphante de KalaLab") {
       ${head}
     </g>
     ${arms}
-    <g class="head"><g class="trunk">
-      <!-- open at the top (flat ends), so it grows out of the face; only the tip is rounded -->
-      <path d="M100 99 C100 126, 104 140, 120 138 C132 136, 138 124, 132 116" fill="none" stroke="${I}" stroke-width="20" stroke-linecap="butt"/><circle cx="132" cy="116" r="10" fill="${I}"/>
-      <path d="M100 96 L100 99 C100 126, 104 140, 120 138 C132 136, 138 124, 132 116" fill="none" stroke="${C.body}" stroke-width="12.5" stroke-linecap="butt"/><circle cx="132" cy="116" r="6.25" fill="${C.body}"/>
+    <g class="head">${KALI_TUSKS ? `<g class="tusks"><path d="M91 111 C88 116, 83 120, 78.5 119.5 C81 124.5, 88 124, 92.5 118.5 Z" fill="#fffaf0" stroke="${I}" stroke-width="3" stroke-linejoin="round"/>
+      <path d="M109 111 C112 116, 117 120, 121.5 119.5 C119 124.5, 112 124, 107.5 118.5 Z" fill="#fffaf0" stroke="${I}" stroke-width="3" stroke-linejoin="round"/></g>` : ""}<g class="trunk">
+      <!-- open at the top, so it grows out of the face; its two sides curve softly into the cheeks; only the tip is rounded -->
+      <path d="M100 105 C100 126, 104 140, 120 138 C132 136, 138 124, 132 116" fill="none" stroke="${I}" stroke-width="20" stroke-linecap="butt"/><circle cx="132" cy="116" r="10" fill="${I}"/>
+      <path d="M100 101 L100 105 C100 126, 104 140, 120 138 C132 136, 138 124, 132 116" fill="none" stroke="${C.body}" stroke-width="12.5" stroke-linecap="butt"/><circle cx="132" cy="116" r="6.25" fill="${C.body}"/>
+      <path d="M86.5 101.5 C89 102.5, 90.15 104.5, 90.15 109 M113.5 101.5 C111 102.5, 109.85 104.5, 109.85 109" fill="none" stroke="${I}" stroke-width="3.75" stroke-linecap="round"/>
       <path d="M104 122 h6 M107 131 h6" stroke="${I}" stroke-width="2.5" stroke-linecap="round" opacity=".5"/></g></g>
     ${front}
   </g>
