@@ -11,8 +11,9 @@ self.addEventListener("fetch", (e) => {
   const req = e.request, url = new URL(req.url);
   if (req.method !== "GET" || url.origin !== location.origin || url.pathname.endsWith(".mp4")) return;
   if (req.mode === "navigate") {   // the page: newest version when online, the saved one offline
-    e.respondWith(fetch(req).then((r) => { const copy = r.clone(); caches.open(CACHE).then((c) => c.put("./", copy)); return r; })
-      .catch(() => caches.match("./")));
+    // each page under its own address (the English course in anglais/ must not replace Mia's home page)
+    e.respondWith(fetch(req).then((r) => { const copy = r.clone(); caches.open(CACHE).then((c) => c.put(req, copy)); return r; })
+      .catch(() => caches.match(req).then((hit) => hit || caches.match("./"))));
     return;
   }
   e.respondWith(caches.match(req).then((hit) => hit || fetch(req).then((r) => {

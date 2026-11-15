@@ -1,0 +1,512 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Anglais Terminale</title>
+<meta name="description" content="Réviser les cours d'anglais de Terminale : écouter, lire, parler, écrire.">
+<meta name="theme-color" content="#1f8f82">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="icon" href="icons/icon-192.png">
+<link rel="apple-touch-icon" href="icons/apple-touch-icon.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@600;800&family=Nunito+Sans:wght@400;600;700;800&display=swap" rel="stylesheet" media="print" onload="this.media='all'">
+<style>
+/* Same world as Mia's page: cream paper, navy ink. Teal = listen, orange = action, violet = speak. */
+:root {
+  --paper: #fff7ee; --paper2: #fde7d2; --card: #ffffff; --ink: #1f2a44; --muted: #6b6275;
+  --action: #e57f1c; --action-soft: #fde3c8; --action-ink: #9a4f08;
+  --teal: #1f8f82; --teal-soft: #dff2ee; --violet: #6c5ce0; --violet-soft: #ebe8ff;
+  --good: #1f9d55; --good-soft: #dcf5e6; --bad: #d64545; --bad-soft: #fde2e2; --line: #eadccb;
+  --display: "Baloo 2", "Trebuchet MS", system-ui, sans-serif;
+  --body: "Nunito Sans", "Segoe UI", system-ui, sans-serif;
+  color-scheme: light;
+}
+* { box-sizing: border-box; }
+[hidden] { display: none !important; }
+html, body { margin: 0; }
+html { background: var(--paper2); }
+body { min-height: 100vh; background: linear-gradient(180deg, var(--paper), var(--paper2) 900px, var(--paper2)); color: var(--ink);
+  font-family: var(--body); font-size: 16px; line-height: 1.5; }
+main { max-width: 720px; margin: 0 auto; padding: 0 max(16px, env(safe-area-inset-right, 0px)) 80px max(16px, env(safe-area-inset-left, 0px)); }
+button, input, textarea { font: inherit; color: inherit; }
+button { cursor: pointer; }
+button:focus-visible, input:focus-visible, textarea:focus-visible { outline: 3px solid var(--violet); outline-offset: 2px; }
+h1, h2, h3 { font-family: var(--display); line-height: 1.15; margin: 0; text-wrap: balance; }
+h1 { font-size: clamp(30px, 8vw, 42px); font-weight: 800; }
+h2 { font-size: 22px; font-weight: 800; }
+h3 { font-size: 19px; font-weight: 800; margin-top: 14px; }
+h3:first-child { margin-top: 0; }
+p { margin: 8px 0; }
+.note { color: var(--muted); font-size: 15px; }
+.card { background: var(--card); border: 1px solid var(--line); border-radius: 18px; padding: 16px; box-shadow: 0 2px 0 rgba(31,42,68,.04); }
+.stack { display: grid; gap: 14px; }
+
+/* top bar */
+.bar { position: sticky; top: 0; z-index: 5; display: flex; align-items: center; gap: 10px; min-height: 56px;
+  background: rgba(255,247,238,.94); backdrop-filter: blur(6px); border-bottom: 1px solid var(--line);
+  padding: 6px max(16px, env(safe-area-inset-right, 0px)) 6px max(16px, env(safe-area-inset-left, 0px)); }
+.bar .in { max-width: 720px; margin: 0 auto; width: 100%; display: flex; align-items: center; gap: 10px; }
+.back { border: 0; background: var(--teal-soft); color: var(--teal); border-radius: 12px; min-width: 44px; height: 44px; font-weight: 800; font-size: 20px; }
+.bar .t { font-family: var(--display); font-weight: 800; font-size: 18px; line-height: 1.1; min-width: 0; }
+.bar .t small { display: block; font-family: var(--body); font-weight: 600; font-size: 13px; color: var(--muted); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+
+/* home */
+.hero { padding: 22px 0 6px; display: grid; gap: 6px; }
+.eyebrow { font-weight: 800; font-size: 13px; letter-spacing: .08em; text-transform: uppercase; color: var(--teal); }
+.lead { color: var(--muted); margin: 0; }
+.skills { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 6px; }
+.chip { font-size: 13px; font-weight: 700; padding: 3px 10px; border-radius: 999px; background: var(--teal-soft); color: var(--teal); }
+.chip.o { background: var(--action-soft); color: var(--action-ink); }
+.chip.v { background: var(--violet-soft); color: var(--violet); }
+.unit h2 { margin-bottom: 8px; }
+.lessons { display: grid; gap: 8px; }
+.lessonbtn { display: grid; grid-template-columns: 1fr auto; align-items: center; gap: 10px; width: 100%; text-align: left;
+  border: 1px solid var(--line); background: #fffdf9; border-radius: 14px; padding: 12px 14px; min-height: 56px; }
+.lessonbtn b { display: block; }
+.lessonbtn span { color: var(--muted); font-size: 14px; }
+.ring { --p: 0; width: 44px; height: 44px; border-radius: 50%; display: grid; place-items: center; font-size: 12px; font-weight: 800;
+  background: conic-gradient(var(--good) calc(var(--p) * 1%), var(--line) 0); }
+.ring i { font-style: normal; width: 34px; height: 34px; border-radius: 50%; background: #fff; display: grid; place-items: center; }
+
+/* tabs */
+.tabs { position: sticky; top: var(--barh, 57px); z-index: 4; display: flex; gap: 6px; overflow-x: auto; padding: 10px 0; scrollbar-width: none;
+  background: linear-gradient(180deg, var(--paper) 80%, transparent); }
+.tabs::-webkit-scrollbar { display: none; }
+.tab { flex: 0 0 auto; border: 1px solid var(--line); background: #fff; border-radius: 999px; padding: 8px 14px; font-weight: 700; min-height: 40px; }
+.tab[aria-selected="true"] { background: var(--ink); color: #fff; border-color: var(--ink); }
+
+/* course */
+.course ul, .course ol { padding-left: 22px; margin: 8px 0; }
+.course li { margin: 4px 0; }
+.ex { cursor: pointer; border-radius: 6px; text-decoration: underline dotted var(--teal); text-underline-offset: 4px; }
+.ex:hover, .ex.playing { background: var(--teal-soft); }
+.tbl { width: 100%; border-collapse: collapse; font-size: 15px; margin: 8px 0; }
+.tbl th, .tbl td { border: 1px solid var(--line); padding: 6px 8px; vertical-align: top; text-align: left; }
+.tbl th { background: var(--paper); }
+.tblwrap { overflow-x: auto; }
+pre.layout { background: var(--paper); border: 1px dashed var(--line); border-radius: 12px; padding: 12px; white-space: pre-wrap; font-family: var(--body); }
+
+/* buttons */
+.row { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; }
+.btn { border: 0; border-radius: 12px; padding: 10px 16px; min-height: 44px; font-weight: 800; background: var(--teal-soft); color: var(--teal); }
+.btn.go { background: var(--action); color: #fff; }
+.btn.mic { background: var(--violet); color: #fff; }
+.btn.mic.on { background: var(--bad); }
+.btn.ghost { background: transparent; border: 1px solid var(--line); color: var(--ink); }
+.btn:disabled { opacity: .5; cursor: default; }
+
+/* vocab */
+.vocab { display: grid; gap: 8px; }
+.word { border: 1px solid var(--line); border-radius: 14px; padding: 10px 12px; background: #fffdf9; }
+.word .w { font-weight: 800; color: var(--teal); }
+.word .d { margin: 2px 0; }
+.word .e { color: var(--muted); font-size: 15px; font-style: italic; }
+
+/* exercises */
+.item { padding: 12px 0; border-top: 1px solid var(--line); }
+.item:first-of-type { border-top: 0; }
+.q { font-weight: 600; }
+.q .n { color: var(--muted); font-weight: 800; margin-right: 4px; }
+.opts { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 8px; }
+.opt { border: 1px solid var(--line); background: #fff; border-radius: 12px; padding: 8px 14px; min-height: 44px; font-weight: 700; }
+.opt[aria-pressed="true"] { border-color: var(--violet); background: var(--violet-soft); color: var(--violet); }
+.opt.right { border-color: var(--good); background: var(--good-soft); color: var(--good); }
+.opt.wrong { border-color: var(--bad); background: var(--bad-soft); color: var(--bad); }
+.gap { display: inline-block; width: 9.5em; max-width: 100%; border: 0; border-bottom: 2px solid var(--violet); background: var(--violet-soft);
+  border-radius: 6px 6px 0 0; padding: 2px 6px; margin: 2px 2px; font-weight: 700; }
+.gap.right { border-color: var(--good); background: var(--good-soft); }
+.gap.wrong { border-color: var(--bad); background: var(--bad-soft); }
+.fb { margin-top: 6px; font-size: 15px; }
+.fb.ok { color: var(--good); font-weight: 700; }
+.fb.ko { color: var(--bad); }
+.box { background: var(--action-soft); border-radius: 12px; padding: 8px 12px; font-weight: 700; color: var(--action-ink); }
+.score { font-family: var(--display); font-size: 22px; font-weight: 800; }
+
+/* dictation & speaking */
+.say-line { font-size: 20px; font-weight: 700; line-height: 1.6; }
+.say-line span { padding: 1px 3px; border-radius: 6px; }
+.say-line .ok { background: var(--good-soft); color: var(--good); }
+.say-line .ko { background: var(--bad-soft); color: var(--bad); }
+textarea { width: 100%; min-height: 90px; border: 1px solid var(--line); border-radius: 12px; padding: 10px 12px; background: #fff; resize: vertical; }
+textarea.big { min-height: 320px; }
+.dots { display: flex; gap: 6px; flex-wrap: wrap; }
+.dot { width: 34px; height: 34px; border-radius: 50%; border: 1px solid var(--line); background: #fff; font-weight: 800; font-size: 14px; }
+.dot.cur { border-color: var(--ink); background: var(--ink); color: #fff; }
+.dot.done { border-color: var(--good); background: var(--good-soft); color: var(--good); }
+.heard { color: var(--muted); font-size: 15px; }
+
+/* writing */
+.checks { list-style: none; padding: 0; margin: 8px 0; display: grid; gap: 4px; }
+.checks li { display: flex; gap: 8px; align-items: baseline; }
+.checks li::before { content: "○"; color: var(--muted); font-weight: 800; }
+.checks li.ok::before { content: "✓"; color: var(--good); }
+.checks li.ok { color: var(--good); }
+.model { white-space: pre-wrap; background: var(--paper); border-radius: 12px; padding: 12px; font-family: var(--body); margin: 8px 0 0; }
+.count { font-weight: 800; }
+.task { font-weight: 600; }
+</style>
+</head>
+<body>
+<header class="bar"><div class="in">
+  <button class="back" id="back" aria-label="Retour" hidden>←</button>
+  <div class="t" id="barTitle">Anglais Terminale</div>
+</div></header>
+
+<main id="app"></main>
+
+<script src="lessons.js"></script>
+<script>
+"use strict";
+const $ = (s, r = document) => r.querySelector(s);
+const el = (tag, attrs = {}, ...kids) => {
+  const e = document.createElement(tag);
+  for (const [k, v] of Object.entries(attrs)) {
+    if (k === "class") e.className = v; else if (k === "html") e.innerHTML = v;
+    else if (k.startsWith("on")) e.addEventListener(k.slice(2), v); else if (v !== false && v != null) e.setAttribute(k, v);
+  }
+  for (const k of kids.flat(Infinity)) if (k != null) e.append(k.nodeType ? k : document.createTextNode(k));
+  return e;
+};
+const shuffle = (a) => { a = a.slice(); for (let i = a.length - 1; i > 0; i--) { const j = Math.floor(Math.random() * (i + 1)); [a[i], a[j]] = [a[j], a[i]]; } return a; };
+
+/* ---------- progress (kept on this device only) ---------- */
+const KEY = "anglais-progress-v1";
+let P = {};
+try { P = JSON.parse(localStorage.getItem(KEY) || "{}") || {}; } catch (e) { P = {}; }
+const save = () => { try { localStorage.setItem(KEY, JSON.stringify(P)); } catch (e) {} };
+const lp = (id) => (P[id] = P[id] || { ex: {}, vocab: 0, dict: {}, speak: {}, write: 0 });
+function lessonPercent(L) {
+  const p = P[L.id]; if (!p) return 0;
+  const parts = [];
+  (L.exercises || []).forEach((_, i) => parts.push((p.ex[i] || 0) / 100));
+  if (L.vocab) parts.push((p.vocab || 0) / 100);
+  if (L.dictation) parts.push(Object.keys(p.dict || {}).length / L.dictation.length);
+  if (L.speak) parts.push(Object.keys(p.speak || {}).length / L.speak.length);
+  if (L.writing) parts.push(p.write ? 1 : 0);
+  return parts.length ? Math.round(100 * parts.reduce((a, b) => a + Math.min(1, b), 0) / parts.length) : 0;
+}
+
+/* ---------- text helpers ---------- */
+const clean = (s) => s.toLowerCase().replace(/[’‘`]/g, "'").replace(/[.!?,;:]+$/g, "").replace(/\s+/g, " ").trim();
+const words = (s) => s.toLowerCase().replace(/[’‘`]/g, "'").replace(/-/g, " ").replace(/[^a-z0-9' ]+/g, " ")
+  .split(/\s+/).map((w) => w.replace(/^'+|'+$/g, "")).filter(Boolean);
+/* which words of `target` are found, in order, in `got` (longest common subsequence) */
+function matchWords(target, got) {
+  const n = target.length, m = got.length, T = Array.from({ length: n + 1 }, () => new Array(m + 1).fill(0));
+  for (let i = n - 1; i >= 0; i--) for (let j = m - 1; j >= 0; j--)
+    T[i][j] = target[i] === got[j] ? 1 + T[i + 1][j + 1] : Math.max(T[i + 1][j], T[i][j + 1]);
+  const ok = new Array(n).fill(false); let i = 0, j = 0;
+  while (i < n && j < m) { if (target[i] === got[j]) { ok[i] = true; i++; j++; } else if (T[i + 1][j] >= T[i][j + 1]) i++; else j++; }
+  return ok;
+}
+
+/* ---------- listening: the phone's English voice ---------- */
+let voice = null;
+function pickVoice() {
+  if (!("speechSynthesis" in window)) return;
+  const vs = speechSynthesis.getVoices();
+  voice = vs.find((v) => /^en[-_]GB/i.test(v.lang)) || vs.find((v) => /^en[-_]US/i.test(v.lang)) || vs.find((v) => /^en/i.test(v.lang)) || null;
+}
+if ("speechSynthesis" in window) { pickVoice(); speechSynthesis.onvoiceschanged = pickVoice; }
+function say(text, slow, node) {
+  if (!("speechSynthesis" in window)) { alert("Ce navigateur ne sait pas lire à voix haute. Essaie avec Google Chrome."); return; }
+  speechSynthesis.cancel();
+  const u = new SpeechSynthesisUtterance(text);
+  u.lang = voice ? voice.lang : "en-GB"; if (voice) u.voice = voice;
+  u.rate = slow ? 0.65 : 0.92;
+  if (node) { node.classList.add("playing"); u.onend = u.onerror = () => node.classList.remove("playing"); }
+  speechSynthesis.speak(u);
+}
+const listenBtns = (text) => el("div", { class: "row" },
+  el("button", { class: "btn", onclick: () => say(text) }, "🔊 Écouter"),
+  el("button", { class: "btn", onclick: () => say(text, true) }, "🐢 Lentement"));
+
+/* ---------- speaking: Chrome's speech recognition ---------- */
+const SR = window.SpeechRecognition || window.webkitSpeechRecognition;
+function hear() {
+  return new Promise((resolve, reject) => {
+    const r = new SR(); r.lang = "en-GB"; r.interimResults = false; r.maxAlternatives = 5;
+    let done = false;
+    r.onresult = (e) => { done = true; resolve(Array.from(e.results[0]).map((a) => a.transcript)); };
+    r.onerror = (e) => { done = true; reject(e.error); };
+    r.onend = () => { if (!done) resolve([]); };
+    r.start();
+  });
+}
+
+/* ---------- screens ---------- */
+const app = $("#app");
+const lessonById = (id) => LESSONS.find((l) => l.id === id);
+const TABS = [
+  ["cours", "📖 Cours", (L) => L.course],
+  ["vocab", "🔤 Vocabulaire", (L) => L.vocab],
+  ["ex", "✏️ Exercices", (L) => L.exercises],
+  ["ecoute", "🎧 Dictée", (L) => L.dictation],
+  ["parle", "🎤 Parler", (L) => L.speak],
+  ["ecris", "📝 Écrire", (L) => L.writing],
+];
+function skillsOf(L) {
+  const s = [];
+  if (L.dictation) s.push(el("span", { class: "chip" }, "Listening"));
+  if (L.course || L.exercises) s.push(el("span", { class: "chip o" }, "Reading"));
+  if (L.speak) s.push(el("span", { class: "chip v" }, "Speaking"));
+  if (L.writing || L.dictation) s.push(el("span", { class: "chip o" }, "Writing"));
+  return s;
+}
+
+function home() {
+  $("#back").hidden = true; $("#barTitle").textContent = "Anglais Terminale";
+  document.title = "Anglais Terminale";
+  app.replaceChildren(
+    el("div", { class: "hero" },
+      el("p", { class: "eyebrow" }, "Terminale A1 · d'après le cahier"),
+      el("h1", {}, "Réviser l'anglais"),
+      el("p", { class: "lead" }, "Chaque leçon du cahier, avec les quatre compétences : écouter, lire, parler et écrire. Touche une phrase en anglais pour l'entendre."),
+      el("div", { class: "skills" },
+        el("span", { class: "chip" }, "🎧 Listening"), el("span", { class: "chip o" }, "📖 Reading"),
+        el("span", { class: "chip v" }, "🎤 Speaking"), el("span", { class: "chip o" }, "📝 Writing"))),
+    el("div", { class: "stack" }, UNITS.map((U) => el("section", { class: "card unit" },
+      el("h2", {}, U.title),
+      el("div", { class: "lessons" }, LESSONS.filter((L) => L.unit === U.id).map((L) => {
+        const pc = lessonPercent(L);
+        return el("button", { class: "lessonbtn", onclick: () => go(`#/l/${L.id}`) },
+          el("div", {}, el("b", {}, L.title), el("span", {}, L.topic)),
+          el("div", { class: "ring", style: `--p:${pc}`, "aria-label": `${pc} % fait` }, el("i", {}, `${pc}%`)));
+      }))))),
+    el("p", { class: "note", style: "margin-top:18px" }, "🔒 La progression reste sur ce téléphone. Le micro marche dans Google Chrome, avec internet."),
+  );
+}
+
+function lesson(id, tab) {
+  const L = lessonById(id); if (!L) return home();
+  const tabs = TABS.filter(([, , has]) => has(L));
+  if (!tabs.some(([k]) => k === tab)) tab = tabs[0][0];
+  $("#back").hidden = false;
+  const bt = $("#barTitle"); bt.replaceChildren(L.title, el("small", {}, L.topic));
+  document.title = `${L.topic} · Anglais`;
+  const pane = el("div", { class: "stack" });
+  app.replaceChildren(
+    el("nav", { class: "tabs", role: "tablist" }, tabs.map(([k, label]) =>
+      el("button", { class: "tab", role: "tab", "aria-selected": String(k === tab), onclick: () => go(`#/l/${id}/${k}`, true) }, label))),
+    pane);
+  ({ cours: renderCourse, vocab: renderVocab, ex: renderEx, ecoute: renderDict, parle: renderSpeak, ecris: renderWrite })[tab](L, pane);
+  document.documentElement.style.setProperty("--barh", $(".bar").offsetHeight + "px");
+  const cur = $(".tab[aria-selected=true]"); if (cur) cur.scrollIntoView({ inline: "center", block: "nearest" });
+}
+
+function renderCourse(L, pane) {
+  for (const html of L.course) {
+    const c = el("section", { class: "card course", html });
+    c.querySelectorAll("table").forEach((t) => { const w = el("div", { class: "tblwrap" }); t.replaceWith(w); w.append(t); });
+    pane.append(c);
+  }
+}
+document.addEventListener("click", (e) => {
+  const x = e.target.closest(".ex"); if (x) say(x.textContent.replace(/\s+/g, " ").trim(), false, x);
+});
+
+function renderVocab(L, pane) {
+  const p = lp(L.id);
+  const quiz = el("section", { class: "card" });
+  const startQuiz = () => {
+    const qs = shuffle(L.vocab).slice(0, Math.min(8, L.vocab.length)); let k = 0, good = 0;
+    const step = () => {
+      if (k === qs.length) {
+        const pc = Math.round(100 * good / qs.length); if (pc > (p.vocab || 0)) { p.vocab = pc; save(); }
+        quiz.replaceChildren(el("h2", {}, "Quiz terminé"), el("p", { class: "score" }, `${good} / ${qs.length}`),
+          el("div", { class: "row" }, el("button", { class: "btn go", onclick: startQuiz }, "Recommencer")));
+        return;
+      }
+      const [w, d] = qs[k];
+      const others = shuffle(L.vocab.filter((v) => v[0] !== w)).slice(0, 3).map((v) => v[0]);
+      const fb = el("p", { class: "fb" });
+      const opts = el("div", { class: "opts" }, shuffle([w, ...others]).map((o) => el("button", { class: "opt", onclick: (e) => {
+        if (fb.textContent) return;
+        const right = o === w; if (right) good++;
+        e.currentTarget.classList.add(right ? "right" : "wrong");
+        opts.querySelectorAll(".opt").forEach((b) => { if (b.textContent === w) b.classList.add("right"); });
+        fb.className = "fb " + (right ? "ok" : "ko"); fb.textContent = right ? "Bravo !" : `C'était : ${w}`;
+        say(w); next.hidden = false;
+      } }, o)));
+      const next = el("button", { class: "btn go", hidden: true, onclick: () => { k++; step(); } }, k + 1 < qs.length ? "Suivant →" : "Voir le score");
+      quiz.replaceChildren(el("p", { class: "note" }, `Question ${k + 1} / ${qs.length} · Quel mot correspond ?`),
+        el("p", { class: "q" }, d), opts, fb, next);
+    };
+    step();
+  };
+  quiz.append(el("h2", {}, "Quiz de vocabulaire"), el("p", { class: "note" }, `Lis la définition et choisis le bon mot.${p.vocab ? ` Meilleur score : ${p.vocab} %.` : ""}`),
+    el("button", { class: "btn go", onclick: startQuiz }, "Commencer le quiz"));
+  pane.append(quiz, el("section", { class: "card" }, el("h2", {}, "Les mots"),
+    el("p", { class: "note" }, "Touche un mot ou un exemple pour l'entendre."),
+    el("div", { class: "vocab" }, L.vocab.map(([w, d, ex]) => el("div", { class: "word" },
+      el("div", { class: "w ex" }, w), el("div", { class: "d" }, d), ex ? el("div", { class: "e ex" }, ex) : null)))));
+}
+
+function renderEx(L, pane) {
+  const p = lp(L.id);
+  L.exercises.forEach((set, si) => {
+    const card = el("section", { class: "card" });
+    const build = () => {
+      const checks = [];
+      const best = p.ex[si];
+      card.replaceChildren(...[el("h2", {}, set.title), best != null ? el("p", { class: "note" }, `Meilleur score : ${best} %`) : null,
+        set.box ? el("p", { class: "box" }, set.box) : null].filter(Boolean));
+      set.items.forEach((it, ii) => {
+        const box = el("div", { class: "item" }); const fb = el("div", { class: "fb" });
+        if (it.t === "mc") {
+          let chosen = null;
+          const opts = el("div", { class: "opts" }, shuffle(it.o.map((o, oi) => [o, oi])).map(([o, oi]) =>
+            el("button", { class: "opt", "aria-pressed": "false", onclick: (e) => {
+              if (box.dataset.done) return; chosen = oi;
+              opts.querySelectorAll(".opt").forEach((b) => b.setAttribute("aria-pressed", "false"));
+              e.currentTarget.setAttribute("aria-pressed", "true");
+            } }, o)));
+          box.append(el("div", { class: "q" }, el("span", { class: "n" }, `${ii + 1}.`), it.q,
+            it.say ? el("button", { class: "btn", style: "margin-left:8px;min-height:36px;padding:4px 10px", onclick: () => say(it.say) }, "🔊") : null), opts, fb);
+          checks.push(() => {
+            box.dataset.done = 1; const ok = chosen === it.a;
+            opts.querySelectorAll(".opt").forEach((b) => { if (b.textContent === it.o[it.a]) b.classList.add("right"); else if (b.getAttribute("aria-pressed") === "true") b.classList.add("wrong"); });
+            fb.className = "fb " + (ok ? "ok" : "ko");
+            fb.textContent = ok ? "✓ Juste" + (it.why ? ` · ${it.why}` : "") : `✗ Réponse : ${it.o[it.a]}` + (it.why ? ` · ${it.why}` : "");
+            return ok;
+          });
+        } else {
+          const parts = it.q.split("___"); const ins = [];
+          const q = el("div", { class: "q" }, el("span", { class: "n" }, `${ii + 1}.`));
+          parts.forEach((t, k) => { q.append(t); if (k < parts.length - 1) { const i = el("input", { class: "gap", autocapitalize: "off", autocomplete: "off", spellcheck: "false", "aria-label": `Réponse ${k + 1}` }); ins.push(i); q.append(i); } });
+          box.append(q, fb);
+          checks.push(() => {
+            let all = true;
+            ins.forEach((i, k) => { const ok = it.a[k].some((a) => clean(a) === clean(i.value)); i.classList.add(ok ? "right" : "wrong"); i.readOnly = true; all = all && ok; });
+            fb.className = "fb " + (all ? "ok" : "ko");
+            fb.textContent = all ? "✓ Juste" + (it.why ? ` · ${it.why}` : "") : `✗ Réponse : ${it.a.map((a) => a[0]).join(" / ")}` + (it.why ? ` · ${it.why}` : "");
+            return all;
+          });
+        }
+        card.append(box);
+      });
+      const res = el("p", { class: "score", "aria-live": "polite" });
+      const check = el("button", { class: "btn go", onclick: () => {
+        const n = checks.map((f) => f()).filter(Boolean).length; const pc = Math.round(100 * n / checks.length);
+        if (pc > (p.ex[si] || 0) || p.ex[si] == null) { p.ex[si] = Math.max(pc, p.ex[si] || 0); save(); }
+        res.textContent = `${n} / ${checks.length}` + (pc === 100 ? " · Parfait ! 🎉" : pc >= 70 ? " · Bien !" : " · Relis le cours et recommence.");
+        check.hidden = true; again.hidden = false;
+      } }, "Vérifier mes réponses");
+      const again = el("button", { class: "btn ghost", hidden: true, onclick: build }, "Recommencer");
+      card.append(el("div", { class: "row" }, check, again), res);
+    };
+    build(); pane.append(card);
+  });
+}
+
+function stepper(list, i, doneMap, onPick) {
+  return el("div", { class: "dots" }, list.map((_, k) => el("button", { class: "dot" + (k === i ? " cur" : doneMap[k] ? " done" : ""), "aria-label": `Phrase ${k + 1}`, onclick: () => onPick(k) }, String(k + 1))));
+}
+
+function renderDict(L, pane, i = 0) {
+  const p = lp(L.id); const s = L.dictation[i];
+  const card = el("section", { class: "card stack" });
+  const ta = el("textarea", { placeholder: "Écris ici ce que tu entends…", autocapitalize: "sentences", spellcheck: "false", "aria-label": "Ta dictée" });
+  const out = el("div", { "aria-live": "polite" });
+  const redo = (k) => { pane.replaceChildren(); renderDict(L, pane, k); };
+  const next = el("button", { class: "btn go", hidden: true, onclick: () => redo((i + 1) % L.dictation.length) }, i + 1 < L.dictation.length ? "Phrase suivante →" : "Revenir à la phrase 1");
+  card.append(el("h2", {}, "Dictée"), el("p", { class: "note" }, "Écoute la phrase autant de fois que tu veux, puis écris-la."),
+    stepper(L.dictation, i, p.dict, redo), listenBtns(s), ta,
+    el("div", { class: "row" }, el("button", { class: "btn go", onclick: () => {
+      const tw = words(s), ok = matchWords(tw, words(ta.value)); const n = ok.filter(Boolean).length; const pc = Math.round(100 * n / tw.length);
+      const orig = s.split(/\s+/);
+      out.replaceChildren(el("p", { class: "say-line" }, orig.map((w, k) => [el("span", { class: ok[k] ? "ok" : "ko" }, w), " "])),
+        el("p", { class: "score" }, `${pc} % des mots justes`),
+        el("p", { class: "note" }, pc >= 90 ? "Très bien !" : "En rouge : les mots oubliés ou mal écrits. Réécoute et réessaie."));
+      if (pc >= 90 && !p.dict[i]) { p.dict[i] = 1; save(); }
+      next.hidden = false;
+    } }, "Corriger"), next), out);
+  pane.append(card);
+}
+
+function renderSpeak(L, pane, i = 0) {
+  const p = lp(L.id); const s = L.speak[i]; const orig = s.split(/\s+/);
+  const card = el("section", { class: "card stack" });
+  const line = el("p", { class: "say-line" }, orig.map((w) => [el("span", {}, w), " "]));
+  const out = el("div", { "aria-live": "polite" });
+  const redo = (k) => { pane.replaceChildren(); renderSpeak(L, pane, k); };
+  const mic = el("button", { class: "btn mic", onclick: async () => {
+    if (!SR) { out.replaceChildren(el("p", { class: "fb ko" }, "Le micro ne marche pas dans ce navigateur. Ouvre la page dans Google Chrome.")); return; }
+    if ("speechSynthesis" in window) speechSynthesis.cancel();
+    mic.classList.add("on"); mic.textContent = "🎙️ Je t'écoute… lis la phrase"; mic.disabled = true;
+    try {
+      const alts = await hear(); const tw = words(s);
+      let best = new Array(tw.length).fill(false), heardTxt = "";
+      for (const a of alts) { const ok = matchWords(tw, words(a)); if (ok.filter(Boolean).length > best.filter(Boolean).length) { best = ok; heardTxt = a; } }
+      if (!heardTxt && alts[0]) heardTxt = alts[0];
+      const spans = line.querySelectorAll("span"); spans.forEach((sp, k) => { sp.className = best[k] ? "ok" : "ko"; });
+      const pc = Math.round(100 * best.filter(Boolean).length / tw.length);
+      if (pc >= 80 && !p.speak[i]) { p.speak[i] = 1; save(); }
+      out.replaceChildren(el("p", { class: "score" }, `${pc} % des mots compris`),
+        el("p", { class: "heard" }, heardTxt ? `Le téléphone a entendu : « ${heardTxt} »` : "Je n'ai rien entendu. Parle un peu plus fort, près du téléphone."),
+        el("p", { class: "note" }, pc >= 80 ? "Bravo ! 🎉" : "Les mots en rouge n'ont pas été compris. Écoute-les (touche la phrase) et réessaie."),
+        el("button", { class: "btn go", onclick: () => redo((i + 1) % L.speak.length) }, i + 1 < L.speak.length ? "Phrase suivante →" : "Revenir à la phrase 1"));
+    } catch (err) {
+      out.replaceChildren(el("p", { class: "fb ko" }, err === "not-allowed" ? "Le micro est bloqué. Autorise le micro pour ce site dans Chrome, puis réessaie." :
+        err === "network" ? "Il faut internet pour le micro." : "Je n'ai rien entendu. Réessaie."));
+    }
+    mic.classList.remove("on"); mic.textContent = "🎤 Lire à voix haute"; mic.disabled = false;
+  } }, "🎤 Lire à voix haute");
+  line.classList.add("ex");
+  card.append(el("h2", {}, "Parler"), el("p", { class: "note" }, "Écoute la phrase, puis appuie sur le micro et lis-la. Les mots compris passent en vert."),
+    stepper(L.speak, i, p.speak, redo), line, listenBtns(s), el("div", { class: "row" }, mic), out);
+  pane.append(card);
+}
+
+const LINKS = ["first", "firstly", "secondly", "moreover", "furthermore", "however", "therefore", "because", "as a result", "finally", "in addition", "on the other hand", "consequently", "although", "then"];
+function renderWrite(L, pane) {
+  const W = L.writing, p = lp(L.id), dkey = `anglais-draft-${L.id}`;
+  let draft = ""; try { draft = localStorage.getItem(dkey) || ""; } catch (e) {}
+  const ta = el("textarea", { class: "big", placeholder: "Écris ton texte ici… Il est gardé sur ce téléphone.", spellcheck: "true", lang: "en", "aria-label": "Ton texte" });
+  ta.value = draft;
+  const count = el("span", { class: "count" });
+  const list = el("ul", { class: "checks" });
+  const items = W.checks.map(([label]) => { const li = el("li", {}, label); list.append(li); return li; });
+  const minLi = el("li", {}, `Au moins ${W.minWords} mots`); list.append(minLi);
+  const update = () => {
+    const t = ta.value, n = (t.match(/[A-Za-z'’-]+/g) || []).length; count.textContent = `${n} mots`;
+    let okN = 0;
+    W.checks.forEach(([, re], k) => {
+      let ok;
+      if (re === "@links3") { const low = " " + t.toLowerCase().replace(/[^a-z' ]+/g, " ") + " "; ok = LINKS.filter((w) => low.includes(` ${w} `)).length >= 3; }
+      else if (re === "@signature") { const lines = t.trim().split(/\n+/).map((x) => x.trim()).filter(Boolean); const last = lines[lines.length - 1] || ""; ok = lines.length >= 4 && /[A-Za-z]/.test(last) && last.split(/\s+/).length <= 4; }
+      else ok = new RegExp(re, "im").test(t);
+      items[k].classList.toggle("ok", ok); if (ok) okN++;
+    });
+    const enough = n >= W.minWords; minLi.classList.toggle("ok", enough);
+    if (enough && okN >= Math.ceil(W.checks.length * 0.7) && !p.write) { p.write = 1; save(); }
+    try { localStorage.setItem(dkey, t); } catch (e) {}
+  };
+  ta.addEventListener("input", update); update();
+  const model = el("pre", { class: "model", hidden: true }, W.model);
+  const showBtn = el("button", { class: "btn ghost", onclick: () => { model.hidden = !model.hidden; showBtn.textContent = model.hidden ? "Voir un modèle de réponse" : "Cacher le modèle"; } }, "Voir un modèle de réponse");
+  pane.append(
+    el("section", { class: "card" }, el("h2", {}, "Le sujet"), el("p", { class: "task", lang: "en" }, W.task)),
+    el("section", { class: "card stack" }, el("div", { class: "row", style: "justify-content:space-between" }, el("h2", {}, "Ton texte"), count), ta,
+      el("div", {}, el("p", { class: "note" }, "Ce que le site vérifie tout seul :"), list,
+        el("p", { class: "note" }, "⚠️ Le site vérifie la structure, pas les fautes. Fais relire ton texte par ton professeur ou compare-le au modèle."))),
+    el("section", { class: "card" }, el("h2", {}, "Modèle"), el("p", { class: "note" }, "Essaie d'abord d'écrire seule, puis compare."), showBtn, model));
+}
+
+/* ---------- routing ---------- */
+function go(hash, replace) { if (replace) history.replaceState(null, "", hash); else history.pushState(null, "", hash); route(); }
+function route() {
+  if ("speechSynthesis" in window) speechSynthesis.cancel();
+  const m = location.hash.match(/^#\/l\/([a-z0-9]+)(?:\/([a-z]+))?/);
+  if (m) lesson(m[1], m[2]); else home();
+  window.scrollTo(0, 0);
+}
+$("#back").addEventListener("click", () => { if (history.state !== null || location.hash) go("#/"); });
+window.addEventListener("popstate", route);
+route();
+
+if ("serviceWorker" in navigator && location.protocol === "https:") navigator.serviceWorker.register("sw.js").catch(() => {});
+</script>
+</body>
+</html>

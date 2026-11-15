@@ -18,3 +18,14 @@ C'est aussi une appli installable : sur l'accueil, « Installer l'appli » ajout
 
 `index.html` et les sons de `audio/` sont générés par `src/build_practice.py` dans le projet `mia-prononciation`
 (`python src/build_practice.py models --template-only --site ../mia-entrainement-site`) ; ne pas les modifier à la main.
+
+## Anglais Terminale (`anglais/`)
+
+Lien : https://swarggirl001.github.io/mia-entrainement/anglais/
+
+Les cours d'anglais du cahier (Terminale A1), leçon par leçon, avec les quatre compétences :
+cours à écouter, vocabulaire et quiz, exercices corrigés, dictée, lecture au micro, rédaction avec liste de vérification et modèle.
+
+- Tout le contenu est dans `anglais/lessons.js` : pour ajouter une leçon, on ajoute un objet à la liste.
+- Après une modification de `lessons.js` ou `anglais/index.html`, changer `CACHE` dans `anglais/sw.js` pour que les téléphones prennent la nouvelle version hors ligne.
+- Ces fichiers sont écrits à la main (ils ne viennent pas de `build_practice.py`).
