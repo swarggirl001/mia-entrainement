@@ -1,7 +1,8 @@
 {
+  "id": "kalalab",
   "name": "KalaLab",
   "short_name": "KalaLab",
-  "description": "Le labo pour apprendre l'anglais : cours de Terminale et jeu de rôle de Mia.",
+  "description": "Le labo pour apprendre : cours d'anglais de Terminale et jeu de rôle de Mia.",
   "lang": "fr",
   "start_url": "./",
   "scope": "./",

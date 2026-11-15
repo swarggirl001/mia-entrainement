@@ -7,7 +7,7 @@
 <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline' https://gc.zgo.at; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src https://fonts.gstatic.com; img-src 'self' data: https://mia-entrainement.goatcounter.com; media-src 'self' data: blob:; connect-src 'self' https://mia-entrainement.goatcounter.com; object-src 'none'; base-uri 'none'; form-action 'none'">
 <meta name="referrer" content="no-referrer">
 <meta name="theme-color" content="#e57f1c">
-<link rel="manifest" href="manifest.webmanifest">
+<link rel="manifest" href="mia.webmanifest">
 <!-- visit counter (GoatCounter: no cookies, anonymous). The page counts each screen itself, by its name only:
      the address after # can hold a progress link, which must never leave the phone. -->
 <script id="gc" data-goatcounter="https://mia-entrainement.goatcounter.com/count" data-goatcounter-settings='{"no_onload": true}'
@@ -449,10 +449,10 @@ canvas.confetti { position: fixed; inset: 0; pointer-events: none; z-index: 50; 
       <button class="linkbtn" id="restartBtn" hidden>Recommencer depuis le début</button>
     </div>
     <div class="card install" id="install" hidden>
-      <div class="appicon" aria-hidden="true"><img src="icons/kalalab-192.png" alt="" width="56" height="56"></div>
+      <div class="appicon" aria-hidden="true"><img src="icons/icon-192.png" alt="" width="56" height="56"></div>
       <div>
         <h3 id="installTitle">Installer l'appli sur ton téléphone</h3>
-        <p class="note" id="installHow">Une icône « KalaLab » sur ton écran d'accueil : elle s'ouvre en plein écran, sans passer par Google.</p>
+        <p class="note" id="installHow">Une icône « Mia » sur ton écran d'accueil : elle s'ouvre en plein écran, sans passer par Google.</p>
       </div>
       <button class="go" id="installBtn" hidden></button>
     </div>
@@ -1802,7 +1802,7 @@ function renderInstall() {
   const ios = /iphone|ipad|ipod/i.test(navigator.userAgent);
   if (!/android|iphone|ipad|ipod|mobile/i.test(navigator.userAgent)) {   // a computer (Chrome or Edge)
     $("installTitle").textContent = "Installer l'appli sur ton ordinateur";
-    $("installHow").textContent = "Une icône « KalaLab » sur ton bureau : elle s'ouvre dans sa propre fenêtre, sans passer par Google.";
+    $("installHow").textContent = "Une icône « Mia » sur ton bureau : elle s'ouvre dans sa propre fenêtre, sans passer par Google.";
   }
   box.hidden = !(installEvt || ios);
   $("installBtn").hidden = !installEvt;
