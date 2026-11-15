@@ -406,7 +406,7 @@ document.querySelectorAll("[data-nav]").forEach((b) => b.addEventListener("click
 
 
 // ---- Kali in the hero
-$("#heroKali").innerHTML = kali("bow");
+$("#heroKali").innerHTML = kali("bonjour");
 $("#heroKali").addEventListener("click", () => kaliCheer($("#heroKali .kali")));
 
 // ---- palettes (demo): light and dark values for the page and the cards
@@ -468,7 +468,7 @@ document.querySelectorAll(".goal").forEach((g) => g.addEventListener("click", ()
 }));
 function showReward(bi) {
   const [ic, name, col] = BADGES[bi];
-  $("#rewardKali").innerHTML = kali("cap"); $("#rewardBadge").innerHTML = medal(ic, col);
+  $("#rewardKali").innerHTML = kali("diplomee"); $("#rewardBadge").innerHTML = medal(ic, col);
   $("#rewardText").textContent = `Nouveau badge : « ${name} ». Continue comme ça !`; fixDigits($("#rewardText"));
   $("#reward").hidden = false; $("#rewardOk").focus();
   setTimeout(() => { kaliCheer($("#rewardKali .kali")); const r = $("#rewardBadge").getBoundingClientRect(); confetti(r.left + r.width / 2, r.top + r.height / 2); }, 350);

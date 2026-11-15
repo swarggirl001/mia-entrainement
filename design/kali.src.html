@@ -62,6 +62,9 @@ h2 { font-family: var(--title); font-weight: 400; font-size: 26px; margin: 6px 0
   border: var(--bw) solid var(--line); border-radius: 14px 14px 4px 14px; padding: 8px 10px; opacity: 0; transform: scale(.6); transform-origin: 100% 100%; transition: .35s .35s; }
 .tip.in { opacity: 1; transform: scale(1); }
 
+.jump { display: flex; flex-wrap: wrap; gap: 8px; } .jump a { font-family: var(--pixel); font-weight: 600; font-size: 15px; color: #141414; text-decoration: none; padding: 7px 12px; border-radius: 12px; border: var(--bw) solid var(--line); background: var(--c4); box-shadow: 3px 3px 0 var(--shadow); }
+.outfit .where-tag { font-family: var(--pixel); font-size: 12.5px; font-weight: 600; padding: 2px 8px; border-radius: 99px; background: rgba(255,255,255,.75); }
+.outfit:nth-child(5) { background: var(--c1); } .outfit:nth-child(6) { background: var(--c3); } .outfit:nth-child(7) { background: var(--c4); } .outfit:nth-child(8) { background: var(--c2); }
 .where { border: var(--bw) dashed var(--line); border-radius: 20px; padding: 14px 16px; font-family: var(--pixel); font-size: 15px; display: grid; gap: 4px; }
 .where b { font-family: var(--title); font-weight: 400; font-size: 18px; }
 .ico { width: 1.3em; height: 1.3em; display: inline-block; vertical-align: -.3em; }
@@ -79,12 +82,10 @@ h2 { font-family: var(--title); font-weight: 400; font-size: 26px; margin: 6px 0
     </div>
   </section>
 
-  <h2>Ses tenues selon l'endroit</h2>
-  <div class="outfits" id="outfits"></div>
-
+  <nav class="jump" aria-label="Aller à"><a href="#logo-anim">Son entrée sur le logo</a><a href="#tenues">Ses 8 tenues</a><a href="#lesson">Pendant un cours</a></nav>
   <div class="two">
     <div class="box logo-card">
-      <h2 style="margin:0">Son entrée sur le logo</h2>
+      <h2 style="margin:0" id="logo-anim">Son entrée sur le logo</h2>
       <svg class="logo" id="logo" viewBox="0 0 300 300" aria-label="Kali sort de derrière l'arche du logo, passe devant, fait coucou et repart">
         <defs><clipPath id="icon"><rect width="300" height="300" rx="66"/></clipPath></defs>
         <g clip-path="url(#icon)">
@@ -101,7 +102,7 @@ h2 { font-family: var(--title); font-weight: 400; font-size: 26px; margin: 6px 0
       <button class="btn" id="replay">Revoir</button>
     </div>
 
-    <div class="box lesson" id="lesson">
+    <div class="box lesson" id="lesson" style="scroll-margin-top:16px">
       <h2 style="margin:0">Pendant un cours (rarement)</h2>
       <p class="cap" style="text-align:left">Seulement si on reste bloqué longtemps ou après plusieurs erreurs : elle passe vite, encourage, puis s'en va.</p>
       <p class="q">I ___ to like maths.</p>
@@ -111,6 +112,9 @@ h2 { font-family: var(--title); font-weight: 400; font-size: 26px; margin: 6px 0
       <div class="visit" id="visit"></div>
     </div>
   </div>
+
+  <h2 id="tenues">Ses 8 tenues, chacune avec son animation</h2>
+  <div class="outfits" id="outfits"></div>
 
   <div class="where">
     <b>Où on la voit</b>
@@ -126,22 +130,26 @@ h2 { font-family: var(--title); font-weight: 400; font-size: 26px; margin: 6px 0
 @ICONS_JS@
 paintIcons();
 const $ = (s) => document.querySelector(s);
-$("#big").innerHTML = kali("bow");
+$("#big").innerHTML = kali("bonjour");
 $("#big").addEventListener("click", () => kaliCheer($("#big .kali")));
 
 const OUTFITS = [
-  ["bow", "Accueil", "Son nœud lilas, pour dire bonjour."],
-  ["phones", "Mes mots", "Son casque, pour réécouter les mots."],
-  ["book", "Passage en cours", "Son livre, pour t'encourager vite fait."],
-  ["cap", "Bravo et badges", "Son chapeau de diplômée, pour fêter tes réussites."],
+  ["bonjour", "Bonjour", "Accueil", "Son nœud lilas. Elle fait coucou avec la main."],
+  ["dj", "DJ", "Mes mots, écoute", "Son casque. Elle danse, des notes de musique s'envolent."],
+  ["lecture", "Lectrice", "Passage en cours", "Ses lunettes et son livre. Elle lit et tourne les pages."],
+  ["diplomee", "Diplômée", "Bravo et badges", "Son chapeau de diplômée. Elle saute, les bras en l'air."],
+  ["sport", "Sportive", "Série de jours", "Son bandeau. Elle court sur place pour garder la série."],
+  ["dodo", "Bonne nuit", "Le soir, en mode sombre", "Son bonnet de nuit. Elle dort, des Z flottent."],
+  ["detective", "Détective", "Page introuvable", "Son chapeau et sa loupe. Elle cherche partout."],
+  ["fete", "Fête", "Unité terminée", "Son chapeau pointu et un ballon. C'est la fête !"],
 ];
-$("#outfits").innerHTML = OUTFITS.map(([a, t, d]) => `<button class="box outfit"><span class="st">${kali(a)}</span><b>${t}</b><p>${d}</p></button>`).join("");
+$("#outfits").innerHTML = OUTFITS.map(([a, t, w, d]) => `<button class="box outfit"><span class="st">${kali(a)}</span><b>${t}</b><span class="where-tag">${w}</span><p>${d}</p></button>`).join("");
 document.querySelectorAll(".outfit").forEach((o) => o.addEventListener("click", () => kaliCheer(o.querySelector(".kali"))));
 
 // ---- logo entrance: behind the arch -> out on the right -> walks in front of "Lab" -> waves -> leaves on the left
 const inner = (acc) => kali(acc).replace(/^<svg[^>]*>|<\/svg>$/g, "");
-const S = 0.36, W = 224 * S;                       // size of Kali on the logo
-const mk = (id) => { const g = $(id); g.innerHTML = `<g class="walker" transform="translate(-999 0)"><svg class="kali" x="0" y="0" width="${W}" height="${W}" viewBox="-12 -16 224 226">${inner("bow")}</svg></g>`; return g.querySelector(".walker"); };
+const S = 0.36, W = 228 * S;                       // size of Kali on the logo
+const mk = (id) => { const g = $(id); g.innerHTML = `<g class="walker" transform="translate(-999 0)"><svg class="kali o-bonjour" x="0" y="0" width="${W}" height="${W}" viewBox="-14 -18 228 230">${inner("bonjour")}</svg></g>`; return g.querySelector(".walker"); };
 const back = mk("#behind"), front = mk("#front");
 const Y = 190;
 let run = 0;
@@ -173,7 +181,7 @@ else place(front, 150, 0, false);
 $("#replay").addEventListener("click", entrance);
 
 // ---- quick visit during a lesson
-$("#visit").innerHTML = kali("book");
+$("#visit").innerHTML = kali("lecture");
 $("#stuck").addEventListener("click", () => {
   const v = $("#visit"), tip = $("#tip");
   v.classList.add("in"); tip.classList.add("in");
