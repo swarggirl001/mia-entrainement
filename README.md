@@ -1,8 +1,16 @@
-# Entraînement de Mia
+# KalaLab
+
+Le labo pour apprendre l'anglais. L'accueil (`index.html`) mène à deux parties :
+- **Cours d'anglais** (`anglais/`) : les leçons de Terminale ;
+- **Le jeu de rôle de Mia** (`mia.html`).
+
+Les anciens liens vers Mia (avec un `#`) sont renvoyés vers `mia.html`.
+
+## Le jeu de rôle de Mia (`mia.html`)
 
 Page d'entraînement à la prononciation pour le jeu de rôle « A patient with a wrist fracture » (rôle de Mia).
 
-Lien : https://swarggirl001.github.io/mia-entrainement/
+Lien : https://swarggirl001.github.io/mia-entrainement/mia.html
 
 - Touche un mot pour l'entendre seul, écoute chaque phrase en vitesse normale ou lente.
 - Appuie sur le micro et lis la réplique : les mots compris passent en vert, les autres en rouge.
@@ -16,8 +24,9 @@ Le test au micro marche dans Google Chrome (Android) avec internet.
 
 C'est aussi une appli installable : sur l'accueil, « Installer l'appli » ajoute l'icône « Mia » à l'écran d'accueil du téléphone. La page, les sons et les images restent alors disponibles sans internet (`sw.js`) ; le micro, lui, a besoin d'internet.
 
-`index.html` et les sons de `audio/` sont générés par `src/build_practice.py` dans le projet `mia-prononciation`
-(`python src/build_practice.py models --template-only --site ../mia-entrainement-site`) ; ne pas les modifier à la main.
+`mia.html` (anciennement `index.html`) et les sons de `audio/` ont été générés par `src/build_practice.py` dans le projet `mia-prononciation`
+(`python src/build_practice.py models --template-only --site ../mia-entrainement-site`) 
+(ce projet n'est pas sur GitHub). Si on le relance, renommer la page produite en `mia.html` et y remettre le lien « ← KalaLab ».
 
 ## Anglais Terminale (`anglais/`)
 

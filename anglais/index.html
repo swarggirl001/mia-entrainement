@@ -3,12 +3,12 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<title>Anglais Terminale</title>
+<title>Anglais · KalaLab</title>
 <meta name="description" content="Réviser les cours d'anglais de Terminale : écouter, lire, parler, écrire.">
 <meta name="theme-color" content="#1f8f82">
-<link rel="manifest" href="manifest.webmanifest">
-<link rel="icon" href="icons/icon-192.png">
-<link rel="apple-touch-icon" href="icons/apple-touch-icon.png">
+<link rel="manifest" href="../manifest.webmanifest">
+<link rel="icon" href="../icons/kalalab-192.png">
+<link rel="apple-touch-icon" href="../icons/kalalab-apple-touch.png">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@600;800&family=Nunito+Sans:wght@400;600;700;800&display=swap" rel="stylesheet" media="print" onload="this.media='all'">
 <style>
@@ -150,7 +150,7 @@ textarea.big { min-height: 320px; }
 <body>
 <header class="bar"><div class="in">
   <button class="back" id="back" aria-label="Retour" hidden>←</button>
-  <div class="t" id="barTitle">Anglais Terminale</div>
+  <div class="t" id="barTitle">KalaLab · Anglais</div>
 </div></header>
 
 <main id="app"></main>
@@ -256,8 +256,8 @@ function skillsOf(L) {
 }
 
 function home() {
-  $("#back").hidden = true; $("#barTitle").textContent = "Anglais Terminale";
-  document.title = "Anglais Terminale";
+  $("#back").hidden = false; $("#barTitle").textContent = "KalaLab · Anglais";
+  document.title = "Anglais · KalaLab";
   app.replaceChildren(
     el("div", { class: "hero" },
       el("p", { class: "eyebrow" }, "Terminale A1 · d'après le cahier"),
@@ -502,7 +502,8 @@ function route() {
   if (m) lesson(m[1], m[2]); else home();
   window.scrollTo(0, 0);
 }
-$("#back").addEventListener("click", () => { if (history.state !== null || location.hash) go("#/"); });
+// in a lesson: back to the list of lessons; on the list: back to KalaLab's home
+$("#back").addEventListener("click", () => { if (/^#\/l\//.test(location.hash)) go("#/"); else location.href = "../"; });
 window.addEventListener("popstate", route);
 route();
 
