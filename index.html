@@ -295,12 +295,12 @@ body.corner .stage .kcorner { display: block; }
 .hero-kali { position: absolute; z-index: 1; width: 150px; height: 150px; left: calc(50% - 30px); bottom: 12px; }
 body.corner .hero-kali { bottom: 20px; }
 /* the bubble is one drawn shape; its tail tip sits just beside Kali's head (--tipx / --tipy) */
-.bubble { --bw: 112px; --bh: 60px; --tipx: calc(50% - 30px); --tipy: 98px; position: absolute; z-index: 2; width: var(--bw); height: var(--bh);
+.bubble { --bw: 96px; --bh: 51px; --tipx: calc(50% - 30px); --tipy: 98px; position: absolute; z-index: 2; width: var(--bw); height: var(--bh);
   left: calc(var(--tipx) - var(--bw) * .892); top: calc(var(--tipy) - var(--bh) * .797); right: auto;
   transform-origin: 89% 80%; animation: bob3 3s ease-in-out infinite; }
-.bubble.long { --bw: 140px; }
+.bubble.long { --bw: 120px; }
 .bubble svg { position: absolute; inset: 0; width: 100%; height: 100%; overflow: visible; filter: drop-shadow(3px 3px 0 var(--bubble-shadow)); }
-.bubble .bt { position: absolute; left: 3%; right: 14%; top: 4%; height: 64%; display: grid; place-items: center; font-family: var(--title); font-size: 16px; color: var(--tile-ink); white-space: nowrap; }
+.bubble .bt { position: absolute; left: 3%; right: 14%; top: 4%; height: 64%; display: grid; place-items: center; font-family: var(--title); font-size: 14px; color: var(--tile-ink); white-space: nowrap; }
 @keyframes bob3 { 0%,100% { transform: rotate(0) translateY(0); } 50% { transform: rotate(-3deg) translateY(-4px); } }
 @media (min-width: 900px) {
   .hero { grid-template-columns: 1fr 390px; grid-template-areas: "text stage" "streak stage"; column-gap: 40px; align-items: center; padding-top: 28px; }
@@ -310,7 +310,7 @@ body.corner .hero-kali { bottom: 20px; }
   .kc-mob { display: none !important; } body.corner .kc-desk { display: block !important; }
   .hero-kali { width: 196px; height: 196px; left: 158px; bottom: 34px; }
   body.corner .hero-kali { bottom: 30px; }
-  .bubble { --bw: 122px; --bh: 65px; --tipx: 162px; --tipy: 136px; } .bubble.long { --bw: 150px; } .bubble .bt { font-size: 18px; }
+  .bubble { --bw: 104px; --bh: 55px; --tipx: 162px; --tipy: 136px; } .bubble.long { --bw: 128px; } .bubble .bt { font-size: 16px; }
 }
 </style>
 </head>
