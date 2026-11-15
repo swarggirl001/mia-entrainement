@@ -1,6 +1,6 @@
 // Offline copy of the English course. Bump CACHE when lessons.js or index.html change.
-const CACHE = "anglais-v2";
-const FILES = ["./", "lessons.js", "../manifest.webmanifest", "../icons/kalalab-192.png", "../icons/kalalab-apple-touch.png"];
+const CACHE = "anglais-v3";
+const FILES = ["./", "lessons.js", "../manifest.webmanifest", "../js/activity.js", "../icons/kalalab-192.png", "../icons/kalalab-apple-touch.png"];
 self.addEventListener("install", (e) => {
   e.waitUntil(caches.open(CACHE).then((c) => c.addAll(FILES)).then(() => self.skipWaiting()));
 });

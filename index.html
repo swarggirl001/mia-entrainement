@@ -4,8 +4,9 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>KalaLab</title>
-<meta name="description" content="KalaLab : le labo pour apprendre l'anglais. Cours de Terminale et jeu de rôle de Mia.">
-<meta name="theme-color" content="#1f8f82">
+<meta name="description" content="KalaLab, le labo pour apprendre : cours d'anglais de Terminale et jeu de rôle de Mia.">
+<meta name="theme-color" content="#fbfaf7" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#262d3b" media="(prefers-color-scheme: dark)">
 <link rel="manifest" href="manifest.webmanifest">
 <link rel="icon" href="icons/kalalab-192.png">
 <link rel="apple-touch-icon" href="icons/kalalab-apple-touch.png">
@@ -13,111 +14,548 @@
 <script>
   // Old links to Mia's page (#sons, #son-3, #transfert=…) now open mia.html.
   if (location.hash.length > 1) location.replace("mia.html" + location.hash);
+  // the theme chosen by hand wins over the phone's setting
+  try { const t = localStorage.getItem("kalalab.theme"); if (t === "dark" || t === "light") document.documentElement.dataset.theme = t; } catch (e) {}
 </script>
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@600;800&family=Nunito+Sans:wght@400;600;700;800&display=swap" rel="stylesheet" media="print" onload="this.media='all'">
+<link rel="preload" href="fonts/cikutra-black.otf" as="font" type="font/otf" crossorigin>
 <style>
+@font-face { font-family: "Cikutra"; font-weight: 900; src: url(fonts/cikutra-black.otf) format("opentype"); font-display: swap; }
+@font-face { font-family: "Cikutra"; font-weight: 700; src: url(fonts/cikutra-bold.otf) format("opentype"); font-display: swap; }
+@font-face { font-family: "Bagel Fat One"; src: url(fonts/bagel-fat-one.woff2) format("woff2"); font-display: swap; }
+@font-face { font-family: "Pixelify Sans"; font-weight: 400; src: url(fonts/pixelify-sans-400.woff2) format("woff2"); font-display: swap; }
+@font-face { font-family: "Pixelify Sans"; font-weight: 600; src: url(fonts/pixelify-sans-600.woff2) format("woff2"); font-display: swap; }
+@font-face { font-family: "Pixelify Sans"; font-weight: 700; src: url(fonts/pixelify-sans-700.woff2) format("woff2"); font-display: swap; }
+@font-face { font-family: "Lexend"; font-weight: 400; src: url(fonts/lexend-400.woff2) format("woff2"); font-display: swap; }
+@font-face { font-family: "Lexend"; font-weight: 600; src: url(fonts/lexend-600.woff2) format("woff2"); font-display: swap; }
+@font-face { font-family: "Lexend"; font-weight: 700; src: url(fonts/lexend-700.woff2) format("woff2"); font-display: swap; }
+
+/* Layout: one column of stickers on phones; on wide screens the menu moves to the top and cards sit side by side.
+   Light = "pop" (cream paper, ink borders, offset shadows). Dark = "ardoise douce" (slate, chalk pastels).
+   Type: Cikutra for the greeting, a fat display face for card titles, Pixelify Sans for small "screen" text. */
 :root {
-  --paper: #fff7ee; --paper2: #fde7d2; --card: #ffffff; --ink: #1f2a44; --muted: #6b6275;
-  --action: #e57f1c; --action-soft: #fde3c8; --action-ink: #9a4f08;
-  --teal: #1f8f82; --teal-soft: #dff2ee; --violet: #6c5ce0; --violet-soft: #ebe8ff;
-  --good: #1f9d55; --line: #eadccb;
-  --display: "Baloo 2", "Trebuchet MS", system-ui, sans-serif;
-  --body: "Nunito Sans", "Segoe UI", system-ui, sans-serif;
-  color-scheme: light;
+  --bg: #fbfaf7; --fg: #141414; --muted: #4d4a45; --card: #ffffff; --line: #141414; --shadow: #141414;
+  --t1: #ece8f8; --t2: #f6ece4; --t3: #e6efe9; --lilac: #e7e1f7; --butter: #f7efd9; --sky: #c6f0ff;
+  --accent: #7b68c4; --track: #e8e2d6; --chip: #ffffff; --tile-ink: #141414; --bw: 3px;
+  --nav-bg: #fffdf6; --nav-fg: #141414; --nav-line: #141414; --nav-pill: #b9a6e0;
+  --display: "Cikutra", "Arial Black", system-ui, sans-serif;
+  --title: "Bagel Fat One", "Cikutra", "Arial Black", system-ui, sans-serif;
+  --pixel: "Pixelify Sans", "Courier New", monospace;
+  --body: "Lexend", "Segoe UI", system-ui, sans-serif;
 }
+@media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) {
+  --bg: #262d3b; --fg: #f4f1ea; --muted: #c9c6d6; --card: #2f3747; --line: #4a5468; --shadow: transparent;
+  --t1: #bdb3dc; --t2: #dcc2b2; --t3: #b3cdbf; --lilac: #b9a6e0; --butter: #ffd27a; --sky: #9be3c4;
+  --accent: #c3b3f0; --track: #3c4558; --chip: #2f3747; --tile-ink: #1c2230;
+  --nav-bg: #f4f1ea; --nav-fg: #262d3b; --nav-line: transparent; --nav-pill: #b9a6e0; color-scheme: dark; } }
+:root[data-theme="dark"] {
+  --bg: #262d3b; --fg: #f4f1ea; --muted: #c9c6d6; --card: #2f3747; --line: #4a5468; --shadow: transparent;
+  --t1: #bdb3dc; --t2: #dcc2b2; --t3: #b3cdbf; --lilac: #b9a6e0; --butter: #ffd27a; --sky: #9be3c4;
+  --accent: #c3b3f0; --track: #3c4558; --chip: #2f3747; --tile-ink: #1c2230;
+  --nav-bg: #f4f1ea; --nav-fg: #262d3b; --nav-line: transparent; --nav-pill: #b9a6e0; color-scheme: dark; }
 * { box-sizing: border-box; }
-[hidden] { display: none !important; }
-html { background: var(--paper2); }
-html, body { margin: 0; }
-body { min-height: 100vh; background: linear-gradient(180deg, var(--paper), var(--paper2) 900px, var(--paper2));
-  color: var(--ink); font-family: var(--body); font-size: 16px; line-height: 1.5; }
-main { max-width: 720px; margin: 0 auto; display: grid; gap: 16px;
-  padding: 28px max(16px, env(safe-area-inset-right, 0px)) 60px max(16px, env(safe-area-inset-left, 0px)); }
-h1, h2 { font-family: var(--display); line-height: 1.1; margin: 0; text-wrap: balance; }
-h1 { font-size: clamp(40px, 11vw, 56px); font-weight: 800; }
-h1 span { color: var(--action); }
-h2 { font-size: 24px; font-weight: 800; }
+body { background: var(--bg); color: var(--fg); font-family: var(--body); font-size: 16px; line-height: 1.45; transition: background .4s, color .4s; }
 p { margin: 0; }
-.brand { display: flex; align-items: center; gap: 14px; }
-.brand img { width: 64px; height: 64px; border-radius: 16px; flex: none; }
-.lead { color: var(--muted); font-size: 17px; }
-.door { display: grid; grid-template-columns: auto 1fr; gap: 14px; align-items: center; text-decoration: none; color: inherit;
-  background: var(--card); border: 1px solid var(--line); border-radius: 20px; padding: 18px; box-shadow: 0 2px 0 rgba(31,42,68,.05);
-  transition: transform .15s ease, box-shadow .15s ease; }
-.door:hover { transform: translateY(-2px); box-shadow: 0 6px 16px rgba(31,42,68,.08); }
-.door:focus-visible { outline: 3px solid var(--violet); outline-offset: 3px; }
-.door .pic { width: 72px; height: 72px; border-radius: 18px; display: grid; place-items: center; font-size: 38px; overflow: hidden; }
-.door .pic img { width: 100%; height: 100%; object-fit: cover; }
-.door.en .pic { background: var(--teal-soft); }
-.door.mia .pic { background: var(--action-soft); }
-.door .txt { display: grid; gap: 4px; min-width: 0; }
-.door .sub { color: var(--muted); font-size: 15px; }
-.door .go { justify-self: start; margin-top: 6px; font-weight: 800; border-radius: 12px; padding: 6px 14px; }
-.door.en .go { background: var(--teal); color: #fff; }
-.door.mia .go { background: var(--action); color: #fff; }
-.chips { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 2px; }
-.chip { font-size: 12px; font-weight: 800; padding: 2px 9px; border-radius: 999px; background: var(--teal-soft); color: var(--teal); }
-.chip.v { background: var(--violet-soft); color: var(--violet); }
-.chip.o { background: var(--action-soft); color: var(--action-ink); }
-.foot { color: var(--muted); font-size: 14px; }
-.install { display: flex; flex-wrap: wrap; gap: 10px; align-items: center; justify-content: space-between;
-  background: var(--card); border: 1px dashed var(--line); border-radius: 16px; padding: 12px 16px; }
-.install button { font: inherit; font-weight: 800; border: 0; border-radius: 12px; padding: 10px 16px; min-height: 44px; background: var(--ink); color: #fff; cursor: pointer; }
-@media (max-width: 380px) { .door { grid-template-columns: 1fr; } }
+button { font: inherit; color: inherit; cursor: pointer; border: 0; background: none; padding: 0; text-align: left; }
+:focus-visible { outline: 3px solid var(--accent); outline-offset: 3px; border-radius: 12px; }
+.app { max-width: 1160px; margin: 0 auto; display: grid; gap: 18px;
+  padding-block: 16px 120px; padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px)); }
+
+/* top bar */
+.top { display: flex; align-items: center; gap: 10px; }
+.mark { width: 42px; height: 42px; flex: none; transition: transform .5s cubic-bezier(.34,1.56,.64,1); }
+.mark:hover { transform: rotate(-8deg) scale(1.08); }
+.brand { font-family: var(--display); font-weight: 900; font-size: 24px; }
+.brand span { color: var(--accent); }
+.spacer { flex: 1; }
+.pill { display: flex; align-items: center; gap: 6px; font-family: var(--pixel); font-weight: 600; font-size: 14px; padding: 6px 12px; border-radius: 99px;
+  background: var(--chip); border: var(--bw) solid var(--line); }
+.flame { display: inline-block; transform-origin: 50% 90%; animation: flicker 1.6s ease-in-out infinite; }
+@keyframes flicker { 0%,100% { transform: rotate(-6deg) scale(1); } 50% { transform: rotate(6deg) scale(1.12); } }
+.theme { width: 42px; height: 42px; border-radius: 50%; display: grid; place-items: center; font-size: 19px;
+  background: var(--chip); border: var(--bw) solid var(--line); transition: transform .5s cubic-bezier(.34,1.56,.64,1); }
+.theme:hover { transform: rotate(25deg); }
+.theme.spin { transform: rotate(360deg); }
+.topnav { display: none; }
+
+/* hero */
+.hero { position: relative; padding-top: 6px; display: grid; gap: 16px; justify-items: start; }
+.hero h1 { font-family: var(--display); font-weight: 900; font-size: clamp(32px, 8.8vw, 64px); line-height: 1.02; margin: 0; text-wrap: balance; max-width: 15ch; }
+.hl { position: relative; white-space: nowrap; }
+.hl svg { position: absolute; left: -4px; bottom: -10px; width: calc(100% + 8px); height: 16px; overflow: visible; }
+.hl path { stroke: var(--accent); stroke-dasharray: 120; stroke-dashoffset: 0; }
+.hero.in .hl path { animation: draw .9s .35s ease-out backwards; }
+@keyframes draw { from { stroke-dashoffset: 120; } to { stroke-dashoffset: 0; } }
+.streak { font-family: var(--pixel); font-size: 16px; font-weight: 600; display: inline-flex; align-items: center; gap: 8px;
+  background: var(--butter); color: var(--tile-ink); border: var(--bw) dashed var(--line); border-radius: 14px; padding: 6px 12px; transform: rotate(-1deg); }
+.hero.in .streak { animation: slide-in .6s .6s cubic-bezier(.34,1.56,.64,1) backwards; }
+@keyframes slide-in { from { transform: translateX(-24px) rotate(-1deg); } }
+.hero-kali { position: absolute; right: -8px; top: 4px; width: 118px; height: 118px; z-index: 1; }
+.hero h1 { max-width: calc(100% - 104px) !important; }
+.hero { padding-top: 26px !important; }
+.bubble { position: absolute; right: 70px; top: -6px; z-index: 2; font-family: var(--title); font-size: 15px;
+  background: var(--sky); color: var(--tile-ink); padding: 6px 12px; border-radius: 16px 16px 16px 4px; border: var(--bw) solid var(--line);
+  transform: rotate(7deg); animation: bob 3s ease-in-out infinite; }
+@keyframes bob { 0%,100% { transform: rotate(7deg) translateY(0); } 50% { transform: rotate(4deg) translateY(-6px); } }
+.spark { position: absolute; right: 150px; top: -14px; width: 32px; height: 32px; color: var(--fg); opacity: .55; animation: twinkle 2.4s ease-in-out infinite; }
+@keyframes twinkle { 0%,100% { transform: scale(.85) rotate(0); opacity: .35; } 50% { transform: scale(1.1) rotate(20deg); opacity: .7; } }
+
+/* shared sticker press: the whole card moves, its shadow follows */
+.sticker { border: var(--bw) solid var(--line); border-radius: 22px; box-shadow: 5px 5px 0 var(--shadow);
+  transition: transform .35s cubic-bezier(.34,1.56,.64,1), box-shadow .25s ease; }
+.sticker:active { transform: translate(4px, 4px) rotate(0deg) !important; box-shadow: 1px 1px 0 var(--shadow); transition-duration: .08s; }
+@media (hover: hover) {
+  .sticker:hover { transform: translateY(-5px) rotate(0deg); box-shadow: 8px 10px 0 var(--shadow); }
+}
+
+.cols { display: grid; gap: 16px; }
+.eyebrow { font-family: var(--pixel); font-size: 13px; font-weight: 600; letter-spacing: .08em; text-transform: uppercase; color: var(--accent); }
+
+/* continue card: the whole card is the button */
+.resume { background: var(--card); padding: 16px; display: grid; grid-template-columns: auto 1fr; gap: 14px; align-items: center; width: 100%; }
+.ring { width: 80px; height: 80px; position: relative; }
+.ring svg { width: 100%; height: 100%; transform: rotate(-90deg); }
+.ring .track { stroke: var(--track); }
+.ring .val { stroke: var(--accent); stroke-dasharray: 201; stroke-dashoffset: 110.55; }
+.ring b { position: absolute; inset: 0; display: grid; place-items: center; font-family: var(--body); font-weight: 700; font-size: 18px; font-variant-numeric: tabular-nums; }
+.resume .ttl { display: block; margin: 2px 0 2px; font-family: var(--title); font-weight: 400; font-size: 21px; line-height: 1.15; }
+.resume small { font-family: var(--pixel); color: var(--muted); font-size: 14px; }
+.go { margin-top: 10px; display: inline-flex; align-items: center; gap: 8px; font-weight: 700; font-size: 14px; padding: 9px 16px; border-radius: 12px;
+  background: var(--fg); color: var(--bg); }
+.go .arr { display: inline-block; animation: nudge 1.8s ease-in-out infinite; }
+@keyframes nudge { 0%,60%,100% { transform: translateX(0); } 30% { transform: translateX(6px); } }
+@media (hover: hover) { .resume:hover .arr { animation-duration: .7s; } }
+
+/* word of the day: the whole card flips, speaker included */
+.flip { perspective: 900px; min-height: 176px; }
+.flip-inner { position: relative; min-height: 176px; height: 100%; transition: transform .7s cubic-bezier(.22,1,.36,1); transform-style: preserve-3d; }
+.flip.on .flip-inner { transform: rotateY(180deg); }
+.face { position: absolute; inset: 0; backface-visibility: hidden; -webkit-backface-visibility: hidden; border-radius: 22px; padding: 16px 72px 16px 16px;
+  border: var(--bw) solid var(--line); box-shadow: 5px 5px 0 var(--shadow); background: var(--lilac); color: var(--tile-ink);
+  display: grid; align-content: start; gap: 4px; cursor: pointer; }
+.face.back { transform: rotateY(180deg); background: var(--butter); }
+.face .eyebrow { color: inherit; opacity: .8; }
+.word { font-family: var(--display); font-weight: 900; font-size: 32px; line-height: 1.1; }
+.ipa { font-size: 14px; opacity: .85; }
+.hint { font-family: var(--pixel); font-size: 13px; opacity: .75; margin-top: auto; }
+.play { position: absolute; right: 14px; top: 14px; width: 48px; height: 48px; border-radius: 50%; background: var(--tile-ink); color: #fff;
+  display: grid; place-items: center; font-size: 18px; transition: transform .2s; }
+.play:active { transform: scale(.88); }
+.play.ping::after { content: ""; position: absolute; inset: 0; border-radius: 50%; border: 3px solid var(--tile-ink); animation: ping .8s ease-out; }
+@keyframes ping { from { transform: scale(1); opacity: .8; } to { transform: scale(1.8); opacity: 0; } }
+
+/* modules */
+.sec { display: flex; justify-content: space-between; align-items: baseline; gap: 12px; flex-wrap: wrap; }
+.sec h2 { margin: 0; font-family: var(--title); font-weight: 400; font-size: 23px; }
+.sec small { font-family: var(--pixel); color: var(--muted); font-size: 14px; }
+.grid { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+.tile { --r: 0deg; padding: 14px; min-height: 156px; display: grid; align-content: space-between; color: var(--tile-ink); position: relative; transform: rotate(var(--r)); }
+.tile:nth-child(1) { background: var(--t1); --r: -1.4deg; --d: .05s; }
+.tile:nth-child(2) { background: var(--t2); --r: 1.2deg; --d: .15s; }
+.tile:nth-child(3) { background: var(--t3); --r: .9deg; --d: .25s; }
+.tile:nth-child(4) { background: var(--card); color: var(--fg); --r: -.9deg; --d: .35s; }
+.grid.in .tile { animation: pop-in .6s var(--d) cubic-bezier(.34,1.56,.64,1) backwards; }
+@keyframes pop-in { from { transform: translateY(22px) scale(.9) rotate(var(--r)); } }
+.tile .ic { display: inline-block; width: max-content; transition: transform .35s cubic-bezier(.34,1.56,.64,1); }
+@media (hover: hover) { .tile:hover .ic { transform: translateY(-4px) scale(1.12); } }
+.tile.jump .ic { animation: jump .5s cubic-bezier(.34,1.56,.64,1); }
+@keyframes jump { 40% { transform: translateY(-10px) scale(1.15); } }
+.tile .ttl { display: block; margin: 0; font-family: var(--title); font-weight: 400; font-size: 20px; line-height: 1.1; }
+.tile p { font-family: var(--pixel); font-size: 13.5px; margin-top: 4px; line-height: 1.25; }
+.tag { position: absolute; right: 10px; top: 10px; font-family: var(--pixel); font-size: 12px; font-weight: 600; background: rgba(255,255,255,.8); color: #141414; padding: 2px 8px; border-radius: 99px; }
+.tile .arr { position: absolute; right: 14px; bottom: 12px; font-size: 20px; transition: transform .3s cubic-bezier(.34,1.56,.64,1); }
+@media (hover: hover) { .tile:hover .arr { transform: translateX(4px); } }
+.tile.soon { opacity: .85; }
+
+
+/* daily goals */
+.goals { background: var(--card); padding: 16px; display: grid; gap: 10px; }
+.goals-head { display: flex; justify-content: space-between; align-items: baseline; }
+.goals-head small { font-family: var(--pixel); font-size: 14px; color: var(--muted); }
+.goal-list { display: grid; gap: 8px; }
+.goal { display: grid; grid-template-columns: 40px 1fr auto; gap: 10px; align-items: center; padding: 8px 10px; border-radius: 14px; border: 2px solid var(--track); width: 100%; transition: transform .2s, background .3s; }
+.goal:active { transform: scale(.97); }
+.goal .gi { width: 40px; height: 40px; display: grid; place-items: center; border-radius: 12px; background: var(--t1); }
+.goal:nth-child(2) .gi { background: var(--t2); } .goal:nth-child(3) .gi { background: var(--t3); }
+.goal .gt { font-family: var(--title); font-size: 16px; display: grid; gap: 6px; }
+.goal .bar { height: 8px; border-radius: 99px; background: var(--track); overflow: hidden; display: block; }
+.goal .bar i { display: block; height: 100%; background: var(--accent); border-radius: 99px; transition: width .8s cubic-bezier(.22,1,.36,1); }
+.goal .gs { font-family: var(--pixel); font-weight: 700; font-size: 14px; }
+.goal.done { background: color-mix(in srgb, var(--t3) 45%, transparent); }
+.goal.done .gs { width: 28px; height: 28px; border-radius: 50%; display: grid; place-items: center; background: var(--fg); color: var(--bg); }
+.goal-hint { font-family: var(--pixel); font-size: 13px; color: var(--muted); }
+/* badges */
+.badges { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; }
+.badge { display: grid; justify-items: center; gap: 4px; text-align: center; }
+.badge svg { width: 100%; max-width: 86px; height: auto; overflow: visible; transition: transform .35s cubic-bezier(.34,1.56,.64,1); }
+@media (hover: hover) { .badge:hover svg { transform: rotate(-8deg) scale(1.08); } }
+.badge:active svg { transform: scale(.92); }
+.badge span { font-family: var(--pixel); font-size: 12px; line-height: 1.15; color: var(--muted); }
+.badge.locked svg { filter: grayscale(1); opacity: .45; }
+.badge.new svg { animation: badge-in .9s cubic-bezier(.34,1.56,.64,1); }
+@keyframes badge-in { 0% { transform: scale(0) rotate(-180deg); } 100% { transform: scale(1) rotate(0); } }
+@media (min-width: 900px) { .badges { grid-template-columns: repeat(8, 1fr); } }
+/* reward pop-up */
+.reward { position: fixed; inset: 0; z-index: 8; display: grid; place-items: center; padding: 16px; background: rgba(20,20,20,.45); }
+.reward[hidden] { display: none !important; }
+.reward-card { background: var(--card); border: var(--bw) solid var(--line); border-radius: 26px; box-shadow: 6px 6px 0 var(--shadow); padding: 18px 20px 20px; width: min(360px, 100%);
+  display: grid; justify-items: center; gap: 8px; text-align: center; animation: reward-in .6s cubic-bezier(.34,1.56,.64,1); }
+@keyframes reward-in { from { transform: translateY(40px) scale(.8); opacity: 0; } }
+.reward-card .rk { width: 150px; height: 150px; margin-top: -60px; }
+.reward-card .rb { width: 96px; animation: badge-in .9s .25s cubic-bezier(.34,1.56,.64,1) backwards; }
+.reward-card h3 { margin: 0; font-family: var(--display); font-weight: 900; font-size: 26px; }
+.reward-card p { font-family: var(--pixel); font-size: 15px; color: var(--muted); }
+.reward-card .go { margin-top: 6px; }
+.ico { width: 1.25em; height: 1.25em; display: inline-block; vertical-align: -.28em; flex: none; overflow: visible; }
+.tile .ic .ico { width: 50px; height: 50px; }
+.goal .gi .ico { width: 28px; height: 28px; vertical-align: middle; }
+.goal.done .gs { background: none !important; width: auto !important; height: auto !important; } .goal .gs .ico { width: 30px; height: 30px; }
+.nav b .ico { width: 26px; height: 26px; }
+.theme .ico { width: 24px; height: 24px; }
+.play { background: var(--card) !important; border: var(--bw) solid var(--line); } .play .ico { width: 26px; height: 26px; }
+.flame .ico { width: 18px; height: 18px; } .streak .ico { width: 22px; height: 22px; }
+.dg { font-family: var(--body); font-weight: 700; font-size: .95em; letter-spacing: 0; }
+.demo { font-family: var(--pixel); font-size: 13px; color: var(--muted); text-align: center; }
+
+/* bottom menu (phone) */
+.nav { position: fixed; left: 50%; bottom: calc(12px + env(safe-area-inset-bottom, 0px)); transform: translateX(-50%); width: min(420px, calc(100% - 24px));
+  display: grid; grid-template-columns: repeat(4, 1fr); background: var(--nav-bg); color: var(--nav-fg); border: var(--bw) solid var(--nav-line);
+  box-shadow: 4px 4px 0 var(--shadow); border-radius: 22px; padding: 7px; z-index: 5; }
+.nav .dot { position: absolute; top: 7px; bottom: 7px; left: 7px; width: calc((100% - 14px) / 4); border-radius: 16px; background: var(--nav-pill);
+  transition: transform .45s cubic-bezier(.34,1.56,.64,1); }
+.nav button, .nav a { position: relative; display: grid; justify-items: center; gap: 1px; font-family: var(--pixel); font-size: 12.5px; font-weight: 600; padding: 6px 0; color: inherit; text-align: center; }
+.nav button b, .nav a b { font-size: 20px; transition: transform .3s cubic-bezier(.34,1.56,.64,1); }
+.nav [aria-current="page"] { color: #141414; }
+.nav [aria-current="page"] b { transform: translateY(-2px) scale(1.15); }
+
+.toast { position: fixed; left: 50%; bottom: calc(100px + env(safe-area-inset-bottom, 0px)); transform: translate(-50%, 20px); opacity: 0; background: var(--fg); color: var(--bg);
+  padding: 10px 16px; border-radius: 14px; font-family: var(--pixel); font-weight: 600; font-size: 15px; transition: .35s; pointer-events: none; z-index: 6; max-width: calc(100% - 32px); text-align: center; }
+.toast.show { opacity: 1; transform: translate(-50%, 0); }
+canvas#confetti { position: fixed; inset: 0; width: 100%; height: 100%; pointer-events: none; z-index: 7; }
+
+@media (min-width: 900px) {
+  .app { padding-block: 28px 60px; gap: 24px; }
+  .topnav { display: flex; gap: 6px; margin-left: 28px; }
+  .topnav button, .topnav a { font-family: var(--pixel); font-weight: 600; font-size: 16px; padding: 7px 14px; border-radius: 12px; color: var(--muted); border: var(--bw) solid transparent; transition: .2s; }
+  .topnav button:hover, .topnav a:hover { background: var(--chip); color: var(--fg); }
+  .topnav [aria-current="page"] { color: #141414; background: var(--nav-pill); border-color: var(--line); }
+  .nav { display: none; }
+  .hero-kali { right: 40px; top: -18px; width: 210px; height: 210px; }
+  .hero h1 { max-width: 15ch !important; }
+  .bubble { right: 220px; top: 6px; font-size: 18px; }
+  .cols { grid-template-columns: 1.3fr 1fr; }
+  .grid { grid-template-columns: repeat(4, 1fr); }
+  .tile { min-height: 200px; }
+  .toast { bottom: 28px; }
+}
+
+@media (prefers-reduced-motion: reduce) { *, *::before, *::after { animation: none !important; transition: none !important; } }
+
+.install-card { background: var(--card); border: var(--bw) dashed var(--line); border-radius: 22px; padding: 14px 16px; display: grid; gap: 8px; }
+.install-card .row2 { display: flex; flex-wrap: wrap; gap: 10px; align-items: center; justify-content: space-between; }
+.install-card b { font-family: var(--title); font-weight: 400; font-size: 18px; }
+.install-card p { font-family: var(--pixel); font-size: 14px; color: var(--muted); }
+.install-card a { color: var(--accent); font-weight: 700; }
+.foot { font-family: var(--pixel); font-size: 13px; color: var(--muted); text-align: center; }
+.tile[href] { text-decoration: none; }
+a.sticker, a.tile { color: var(--tile-ink); }
+.tile.soon .tag { background: var(--card); color: var(--fg); }
+
+a.resume, a.goal, a.tile, .nav a, .topnav a { text-decoration: none; color: inherit; }
+a.resume { color: var(--fg); }
+.nav a, .topnav a { cursor: pointer; }
+.topnav a { font-family: var(--pixel); font-weight: 600; }
+
 </style>
 </head>
 <body>
-<main>
-  <header class="brand">
-    <img src="icons/kalalab-192.png" alt="" width="64" height="64">
-    <div>
-      <h1>Kala<span>Lab</span></h1>
-      <p class="lead">Le labo pour apprendre l'anglais, pas à pas.</p>
-    </div>
+<div class="app">
+  <header class="top">
+    <svg class="mark" viewBox="0 0 300 300" aria-hidden="true"><rect width="300" height="300" rx="66" fill="#b9a6e0"/><path d="M68 266 v-122 a82 82 0 0 1 164 0 v122z" fill="#fbeee0"/><path d="M84 266 v-120 a66 66 0 0 1 132 0 v120" fill="none" stroke="#b9a6e0" stroke-width="3"/><text x="150" y="186" text-anchor="middle" font-family="Cikutra" font-weight="900" font-size="54" fill="#2e2350">Kala</text><text x="150" y="238" text-anchor="middle" font-family="Cikutra" font-weight="900" font-size="46" fill="#8e7cc3">Lab</text></svg>
+    <div class="brand">Kala<span>Lab</span></div>
+    <nav class="topnav" aria-label="Menu">
+      <a aria-current="page" href="./">Accueil</a><a href="anglais/">Cours</a><button data-soon="Mes mots">Mes mots</button><button data-soon="Moi">Moi</button>
+    </nav>
+    <div class="spacer"></div>
+    <div class="pill" id="streakPill" title="Jours d'affilée"><span class="flame"><i data-ic="flame"></i></span> <span id="streakN">0</span>&nbsp;<span id="streakWord">jour</span></div>
+    <button class="theme" id="theme" aria-label="Passer en mode sombre"></button>
   </header>
 
-  <a class="door en" href="anglais/">
-    <div class="pic" aria-hidden="true">📚</div>
-    <div class="txt">
-      <h2>Cours d'anglais</h2>
-      <p class="sub">Terminale · les leçons du cahier, unité par unité.</p>
-      <div class="chips"><span class="chip">Listening</span><span class="chip o">Reading</span><span class="chip v">Speaking</span><span class="chip o">Writing</span></div>
-      <p class="sub" id="enProgress" hidden></p>
-      <span class="go">Ouvrir les cours →</span>
-    </div>
-  </a>
+  <section class="hero" data-replay>
+    <button class="hero-kali" id="heroKali" aria-label="Kali, toucher pour la faire sauter"></button>
+    <span class="bubble" id="bubble">Hello!</span>
+    <h1 id="hello">Salut, prête à <span class="hl">briller<svg viewBox="0 0 100 16" preserveAspectRatio="none" aria-hidden="true"><path d="M2 10 Q25 2 50 9 T98 7" fill="none" stroke-width="5" stroke-linecap="round"/></svg></span> ?</h1>
+    <p class="streak"><i data-ic="flame"></i><span id="streakMsg">Fais un exercice aujourd'hui pour lancer ta série</span></p>
+  </section>
 
-  <a class="door mia" href="mia.html">
-    <div class="pic"><img src="icons/icon-192.png" alt="" width="72" height="72"></div>
-    <div class="txt">
-      <h2>Le jeu de rôle de Mia</h2>
-      <p class="sub">Oral d'anglais : « A patient with a wrist fracture ». Les sons, les répliques de Mia et la répétition générale.</p>
-      <span class="go">Jouer le rôle de Mia →</span>
+  <div class="cols">
+    <a class="resume sticker" id="resume" data-replay href="anglais/">
+      <span class="ring"><svg viewBox="0 0 78 78" aria-hidden="true"><circle class="track" cx="39" cy="39" r="32" fill="none" stroke-width="9"/><circle class="val" id="ring" cx="39" cy="39" r="32" fill="none" stroke-width="9" stroke-linecap="round"/></svg><b id="pct">0%</b></span>
+      <span>
+        <span class="eyebrow" style="display:block"><i data-ic="play"></i> <span id="resumeKicker">Commencer</span></span>
+        <span class="ttl" id="resumeTitle">Unit 1 · Reading</span>
+        <small id="resumeSub">Understanding Artificial Intelligence</small><br>
+        <span class="go" id="resumeGo">C'est parti <span class="arr">→</span></span>
+      </span>
+    </a>
+    <div class="flip" id="flip">
+      <div class="flip-inner">
+        <div class="face front" id="front" role="button" tabindex="0" aria-label="Le mot du jour. Toucher pour voir le sens.">
+          <p class="eyebrow"><i data-ic="sparkle"></i> Le mot du jour</p>
+          <p class="word" id="wodWord">…</p>
+          <p class="ipa" id="wodLesson"></p>
+          <p class="hint">Touche la carte pour voir le sens ↻</p>
+          <button class="play" id="wodSay" aria-label="Écouter le mot"><i data-ic="speaker"></i></button>
+        </div>
+        <div class="face back" id="back" role="button" tabindex="-1" aria-label="Retourner la carte">
+          <p class="eyebrow">Ça veut dire…</p>
+          <p class="word" style="font-size:20px" id="wodDef"></p>
+          <p class="ipa" id="wodEx"></p>
+          <p class="hint">Touche pour retourner ↻</p>
+          <button class="play" id="wodSayEx" aria-label="Écouter la phrase"><i data-ic="speaker"></i></button>
+        </div>
+      </div>
     </div>
-  </a>
-  <p class="foot">Le jeu de rôle de Mia est déjà dans KalaLab. Tu peux aussi <a href="mia.html">installer l'appli Mia toute seule</a> : ouvre-la, puis touche « Installer l'appli » sur sa page d'accueil.</p>
-
-  <div class="install" id="install" hidden>
-    <p><b>Installer KalaLab</b><br><span class="foot">Une icône sur l'écran d'accueil, qui marche aussi sans internet.</span></p>
-    <button id="installBtn">Installer</button>
   </div>
 
-  <p class="foot">🔒 La progression reste sur ce téléphone. Le micro marche dans Google Chrome, avec internet.</p>
-</main>
+  <section class="goals sticker" id="goals" data-replay>
+    <div class="goals-head"><p class="eyebrow"><i data-ic="target"></i> Objectifs du jour</p><small id="goalCount">0 / 3</small></div>
+    <div class="goal-list" id="goalList"></div>
+    <p class="goal-hint">Touche un objectif pour aller le faire. Chaque jour, de nouveaux objectifs.</p>
+  </section>
+
+  <div class="sec"><h2>Mes badges</h2><small id="badgeCount">0 sur 8</small></div>
+  <div class="badges" id="badges"></div>
+
+  <div class="sec"><h2>Tes modules</h2><small>4 au total</small></div>
+  <div class="grid" data-replay>
+    <a class="tile sticker" href="anglais/"><span class="tag" id="lessonCount">9 leçons</span><span class="ic"><i data-ic="books"></i></span><span><span class="ttl">Cours d'anglais</span><p>Terminale · écouter, lire, parler, écrire</p></span><span class="arr">→</span></a>
+    <a class="tile sticker" href="mia.html"><span class="tag">Oral</span><span class="ic"><i data-ic="dialogue"></i></span><span><span class="ttl">Jeu de rôle de Mia</span><p>7 répliques à maîtriser</p></span><span class="arr">→</span></a>
+    <button class="tile sticker soon" data-soon="Mes mots"><span class="tag">Bientôt</span><span class="ic"><i data-ic="letters"></i></span><span><span class="ttl">Mes mots</span><p>Révise tes mots difficiles</p></span></button>
+    <button class="tile sticker soon" data-soon="D'autres matières"><span class="ic"><i data-ic="sparkle"></i></span><span><span class="ttl">Bientôt…</span><p>D'autres matières</p></span></button>
+  </div>
+
+  <div class="install-card" id="installCard">
+    <div class="row2"><b>Installer KalaLab</b><button class="go" id="installBtn" hidden>Installer <span class="arr">→</span></button></div>
+    <p id="installHow">Sur Android, ouvre ce site dans Chrome, touche ⋮ puis « Ajouter à l'écran d'accueil ». KalaLab marche aussi sans internet.</p>
+    <p>Le jeu de rôle de Mia est déjà dans KalaLab. Tu peux aussi <a href="mia.html">installer l'appli Mia toute seule</a> depuis sa page d'accueil.</p>
+  </div>
+  <p class="foot">La progression reste sur ce téléphone, elle n'est envoyée à personne. Le micro marche dans Google Chrome, avec internet.</p>
+</div>
+
+<nav class="nav" aria-label="Menu">
+  <span class="dot" id="dot"></span>
+  <a aria-current="page" href="./"><b><i data-ic="home"></i></b>Accueil</a>
+  <a href="anglais/"><b><i data-ic="books"></i></b>Cours</a>
+  <button data-soon="Mes mots"><b><i data-ic="letters"></i></b>Mes mots</button>
+  <button data-soon="Moi"><b><i data-ic="user"></i></b>Moi</button>
+</nav>
+<div class="reward" id="reward" hidden>
+  <div class="reward-card" role="dialog" aria-modal="true" aria-labelledby="rewardTitle">
+    <div class="rk" id="rewardKali"></div>
+    <div class="rb" id="rewardBadge"></div>
+    <h3 id="rewardTitle">Badge débloqué !</h3>
+    <p id="rewardText"></p>
+    <button class="go" id="rewardOk">Merci Kali ! <span class="arr">→</span></button>
+  </div>
+</div>
+<div class="toast" id="toast" role="status" aria-live="polite"></div>
+<canvas id="confetti" aria-hidden="true"></canvas>
+
+<script src="js/icons.js"></script>
+<script src="js/kali.js"></script>
+<script src="js/activity.js"></script>
+<script src="anglais/lessons.js"></script>
 <script>
 "use strict";
-// how far the English course has gone (saved by anglais/ on this phone)
-try {
-  const p = JSON.parse(localStorage.getItem("anglais-progress-v1") || "{}");
-  const n = Object.keys(p).length;
-  if (n) { const e = document.getElementById("enProgress"); e.textContent = `✓ ${n} leçon${n > 1 ? "s" : ""} commencée${n > 1 ? "s" : ""}`; e.hidden = false; }
-} catch (e) {}
-let deferred = null;
-window.addEventListener("beforeinstallprompt", (e) => { e.preventDefault(); deferred = e; document.getElementById("install").hidden = false; });
-document.getElementById("installBtn").addEventListener("click", async () => {
-  if (!deferred) return; deferred.prompt(); await deferred.userChoice; deferred = null; document.getElementById("install").hidden = true;
+const $ = (s) => document.querySelector(s);
+const root = document.documentElement;
+const reduce = matchMedia("(prefers-reduced-motion: reduce)").matches;
+document.head.insertAdjacentHTML("beforeend", `<style>${KALI_CSS}</style>`);
+paintIcons();
+
+let tt;
+function toast(msg) { const t = $("#toast"); t.textContent = msg; fixDigits(t); t.classList.add("show"); clearTimeout(tt); tt = setTimeout(() => t.classList.remove("show"), 2200); }
+
+// ---- light / dark: follows the phone; the moon button switches by hand and is remembered
+const isDark = () => root.dataset.theme ? root.dataset.theme === "dark" : matchMedia("(prefers-color-scheme: dark)").matches;
+const paintTheme = () => { const d = isDark(); $("#theme").innerHTML = icon(d ? "sun" : "moon"); $("#theme").setAttribute("aria-label", d ? "Passer en mode clair" : "Passer en mode sombre"); };
+paintTheme();
+$("#theme").addEventListener("click", () => {
+  root.dataset.theme = isDark() ? "light" : "dark"; KL.write("theme", root.dataset.theme);
+  try { localStorage.setItem("kalalab.theme", root.dataset.theme); } catch (e) {}
+  $("#theme").classList.toggle("spin"); paintTheme(); toast(isDark() ? "Mode sombre" : "Mode clair");
 });
+matchMedia("(prefers-color-scheme: dark)").addEventListener("change", paintTheme);
+
+// ---- greeting and Kali (she sleeps late in the evening)
+const name = KL.firstName(), hour = new Date().getHours(), late = hour >= 21 || hour < 5;
+$("#hello").firstChild.textContent = (late ? "Bonsoir" : "Salut") + (name ? " " + name : "") + ", prête à ";
+$("#bubble").textContent = late ? "Bonne nuit !" : "Hello!";
+$("#heroKali").innerHTML = kali(late ? "dodo" : "bonjour");
+$("#heroKali").addEventListener("click", () => kaliCheer($("#heroKali .kali")));
+
+// ---- streak
+const streak = KL.streak(), today = KL.todayCounts();
+const didToday = (today.ex + today.words + today.dict + today.speak + today.write) > 0;
+$("#streakN").textContent = streak; $("#streakWord").textContent = streak > 1 ? "jours" : "jour";
+$("#streakMsg").textContent = didToday ? (streak > 1 ? `Bravo, ${streak} jours d'affilée ! Ta série continue` : "Bravo, ta série a commencé aujourd'hui !")
+  : streak ? `Encore 1 exercice aujourd'hui pour garder ta série de ${streak} jour${streak > 1 ? "s" : ""}` : "Fais un exercice aujourd'hui pour lancer ta série";
+
+// ---- English course progress (same rules as the course page)
+let P = {}; try { P = JSON.parse(localStorage.getItem("anglais-progress-v1") || "{}") || {}; } catch (e) {}
+function lessonPercent(L) {
+  const p = P[L.id]; if (!p) return 0; const parts = [];
+  (L.exercises || []).forEach((_, i) => parts.push(((p.ex || {})[i] || 0) / 100));
+  if (L.vocab) parts.push((p.vocab || 0) / 100);
+  if (L.dictation) parts.push(Object.keys(p.dict || {}).length / L.dictation.length);
+  if (L.speak) parts.push(Object.keys(p.speak || {}).length / L.speak.length);
+  if (L.writing) parts.push(p.write ? 1 : 0);
+  return parts.length ? Math.round(100 * parts.reduce((a, b) => a + Math.min(1, b), 0) / parts.length) : 0;
+}
+$("#lessonCount").textContent = `${LESSONS.length} leçons`;
+
+// ---- continue card: the last lesson opened, or the first one not finished
+const lastId = KL.read("last", null);
+let cur = LESSONS.find((l) => l.id === lastId);
+if (!cur || lessonPercent(cur) >= 100) cur = LESSONS.find((l) => lessonPercent(l) < 100) || LESSONS[0];
+const curPct = lessonPercent(cur), unitNo = cur.unit.replace("u", "");
+$("#resume").href = `anglais/#/l/${cur.id}`;
+$("#resumeKicker").textContent = curPct ? "Continuer" : "Commencer";
+$("#resumeTitle").textContent = `Unit ${unitNo} · ${cur.title.replace(/^Lesson \d+ · /, "")}`;
+$("#resumeSub").textContent = cur.topic;
+$("#resumeGo").firstChild.textContent = curPct ? "On reprend " : "C'est parti ";
+const ring = $("#ring"), pct = $("#pct"), FULL = 201;
+let ringTimer;
+function playRing() {
+  cancelAnimationFrame(ringTimer);
+  if (reduce) { ring.style.strokeDashoffset = FULL * (1 - curPct / 100); pct.textContent = curPct + "%"; return; }
+  const t0 = performance.now(), dur = 1300;
+  (function step(t) { const k = Math.min(1, (t - t0) / dur), v = curPct * (1 - Math.pow(1 - k, 3));
+    ring.style.strokeDashoffset = FULL * (1 - v / 100); pct.textContent = Math.round(v) + "%"; if (k < 1) ringTimer = requestAnimationFrame(step); })(t0);
+}
+playRing();
+$("#resume").addEventListener("mouseenter", playRing);
+
+// ---- word of the day: one word from the course, a new one each day
+const WORDS = LESSONS.flatMap((l) => (l.vocab || []).map((v) => ({ w: v[0], d: v[1], ex: v[2], lesson: l })));
+const dayNo = Math.floor(new Date(KL.today() + "T12:00:00").getTime() / 864e5);
+const wod = WORDS[(dayNo * 7) % WORDS.length];
+$("#wodWord").textContent = wod.w; $("#wodLesson").textContent = `Unit ${wod.lesson.unit.replace("u", "")} · ${wod.lesson.topic}`;
+$("#wodDef").textContent = wod.d; $("#wodEx").textContent = wod.ex ? `« ${wod.ex} »` : "";
+if (wod.w.length > 14) $("#wodWord").style.fontSize = "24px";
+const flip = $("#flip");
+function turn(on) { flip.classList.toggle("on", on); $("#front").tabIndex = on ? -1 : 0; $("#back").tabIndex = on ? 0 : -1; }
+$("#front").addEventListener("click", () => turn(true)); $("#back").addEventListener("click", () => turn(false));
+["#front", "#back"].forEach((s) => $(s).addEventListener("keydown", (e) => { if (e.target === $(s) && (e.key === "Enter" || e.key === " ")) { e.preventDefault(); turn(s === "#front"); } }));
+let voice = null;
+const pickVoice = () => { const vs = "speechSynthesis" in window ? speechSynthesis.getVoices() : []; voice = vs.find((v) => /^en[-_]GB/i.test(v.lang)) || vs.find((v) => /^en/i.test(v.lang)) || null; };
+if ("speechSynthesis" in window) { pickVoice(); speechSynthesis.onvoiceschanged = pickVoice; }
+function say(text, btn) {
+  btn.classList.remove("ping"); void btn.offsetWidth; btn.classList.add("ping");
+  if (!("speechSynthesis" in window)) return toast("Ce navigateur ne sait pas lire à voix haute. Essaie avec Chrome.");
+  speechSynthesis.cancel(); const u = new SpeechSynthesisUtterance(text); u.lang = voice ? voice.lang : "en-GB"; if (voice) u.voice = voice; u.rate = .85; speechSynthesis.speak(u);
+}
+$("#wodSay").addEventListener("click", (e) => { e.stopPropagation(); say(wod.w, e.currentTarget); });
+$("#wodSayEx").addEventListener("click", (e) => { e.stopPropagation(); say(wod.ex || wod.w, e.currentTarget); });
+
+// ---- daily goals, measured from what was really done today
+const GOALS = [
+  { ic: "bookopen", label: "Faire 1 exercice", have: today.ex, need: 1, go: `anglais/#/l/${cur.id}/ex` },
+  { ic: "letters", label: "Trouver 5 mots au quiz", have: today.words, need: 5, go: `anglais/#/l/${cur.id}/vocab` },
+  { ic: "headphones", label: "3 phrases en dictée ou au micro", have: today.dict + today.speak, need: 3, go: `anglais/#/l/${cur.id}/ecoute` },
+];
+$("#goalList").innerHTML = GOALS.map((g) => { const done = g.have >= g.need, w = Math.min(100, Math.round(100 * g.have / g.need));
+  return `<a class="goal ${done ? "done" : ""}" href="${g.go}"><span class="gi">${icon(g.ic)}</span><span class="gt">${g.label}<span class="bar"><i style="width:${w}%"></i></span></span><span class="gs">${done ? icon("check") : `${Math.min(g.have, g.need)}/${g.need}`}</span></a>`; }).join("");
+const goalsDone = GOALS.filter((g) => g.have >= g.need).length;
+$("#goalCount").textContent = `${goalsDone} / 3 atteint${goalsDone > 1 ? "s" : ""}`;
+
+// ---- badges, earned from the real progress
+const T = KL.read("totals", {}), best = Math.max(KL.read("bestStreak", 0), streak);
+const u1 = LESSONS.filter((l) => l.unit === "u1");
+const BADGES = [
+  ["first", "flag", "Premier pas", "#d9cdf6", "Ton premier exercice", (T.ex || 0) + (T.words || 0) + (T.dict || 0) + (T.speak || 0) > 0],
+  ["streak3", "flame", "3 jours", "#ffd9c4", "3 jours d'affilée", best >= 3],
+  ["lesson", "bookopen", "1re leçon", "#cfeee0", "Une leçon finie à 100 %", LESSONS.some((l) => lessonPercent(l) >= 100)],
+  ["words50", "letters", "50 mots", "#d3e0fb", "50 mots trouvés au quiz", (T.words || 0) >= 50],
+  ["ear", "headphones", "Oreille d'or", "#ffe9b0", "20 dictées réussies", (T.dict || 0) >= 20],
+  ["voice", "mic", "Belle voix", "#f8d3e1", "20 phrases bien dites au micro", (T.speak || 0) >= 20],
+  ["writer", "pencil", "Écrivain", "#dcefc6", "Un texte écrit en entier", (T.write || 0) >= 1],
+  ["unit1", "trophy", "Unit 1 finie", "#f3dfb0", "Toute l'Unit 1 à 100 %", u1.every((l) => lessonPercent(l) >= 100)],
+];
+const medal = (ic, col) => `<svg viewBox="0 0 100 110" aria-hidden="true"><path d="M30 4 h16 l10 34 -14 6z" fill="#7b68c4" stroke="#141414" stroke-width="3.5" stroke-linejoin="round"/><path d="M70 4 h-16 l-10 34 14 6z" fill="#ffd27a" stroke="#141414" stroke-width="3.5" stroke-linejoin="round"/>
+  <circle cx="50" cy="70" r="34" fill="${col}" stroke="#141414" stroke-width="4"/><circle cx="50" cy="70" r="25" fill="none" stroke="#141414" stroke-width="2" stroke-dasharray="3 4" opacity=".5"/>
+  ${icon(ic, "mi").replace("<svg ", '<svg x="29" y="49" width="42" height="42" ')}</svg>`;
+const seen = KL.read("badgesSeen", []);
+const fresh = BADGES.filter((b) => b[5] && !seen.includes(b[0]));
+function drawBadges(newId) {
+  $("#badges").innerHTML = BADGES.map(([id, ic, name, col, how, got]) => `<button class="badge ${got ? "" : "locked"} ${id === newId ? "new" : ""}" data-b="${id}">${medal(got ? ic : "lock", col)}<span>${name}</span></button>`).join("");
+  $("#badgeCount").textContent = `${BADGES.filter((b) => b[5]).length} sur ${BADGES.length}`;
+  document.querySelectorAll(".badge").forEach((b) => b.addEventListener("click", () => {
+    const B = BADGES.find((x) => x[0] === b.dataset.b); toast(B[5] ? `« ${B[2]} » : ${B[4]}` : `Pour gagner « ${B[2]} » : ${B[4]}`);
+  }));
+  fixDigits($("#badges")); fixDigits($("#badgeCount"));
+}
+drawBadges();
+// a new badge since last time: Kali comes to celebrate it
+function showReward(i) {
+  if (i >= fresh.length) return;
+  const [id, ic, name, col, how] = fresh[i];
+  $("#rewardKali").innerHTML = kali("diplomee"); $("#rewardBadge").innerHTML = medal(ic, col);
+  $("#rewardText").textContent = `Nouveau badge : « ${name} ». ${how}. Continue comme ça !`; fixDigits($("#rewardText"));
+  $("#reward").hidden = false; $("#rewardOk").focus();
+  setTimeout(() => { kaliCheer($("#rewardKali .kali")); const r = $("#rewardBadge").getBoundingClientRect(); confetti(r.left + r.width / 2, r.top + r.height / 2); }, 350);
+  $("#rewardOk").onclick = () => { $("#reward").hidden = true; seen.push(id); KL.write("badgesSeen", seen); drawBadges(id); setTimeout(() => showReward(i + 1), 500); };
+}
+if (fresh.length) setTimeout(() => showReward(0), 900);
+
+// ---- things that arrive in the next steps
+document.querySelectorAll("[data-soon]").forEach((b) => b.addEventListener("click", () => {
+  const t = b.dataset.soon; if (b.classList.contains("tile")) { b.classList.remove("jump"); void b.offsetWidth; b.classList.add("jump"); }
+  toast(t === "D'autres matières" ? "D'autres matières arrivent bientôt" : `« ${t} » arrive très bientôt`);
+}));
+
+// ---- animations replay when a block comes back on screen
+const io = new IntersectionObserver((entries) => entries.forEach((en) => {
+  const el = en.target;
+  if (en.isIntersecting) { el.classList.remove("in"); void el.offsetWidth; el.classList.add("in");
+    if (el.id === "resume") playRing();
+    if (el.classList.contains("hero") && !late) setTimeout(() => kaliWave(el.querySelector(".kali")), 400); }
+  else el.classList.remove("in");
+}), { threshold: .35 });
+document.querySelectorAll("[data-replay]").forEach((el) => io.observe(el));
+
+// ---- install
+let deferred = null;
+window.addEventListener("beforeinstallprompt", (e) => { e.preventDefault(); deferred = e; $("#installBtn").hidden = false; $("#installHow").textContent = "Une icône KalaLab sur ton écran d'accueil. Elle s'ouvre en plein écran et marche aussi sans internet."; });
+$("#installBtn").addEventListener("click", async () => { if (!deferred) return; deferred.prompt(); await deferred.userChoice; deferred = null; $("#installBtn").hidden = true; });
+if (matchMedia("(display-mode: standalone)").matches) $("#installCard").hidden = true;
+
+// Pixelify's 5 looks like an S: digits inside pixel text use the body face
+function fixDigits(el = document.body) {
+  const w = document.createTreeWalker(el, NodeFilter.SHOW_TEXT), nodes = [];
+  while (w.nextNode()) { const n = w.currentNode, pe = n.parentElement;
+    if (/\d/.test(n.nodeValue) && pe && !pe.classList.contains("dg") && !pe.closest("svg, #pct") && getComputedStyle(pe).fontFamily.includes("Pixelify")) nodes.push(n); }
+  nodes.forEach((n) => { const f = document.createDocumentFragment();
+    n.nodeValue.split(/(\d+)/).forEach((part, i) => { if (!part) return; if (i % 2) { const sp = document.createElement("span"); sp.className = "dg"; sp.textContent = part; f.append(sp); } else f.append(part); });
+    n.replaceWith(f); });
+}
+document.fonts.ready.then(() => fixDigits());
+
+// a small confetti burst
+function confetti(x, y) {
+  if (reduce) return;
+  const c = $("#confetti"), ctx = c.getContext("2d"), dpr = devicePixelRatio || 1;
+  c.width = innerWidth * dpr; c.height = innerHeight * dpr; ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+  const css = getComputedStyle(root), cols = ["--t1", "--t2", "--t3", "--lilac", "--accent", "--butter"].map((v) => css.getPropertyValue(v).trim());
+  const bits = Array.from({ length: 70 }, () => ({ x, y, vx: (Math.random() - .5) * 11, vy: -Math.random() * 11 - 3, r: Math.random() * 6 + 4, a: Math.random() * 6, c: cols[Math.floor(Math.random() * cols.length)] }));
+  let f = 0;
+  (function step() {
+    ctx.clearRect(0, 0, innerWidth, innerHeight);
+    bits.forEach((b) => { b.x += b.vx; b.y += b.vy; b.vy += .35; b.a += .2; ctx.save(); ctx.translate(b.x, b.y); ctx.rotate(b.a); ctx.fillStyle = b.c; ctx.fillRect(-b.r / 2, -b.r / 4, b.r, b.r / 2); ctx.restore(); });
+    if (++f < 90) requestAnimationFrame(step); else ctx.clearRect(0, 0, innerWidth, innerHeight);
+  })();
+}
+
 if ("serviceWorker" in navigator && location.protocol === "https:") navigator.serviceWorker.register("sw.js").catch(() => {});
 </script>
 </body>

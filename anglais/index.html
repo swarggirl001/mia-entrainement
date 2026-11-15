@@ -156,6 +156,7 @@ textarea.big { min-height: 320px; }
 <main id="app"></main>
 
 <script src="lessons.js"></script>
+<script src="../js/activity.js"></script>
 <script>
 "use strict";
 const $ = (s, r = document) => r.querySelector(s);
@@ -280,6 +281,7 @@ function home() {
 
 function lesson(id, tab) {
   const L = lessonById(id); if (!L) return home();
+  KL.write("last", id);
   const tabs = TABS.filter(([, , has]) => has(L));
   if (!tabs.some(([k]) => k === tab)) tab = tabs[0][0];
   $("#back").hidden = false;
@@ -323,7 +325,7 @@ function renderVocab(L, pane) {
       const fb = el("p", { class: "fb" });
       const opts = el("div", { class: "opts" }, shuffle([w, ...others]).map((o) => el("button", { class: "opt", onclick: (e) => {
         if (fb.textContent) return;
-        const right = o === w; if (right) good++;
+        const right = o === w; if (right) { good++; KL.log("words"); }
         e.currentTarget.classList.add(right ? "right" : "wrong");
         opts.querySelectorAll(".opt").forEach((b) => { if (b.textContent === w) b.classList.add("right"); });
         fb.className = "fb " + (right ? "ok" : "ko"); fb.textContent = right ? "Bravo !" : `C'était : ${w}`;
@@ -388,7 +390,7 @@ function renderEx(L, pane) {
       });
       const res = el("p", { class: "score", "aria-live": "polite" });
       const check = el("button", { class: "btn go", onclick: () => {
-        const n = checks.map((f) => f()).filter(Boolean).length; const pc = Math.round(100 * n / checks.length);
+        const n = checks.map((f) => f()).filter(Boolean).length; const pc = Math.round(100 * n / checks.length); KL.log("ex");
         if (pc > (p.ex[si] || 0) || p.ex[si] == null) { p.ex[si] = Math.max(pc, p.ex[si] || 0); save(); }
         res.textContent = `${n} / ${checks.length}` + (pc === 100 ? " · Parfait ! 🎉" : pc >= 70 ? " · Bien !" : " · Relis le cours et recommence.");
         check.hidden = true; again.hidden = false;
@@ -419,6 +421,7 @@ function renderDict(L, pane, i = 0) {
       out.replaceChildren(el("p", { class: "say-line" }, orig.map((w, k) => [el("span", { class: ok[k] ? "ok" : "ko" }, w), " "])),
         el("p", { class: "score" }, `${pc} % des mots justes`),
         el("p", { class: "note" }, pc >= 90 ? "Très bien !" : "En rouge : les mots oubliés ou mal écrits. Réécoute et réessaie."));
+      if (pc >= 90) KL.log("dict");
       if (pc >= 90 && !p.dict[i]) { p.dict[i] = 1; save(); }
       next.hidden = false;
     } }, "Corriger"), next), out);
@@ -442,6 +445,7 @@ function renderSpeak(L, pane, i = 0) {
       if (!heardTxt && alts[0]) heardTxt = alts[0];
       const spans = line.querySelectorAll("span"); spans.forEach((sp, k) => { sp.className = best[k] ? "ok" : "ko"; });
       const pc = Math.round(100 * best.filter(Boolean).length / tw.length);
+      if (pc >= 80) KL.log("speak");
       if (pc >= 80 && !p.speak[i]) { p.speak[i] = 1; save(); }
       out.replaceChildren(el("p", { class: "score" }, `${pc} % des mots compris`),
         el("p", { class: "heard" }, heardTxt ? `Le téléphone a entendu : « ${heardTxt} »` : "Je n'ai rien entendu. Parle un peu plus fort, près du téléphone."),
@@ -480,7 +484,7 @@ function renderWrite(L, pane) {
       items[k].classList.toggle("ok", ok); if (ok) okN++;
     });
     const enough = n >= W.minWords; minLi.classList.toggle("ok", enough);
-    if (enough && okN >= Math.ceil(W.checks.length * 0.7) && !p.write) { p.write = 1; save(); }
+    if (enough && okN >= Math.ceil(W.checks.length * 0.7) && !p.write) { p.write = 1; save(); KL.log("write"); }
     try { localStorage.setItem(dkey, t); } catch (e) {}
   };
   ta.addEventListener("input", update); update();

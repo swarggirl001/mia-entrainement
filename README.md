@@ -1,6 +1,6 @@
 # KalaLab
 
-Le labo pour apprendre l'anglais. L'accueil (`index.html`) mène à deux parties :
+Le labo pour apprendre. L'accueil (`index.html`) montre la série de jours, les objectifs du jour, les badges, le mot du jour, la leçon à reprendre et Kali, l'éléphante mascotte (`js/kali.js`). Il mène à deux parties :
 - **Cours d'anglais** (`anglais/`) : les leçons de Terminale ;
 - **Le jeu de rôle de Mia** (`mia.html`).
 
@@ -38,3 +38,10 @@ cours à écouter, vocabulaire et quiz, exercices corrigés, dictée, lecture au
 - Tout le contenu est dans `anglais/lessons.js` : pour ajouter une leçon, on ajoute un objet à la liste.
 - Après une modification de `lessons.js` ou `anglais/index.html`, changer `CACHE` dans `anglais/sw.js` pour que les téléphones prennent la nouvelle version hors ligne.
 - Ces fichiers sont écrits à la main (ils ne viennent pas de `build_practice.py`).
+
+## Accueil KalaLab
+
+- Ce qui a été fait est compté sur le téléphone seulement (`js/activity.js`, clés `kalalab.*`) : série de jours, objectifs du jour, badges.
+- Icônes dessinées : `js/icons.js`. Polices hébergées dans `fonts/` (licence OFL, voir `fonts/LICENCES.md`).
+- Deux applis installables : KalaLab (`manifest.webmanifest`) et Mia seule (`mia.webmanifest`).
+- Après un changement des fichiers mis hors ligne, changer `CACHE` dans `sw.js`.

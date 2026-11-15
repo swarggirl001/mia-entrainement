@@ -87,9 +87,11 @@ function kali(outfit = "bonjour", label = "Kali, l'éléphante de KalaLab") {
       ${head}
     </g>
     ${arms}
-    <g class="head"><g class="trunk">${tube("M100 103 C100 126, 104 140, 120 138 C132 136, 138 124, 132 116", 20, 12.5)}<path d="M104 122 h6 M107 131 h6" stroke="${I}" stroke-width="2.5" stroke-linecap="round" opacity=".5"/>
-      <!-- the trunk grows out of the face: a patch the colour of her skin hides its round top and moves with it -->
-      <path d="M91 114 C91 108, 94 104, 100 102.5 C106 104, 109 108, 109 114 Z" fill="${C.body}"/><ellipse cx="100" cy="102.5" rx="11.6" ry="11" fill="${C.body}"/></g></g>
+    <g class="head"><g class="trunk">
+      <!-- open at the top (flat ends), so it grows out of the face; only the tip is rounded -->
+      <path d="M100 99 C100 126, 104 140, 120 138 C132 136, 138 124, 132 116" fill="none" stroke="${I}" stroke-width="20" stroke-linecap="butt"/><circle cx="132" cy="116" r="10" fill="${I}"/>
+      <path d="M100 96 L100 99 C100 126, 104 140, 120 138 C132 136, 138 124, 132 116" fill="none" stroke="${C.body}" stroke-width="12.5" stroke-linecap="butt"/><circle cx="132" cy="116" r="6.25" fill="${C.body}"/>
+      <path d="M104 122 h6 M107 131 h6" stroke="${I}" stroke-width="2.5" stroke-linecap="round" opacity=".5"/></g></g>
     ${front}
   </g>
   ${floats}
