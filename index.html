@@ -259,9 +259,9 @@ a.resume { color: var(--fg); }
 
 
 /* Kali's corner: a little meadow behind her (only when body.corner) */
-:root { --sky1: #ebe5fb; --sky2: #fbf6ee; --hill1: #d5ebdc; --hill2: #e6f2e9; --petal: #f5b8cc; }
-@media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) { --sky1: #1d2433; --sky2: #39445e; --hill1: #7da493; --hill2: #5c7d71; --petal: #e9a3bd; } }
-:root[data-theme="dark"] { --sky1: #1d2433; --sky2: #39445e; --hill1: #7da493; --hill2: #5c7d71; --petal: #e9a3bd; }
+:root { --bubble-shadow: #141414; --sky1: #ebe5fb; --sky2: #fbf6ee; --hill1: #d5ebdc; --hill2: #e6f2e9; --petal: #f5b8cc; }
+@media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) { --bubble-shadow: rgba(244, 241, 234, .7); --sky1: #1d2433; --sky2: #39445e; --hill1: #7da493; --hill2: #5c7d71; --petal: #e9a3bd; } }
+:root[data-theme="dark"] { --bubble-shadow: rgba(244, 241, 234, .7); --sky1: #1d2433; --sky2: #39445e; --hill1: #7da493; --hill2: #5c7d71; --petal: #e9a3bd; }
 .kcorner svg { width: 100%; height: 100%; overflow: visible; }
 .kc-s1 { stop-color: var(--sky1); } .kc-s2 { stop-color: var(--sky2); }
 .kc-h1 { fill: var(--hill1); } .kc-h2 { fill: var(--hill2); } .kc-p { fill: var(--petal); }
@@ -299,7 +299,7 @@ body.corner .hero-kali { bottom: 20px; }
   left: calc(var(--tipx) - var(--bw) * .892); top: calc(var(--tipy) - var(--bh) * .797); right: auto;
   transform-origin: 89% 80%; animation: bob3 3s ease-in-out infinite; }
 .bubble.long { --bw: 140px; }
-.bubble svg { position: absolute; inset: 0; width: 100%; height: 100%; overflow: visible; filter: drop-shadow(3px 3px 0 var(--shadow)); }
+.bubble svg { position: absolute; inset: 0; width: 100%; height: 100%; overflow: visible; filter: drop-shadow(3px 3px 0 var(--bubble-shadow)); }
 .bubble .bt { position: absolute; left: 3%; right: 14%; top: 4%; height: 64%; display: grid; place-items: center; font-family: var(--title); font-size: 16px; color: var(--tile-ink); white-space: nowrap; }
 @keyframes bob3 { 0%,100% { transform: rotate(0) translateY(0); } 50% { transform: rotate(-3deg) translateY(-4px); } }
 @media (min-width: 900px) {
@@ -332,7 +332,7 @@ body.corner .hero-kali { bottom: 20px; }
     <div class="stage" id="stage">
       <div class="kcorner" id="kcorner" aria-hidden="true"></div>
       <button class="hero-kali" id="heroKali" aria-label="Kali, toucher pour la faire sauter"></button>
-      <span class="bubble" id="bubble"><svg viewBox="0 0 120 64" aria-hidden="true"><path d="M16 3 H88 Q104 3 104 19 V27 Q104 39 93 42 Q98 47 107 51 Q95 51 85 43 H16 Q3 43 3 30 V16 Q3 3 16 3 Z" style="fill: var(--sky); stroke: #141414" stroke-width="3" stroke-linejoin="round"/></svg><span class="bt" id="bubbleText">Hello!</span></span>
+      <span class="bubble" id="bubble"><svg viewBox="0 0 120 64" aria-hidden="true"><path d="M16 3 H88 Q104 3 104 19 V27 Q104 39 93 42 Q98.5 47 104.5 50 Q108.5 52 104 52.6 Q95.5 51.5 85 43 H16 Q3 43 3 30 V16 Q3 3 16 3 Z" style="fill: var(--sky); stroke: #141414" stroke-width="3" stroke-linejoin="round"/></svg><span class="bt" id="bubbleText">Hello!</span></span>
     </div>
     <p class="streak"><i data-ic="flame"></i><span id="streakMsg">Fais un exercice aujourd'hui pour lancer ta série</span></p>
   </section>
