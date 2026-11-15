@@ -132,6 +132,8 @@ paintIcons();
 const $ = (s) => document.querySelector(s);
 $("#big").innerHTML = kali("bonjour");
 $("#big").addEventListener("click", () => kaliCheer($("#big .kali")));
+// she says hello when she arrives on screen (again after scrolling back up), not all the time
+new IntersectionObserver((es) => es.forEach((e) => { if (e.isIntersecting) setTimeout(() => kaliWave(e.target.querySelector(".kali")), 300); }), { threshold: .6 }).observe($("#big"));
 
 const OUTFITS = [
   ["bonjour", "Bonjour", "Accueil", "Son nœud lilas. Elle fait coucou avec la main."],
@@ -145,6 +147,7 @@ const OUTFITS = [
 ];
 $("#outfits").innerHTML = OUTFITS.map(([a, t, w, d]) => `<button class="box outfit"><span class="st">${kali(a)}</span><b>${t}</b><span class="where-tag">${w}</span><p>${d}</p></button>`).join("");
 document.querySelectorAll(".outfit").forEach((o) => o.addEventListener("click", () => kaliCheer(o.querySelector(".kali"))));
+new IntersectionObserver((es) => es.forEach((e) => { if (e.isIntersecting) kaliWave(e.target.querySelector(".kali")); }), { threshold: .7 }).observe(document.querySelector(".outfit"));
 
 // ---- logo entrance: behind the arch -> out on the right -> walks in front of "Lab" -> waves -> leaves on the left
 const inner = (acc) => kali(acc).replace(/^<svg[^>]*>|<\/svg>$/g, "");
@@ -169,7 +172,7 @@ function entrance() {
     else if (t < 4.6) {
       place(front, 150, t, false);
       const k = front.querySelector(".kali");
-      if (!k.dataset.waved) { k.dataset.waved = 1; k.classList.add("wave"); setTimeout(() => { k.classList.remove("wave"); kaliCheer(k); }, 1500); }
+      if (!k.dataset.waved) { k.dataset.waved = 1; kaliWave(k); setTimeout(() => kaliCheer(k), 1700); }
     }
     else if (t < 6.2) { place(front, lerp(150, -60, (t - 4.6) / 1.6), t, true); }
     else { hide(front); hide(back); delete front.querySelector(".kali").dataset.waved; if (t > 8.5) return entrance(); }

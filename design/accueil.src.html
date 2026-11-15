@@ -353,7 +353,7 @@ function playRing() {
 // animations replay each time a block comes back on screen (scrolling down then up)
 const io = new IntersectionObserver((entries) => entries.forEach((en) => {
   const el = en.target;
-  if (en.isIntersecting) { el.classList.remove("in"); void el.offsetWidth; el.classList.add("in"); if (el.id === "resume") playRing(); }
+  if (en.isIntersecting) { el.classList.remove("in"); void el.offsetWidth; el.classList.add("in"); if (el.id === "resume") playRing(); if (el.classList.contains("hero")) setTimeout(() => kaliWave(el.querySelector(".kali")), 400); }
   else el.classList.remove("in");
 }), { threshold: .35 });
 document.querySelectorAll("[data-replay]").forEach((el) => io.observe(el));
@@ -420,7 +420,7 @@ const CARDS = [
   { name: "Sable & sauge", l: { t1: "#dfe8d3", t2: "#f1dccb", t3: "#d8e2ef", lilac: "#e5ddf5", butter: "#f8e8c3" }, d: { t1: "#b9cfae", t2: "#e8c4ab", t3: "#aec3dd" } },
   { name: "Lavande douce", l: { t1: "#e3dcfb", t2: "#fde3d6", t3: "#d9efe7", lilac: "#dcd0f7", butter: "#fff0c7" }, d: { t1: "#b8a8e6", t2: "#efbfa8", t3: "#a5d8c6" } },
 ];
-let bgIdx = 0, cardIdx = 0;
+let bgIdx = 2, cardIdx = 0;
 function applyPalette() {
   ["bg", "t1", "t2", "t3", "lilac", "butter"].forEach((k) => root.style.removeProperty("--" + k));
   const C = CARDS[cardIdx];

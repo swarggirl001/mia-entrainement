@@ -70,6 +70,7 @@ function kali(outfit = "bonjour", label = "Kali, l'éléphante de KalaLab") {
 
   const heart = (x, y, c) => `<path transform="translate(${x} ${y})" d="M0 6 C0 -1 9 -1 9 5 C9 -1 18 -1 18 6 C18 12 11 16 9 19 C7 16 0 12 0 6Z" fill="${c}" stroke="${I}" stroke-width="2.5" stroke-linejoin="round"/>`;
   return `<svg class="kali o-${o}" viewBox="-14 -18 228 230" role="img" aria-label="${label}">
+  <defs><radialGradient id="kblush"><stop offset="0" stop-color="#ff86ab" stop-opacity=".85"/><stop offset=".6" stop-color="#ff9fb8" stop-opacity=".45"/><stop offset="1" stop-color="#ff9fb8" stop-opacity="0"/></radialGradient></defs>
   <g class="all">
     <g class="tail"><path d="M134 160 q15 -1 17 -15" fill="none" stroke="${I}" stroke-width="4" stroke-linecap="round"/><path d="M151 145 l-4 -7 M151 145 l3 -8 M151 145 l7 -4" stroke="${I}" stroke-width="3" stroke-linecap="round"/></g>
     ${ear(1)}${ear(-1)}
@@ -80,12 +81,13 @@ function kali(outfit = "bonjour", label = "Kali, l'éléphante de KalaLab") {
     <g class="head">
       <ellipse cx="100" cy="92" rx="50" ry="46" fill="${C.body}" stroke="${I}" stroke-width="4"/>
       <ellipse cx="82" cy="66" rx="16" ry="8" fill="#fff" opacity=".35" transform="rotate(-18 82 66)"/>
-      <ellipse cx="73" cy="108" rx="9" ry="6" fill="${C.cheek}" opacity=".8"/><ellipse cx="127" cy="108" rx="9" ry="6" fill="${C.cheek}" opacity=".8"/>
+      <g class="blush"><ellipse cx="72" cy="107" rx="13" ry="8.5" fill="url(#kblush)"/><ellipse cx="128" cy="107" rx="13" ry="8.5" fill="url(#kblush)"/>
+        <path d="M66 105 l-2.5 4 M71 105 l-2.5 4 M76 105 l-2.5 4 M126 105 l-2.5 4 M131 105 l-2.5 4 M136 105 l-2.5 4" stroke="#e8789c" stroke-width="1.6" stroke-linecap="round" opacity=".55"/></g>
       ${eyes}${mouth}
-      <g class="trunk">${tube("M100 104 C100 126, 104 140, 120 138 C132 136, 138 124, 132 116", 20, 12.5)}<path d="M104 122 h6 M107 131 h6" stroke="${I}" stroke-width="2.5" stroke-linecap="round" opacity=".5"/></g>
       ${head}
     </g>
     ${arms}
+    <g class="head"><g class="trunk">${tube("M100 104 C100 126, 104 140, 120 138 C132 136, 138 124, 132 116", 20, 12.5)}<path d="M104 122 h6 M107 131 h6" stroke="${I}" stroke-width="2.5" stroke-linecap="round" opacity=".5"/></g></g>
     ${front}
   </g>
   ${floats}
@@ -117,8 +119,8 @@ const KALI_CSS = `
 @keyframes k-wag { 0%,100% { transform: rotate(-12deg); } 50% { transform: rotate(14deg); } }
 @keyframes k-bow { 0%,100% { transform: rotate(-4deg); } 50% { transform: rotate(5deg); } }
 
-/* bonjour: she waves with her right arm */
-.kali.o-bonjour .armR { animation: k-wave 1.2s ease-in-out infinite; }
+/* waving only when asked (arrival, coming back on screen, on the logo) */
+.kali.waving .armR { animation: k-wave .8s ease-in-out 3 !important; }
 @keyframes k-wave { 0%,100% { transform: rotate(-84deg); } 50% { transform: rotate(-112deg); } }
 
 /* dj: head bobbing, arms dancing, music notes rising */
@@ -164,7 +166,7 @@ const KALI_CSS = `
 @keyframes k-look { 0%,20%,100% { transform: translateX(0); } 35%,55% { transform: translateX(4px); } 70%,85% { transform: translateX(-4px); } }
 
 /* fete: balloon bobbing, waving the other arm, party hat dancing */
-.kali.o-fete .armR { animation: k-wave .9s ease-in-out infinite; }
+.kali.o-fete .armR { animation: k-cheerR 1.6s ease-in-out infinite; }
 .kali.o-fete .armL { animation: none; }
 .kali.o-fete .balloon { transform-origin: 56px 168px; animation: k-balloon 2.4s ease-in-out infinite; }
 .kali.o-fete .party { transform-origin: 50% 100%; animation: k-bow 1.2s ease-in-out infinite; }
@@ -183,9 +185,13 @@ const KALI_CSS = `
 @keyframes k-jump { 0% { transform: translateY(0) scale(1); } 20% { transform: translateY(4px) scale(1.06,.92); } 55% { transform: translateY(-26px) scale(.96,1.05); } 100% { transform: translateY(0) scale(1); } }
 @keyframes k-toot { 40% { transform: rotate(-28deg); } }
 @keyframes k-wavet { 50% { transform: rotate(-24deg); } }
+.kali .blush { transform-origin: 50% 50%; transition: opacity .3s; }
+.kali.happy .blush, .kali.waving .blush { animation: k-blush 1.1s ease-in-out; }
+@keyframes k-blush { 40% { transform: scale(1.18); opacity: 1; } }
 .kali .hearts { pointer-events: none; } .kali .hearts > * { opacity: 0; }
 .kali.happy .hearts > * { animation: k-float 1s ease-out; }
 .kali.happy .hearts > :nth-child(2) { animation-delay: .12s; } .kali.happy .hearts > :nth-child(3) { animation-delay: .24s; }
 @keyframes k-float { 0% { opacity: 0; transform: translateY(6px) scale(.6); } 30% { opacity: 1; } 100% { opacity: 0; transform: translateY(-30px) scale(1.1); } }
 `;
+function kaliWave(svg) { if (!svg) return; svg.classList.remove("waving"); void svg.getBoundingClientRect(); svg.classList.add("waving"); setTimeout(() => svg.classList.remove("waving"), 2500); }
 function kaliCheer(svg) { if (!svg) return; svg.classList.remove("happy"); void svg.getBoundingClientRect(); svg.classList.add("happy"); setTimeout(() => svg.classList.remove("happy"), 1100); }
