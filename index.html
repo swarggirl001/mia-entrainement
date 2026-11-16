@@ -317,7 +317,11 @@ function showReward(i) {
     const o = q.outfit;
     $("#rewardKali").innerHTML = kali(o ? o[0] : "fete"); $("#rewardBadge").hidden = true;
     $("#rewardTitle").textContent = `Niveau ${q.n} !`;
-    $("#rewardText").textContent = o ? `Tu es maintenant ${KLP.TITLES[q.n - 1][fem ? 0 : 1]}. Ton cadeau : la tenue « ${o[1]} » pour Kali. Mets-la dans « Moi ».` : `Tu es maintenant ${KLP.TITLES[q.n - 1][fem ? 0 : 1]}. Bravo !`;
+    // every gift of this level: an outfit, accessories, colours
+    const gifts = [o ? `la tenue « ${o[1]} »` : ""].concat(KALI_ITEMS.filter(([id]) => KLP.ITEM_LV[id] === q.n).map(([, nm]) => nm.toLowerCase()),
+      Object.values(KALI_SKINS).filter((s) => s.lv === q.n && q.n > 1).length ? ["4 nouvelles couleurs"] : []).filter(Boolean);
+    const list = gifts.length > 1 ? gifts.slice(0, -1).join(", ") + " et " + gifts[gifts.length - 1] : gifts[0];
+    $("#rewardText").textContent = `Tu es maintenant ${KLP.TITLES[q.n - 1][fem ? 0 : 1]}.` + (list ? ` Tes cadeaux pour Kali : ${list}. Habille-la dans « Moi ».` : " Bravo !");
   }
   fixDigits($("#rewardText"));
   $("#reward").hidden = false; $("#rewardOk").focus();

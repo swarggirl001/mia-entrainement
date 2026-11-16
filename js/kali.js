@@ -45,15 +45,18 @@ function kali(outfit = "bonjour", label = "Kali, l'éléphante de KalaLab", skin
     <g class="blades"><path d="M155 194 l0 -10 a5 5 0 0 1 5 5z M155 194 l10 0 a5 5 0 0 1 -5 5z M155 194 l0 10 a5 5 0 0 1 -5 -5z M155 194 l-10 0 a5 5 0 0 1 5 -5z" fill="${C.blue}" stroke="${I}" stroke-width="1.8" stroke-linejoin="round"/></g><circle cx="155" cy="194" r="2.5" fill="${I}"/></g>`;
   const pad = `<g transform="translate(150 178) rotate(-14)" style="transform-box:view-box"><path d="M-15 -6 q0 -6 7 -6 h16 q7 0 7 6 l3 11 q1 7 -5 7 q-4 0 -6 -5 h-10 q-2 5 -6 5 q-6 0 -5 -7z" fill="#3b3f4c" stroke="${I}" stroke-width="3" stroke-linejoin="round"/>
     <path d="M-9 -2 h6 M-6 -5 v6" stroke="#fff" stroke-width="2.2" stroke-linecap="round"/><circle cx="6" cy="-4" r="2" fill="${C.rose}"/><circle cx="10" cy="0" r="2" fill="${C.mint}"/></g>`;
-  const phone = `<g transform="translate(135 155) rotate(-10)" style="transform-box:view-box"><rect width="17" height="28" rx="4" fill="${I}"/><rect x="2.5" y="3" width="12" height="20" rx="2" fill="${C.blue}"/><circle cx="8.5" cy="25.5" r="1.3" fill="#fff"/></g>`;
-  const tablet = `<g transform="translate(132 146) rotate(-8)" style="transform-box:view-box"><rect width="34" height="44" rx="5" fill="${C.bow}" stroke="${I}" stroke-width="3"/><rect x="4" y="4" width="26" height="33" rx="2" fill="#dff3ff"/><path d="M8 12 h14 M8 18 h18 M8 24 h11" stroke="${C.bow}" stroke-width="2.5" stroke-linecap="round" opacity=".7"/><circle cx="17" cy="40.5" r="1.4" fill="#fff"/></g>`;
-  const handR = `${o === "detective" ? magnifier : o === "chaud" ? fanR : has("manette") ? pad : ""}`;
-  const inHand = o === "detective" || o === "chaud" || has("manette") ? "" : has("tablette") ? tablet : has("telephone") ? phone : "";   // held: the hand is on top
+  // phone and tablet: held up in front of her hand, her thumb on the side, so you see them well
+  const thumb = (x, y) => `<ellipse cx="${x}" cy="${y}" rx="5" ry="6.5" fill="${C.body}" stroke="${I}" stroke-width="3"/>`;
+  const phone = `<g transform="translate(143 126) rotate(10)" style="transform-box:view-box"><rect width="24" height="40" rx="5" fill="${I}"/><rect x="3" y="4" width="18" height="28" rx="2.5" fill="${C.blue}"/>
+    <path d="M7 11 h10 M7 17 h7" stroke="#fff" stroke-width="2.4" stroke-linecap="round" opacity=".85"/><circle cx="12" cy="36" r="1.6" fill="#fff"/></g>${thumb(143, 162)}`;
+  const tablet = `<g transform="translate(136 124) rotate(6)" style="transform-box:view-box"><rect width="38" height="50" rx="5" fill="${C.bow}" stroke="${I}" stroke-width="3"/><rect x="4" y="4" width="30" height="38" rx="2" fill="#dff3ff"/>
+    <path d="M9 13 h16 M9 20 h20 M9 27 h12" stroke="${C.bow}" stroke-width="2.6" stroke-linecap="round" opacity=".75"/><circle cx="19" cy="46" r="1.5" fill="#fff"/></g>${thumb(139, 162)}`;
+  const handR = `${o === "detective" ? magnifier : o === "chaud" ? fanR : has("manette") ? pad : has("tablette") ? tablet : has("telephone") ? phone : ""}`;
   const bracelet = has("bracelet") ? `<ellipse cx="61" cy="158" rx="9.5" ry="4" transform="rotate(24 61 158)" style="transform-box:view-box" fill="${gold}" stroke="${I}" stroke-width="2.5"/>` : "";
   const arms = hold
     ? `<g class="armL">${tube(`M70 139 Q60 152 ${hold[0][0]} ${hold[0][1]}`)}</g><g class="armR">${tube(`M130 139 Q140 152 ${hold[1][0]} ${hold[1][1]}`)}</g>`
     : `<g class="armL">${tube("M70 139 L57 167")}<path d="M54 167 h3 M58 170 h3" stroke="${C.light}" stroke-width="2.5" stroke-linecap="round"/>${bracelet}</g>
-    <g class="armR">${inHand}${tube("M130 139 L143 167")}<path d="M140 170 h3 M144 167 h3" stroke="${C.light}" stroke-width="2.5" stroke-linecap="round"/>${handR}</g>`;
+    <g class="armR">${tube("M130 139 L143 167")}<path d="M140 170 h3 M144 167 h3" stroke="${C.light}" stroke-width="2.5" stroke-linecap="round"/>${handR}</g>`;
 
   // eyes: open, asleep, or looking around (the pupils move)
   const lashes = (x, s) => `<path d="M${x + s * 5.5} 84 l${s * 6} -3.5 M${x + s * 6.5} 88.5 l${s * 6.5} -0.5" stroke="${I}" stroke-width="2.3" stroke-linecap="round"/>`;
@@ -162,7 +165,8 @@ function kali(outfit = "bonjour", label = "Kali, l'éléphante de KalaLab", skin
   }[o] || [];
   const floats = float.length ? `<g class="float">${float.map((f) => f.replace(/^<g transform="([^"]+)">/, '<g transform="$1"><g class="fl">')).map((f) => f + "</g>").join("")}</g>` : "";
 
-  return `<svg class="kali o-${o}" viewBox="-14 -18 228 230" role="img" aria-label="${label}">
+  const holds = !hold && !["detective", "chaud", "diplomee", "dj", "sport", "fete", "reflechit", "froid", "triste"].includes(o) && (has("telephone") || has("tablette"));
+  return `<svg class="kali o-${o}${holds ? " holds" : ""}" viewBox="-14 -18 228 230" role="img" aria-label="${label}">
   <defs><radialGradient id="kblush"><stop offset="0" stop-color="#ff86ab" stop-opacity=".85"/><stop offset=".6" stop-color="#ff9fb8" stop-opacity=".45"/><stop offset="1" stop-color="#ff9fb8" stop-opacity="0"/></radialGradient></defs>
   <g class="all">
     <g class="tail"><path d="M134 160 q15 -1 17 -15" fill="none" stroke="${I}" stroke-width="4" stroke-linecap="round"/><path d="M151 145 l-4 -7 M151 145 l3 -8 M151 145 l7 -4" stroke="${I}" stroke-width="3" stroke-linecap="round"/></g>
@@ -230,6 +234,8 @@ const KALI_CSS = `
 @keyframes k-groove { 0%,100% { transform: rotate(-5deg); } 50% { transform: rotate(5deg); } }
 @keyframes k-danceL { 0%,100% { transform: rotate(10deg); } 50% { transform: rotate(70deg); } }
 @keyframes k-danceR { 0%,100% { transform: rotate(-70deg); } 50% { transform: rotate(-10deg); } }
+.kali.holds .armR { animation: k-show 2.6s ease-in-out infinite; }
+@keyframes k-show { 0%,100% { transform: rotate(-22deg); } 50% { transform: rotate(-28deg); } }
 .kali.o-foot .armL, .kali.o-foot .armR, .kali.o-ordi .armL, .kali.o-ordi .armR { animation: none; }
 .kali.o-foot .all { animation: k-bounce .7s ease-in-out infinite; }
 /* ordi: typing, head nodding to the screen */

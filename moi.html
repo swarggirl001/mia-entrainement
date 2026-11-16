@@ -81,6 +81,26 @@
 .bitem.locked svg { filter: grayscale(1); opacity: .45; }
 .bitem.got { background: color-mix(in srgb, var(--t3) 45%, transparent); }
 
+/* Kali's dressing room: Kali big on a podium, and what you can put on her */
+.dress { display: grid; gap: 14px; }
+@media (min-width: 760px) { .dress { grid-template-columns: 300px 1fr; align-items: start; } .dstage { position: sticky; top: 16px; } }
+.dstage { display: grid; justify-items: center; gap: 6px; padding: 14px 10px 12px; border-radius: 22px; background: radial-gradient(ellipse 40% 7% at 50% 74%, var(--lilac) 96%, transparent 100%), linear-gradient(var(--sky1), var(--sky2)); border: 2px solid var(--track); }
+.dstage .k { width: min(230px, 62vw); aspect-ratio: 1; display: block; }
+.dstage .worn { margin: 0; font-family: var(--pixel); font-weight: 600; font-size: 14px; }
+.dtabs { margin-bottom: 2px; }
+.tiles { display: grid; grid-template-columns: repeat(auto-fill, minmax(92px, 1fr)); gap: 8px; }
+.tile-i { position: relative; display: grid; justify-items: center; gap: 3px; padding: 8px 4px 7px; border-radius: 16px; border: 2px solid var(--track); background: var(--bg); color: var(--fg); cursor: pointer;
+  font-family: var(--pixel); font-weight: 600; font-size: 12.5px; line-height: 1.15; text-align: center; transition: transform .25s cubic-bezier(.34,1.56,.64,1); }
+.tile-i:active { transform: scale(.94); }
+.tile-i .th { width: 70px; height: 52px; display: block; border-radius: 12px; background: var(--chip); overflow: hidden; }
+.tile-i .th .kali { overflow: hidden; filter: none; }
+.tile-i .th .kali * { animation: none !important; }
+.tile-i[aria-pressed="true"] { border: var(--bw) solid #141414; background: var(--lilac); color: #141414; box-shadow: 3px 3px 0 var(--shadow); }
+.tile-i .on { position: absolute; top: -7px; right: -7px; width: 24px; height: 24px; border-radius: 50%; background: var(--accent); border: 2px solid #141414; display: grid; place-items: center; }
+.tile-i .on svg { width: 14px; height: 14px; }
+.tile-i.locked { border-style: dashed; cursor: default; }
+.tile-i.locked .th { filter: grayscale(1) opacity(.45); }
+.tile-i .lock { position: absolute; top: 20px; left: 50%; translate: -50% 0; width: 26px; height: 26px; }
 /* Kali's outfits: gifts unlocked by level */
 .outfits { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; }
 .outfit-btn { position: relative; display: grid; justify-items: center; gap: 2px; padding: 8px 2px 6px; border-radius: 16px; border: 2px solid var(--track); background: var(--bg); cursor: pointer; color: var(--fg); }
@@ -174,9 +194,21 @@
   <!-- Kali -->
   <div class="tabpane mine" id="p-kali" role="tabpanel" aria-labelledby="t-kali" hidden>
     <section class="panel sticker">
-      <h2>La garde-robe de Kali</h2>
-      <p class="note" id="wardNote">Chaque nouveau niveau t'offre une tenue pour Kali. Choisis celle qu'elle porte sur ton accueil.</p>
-      <div class="outfits" id="outfits"></div>
+      <h2>Le dressing de Kali</h2>
+      <div class="dress">
+        <div class="dstage">
+          <span class="k" id="dressKali" role="img" aria-label="Kali habillée"></span>
+          <p class="worn" id="wornInfo"></p>
+          <button class="small-btn" id="undress">Tout enlever</button>
+        </div>
+        <div class="dpicker">
+          <div class="seg2 dtabs" role="group" aria-label="Choisir"><button data-dt="items" aria-pressed="true">Accessoires</button><button data-dt="colors" aria-pressed="false">Couleurs</button><button data-dt="outfits" aria-pressed="false">Tenues</button></div>
+          <p class="note" id="dtNote"></p>
+          <div class="tiles" id="dt-items"></div>
+          <div class="tiles" id="dt-colors" hidden></div>
+          <div class="outfits" id="outfits" hidden></div>
+        </div>
+      </div>
     </section>
   </div>
 
@@ -393,21 +425,64 @@ document.querySelectorAll("[data-genre]").forEach((b) => b.addEventListener("cli
 }));
 paintGenre();
 
-// ---- Kali's wardrobe: one outfit per level
+// ---- Kali's dressing room: accessories (unlocked one by one, a limited number at once), colours, outfits
+const CROP = { "tête": "50 12 100 66", yeux: "52 62 96 52", cou: "48 112 128 68", oreilles: "2 92 66 62", bras: "30 130 60 48", pieds: "60 154 80 46", dos: "26 110 148 100", main: "112 108 86 96" };
+const crop = (svg, vb) => svg.replace(/viewBox="[^"]+"/, `viewBox="${vb}"`);
+let dTab = "items";
+function syncKali() { KALI_BOY = KL.read("genre", "f") === "m"; KALI_SKIN = KL.read("kaliColor", "lilas"); KALI_EXTRAS = KL.read("kaliItems", []); }
 function paintOutfits() {
-  const lv = KLP.level(), cur = KLP.outfitOpen(KL.read("outfit", "bonjour"), lv.n) ? KL.read("outfit", "bonjour") : "bonjour";
+  syncKali();
+  const lv = KLP.level(), n = lv.n, max = KLP.maxItems(n), cur = KLP.outfitOpen(KL.read("outfit", "bonjour"), n) ? KL.read("outfit", "bonjour") : "bonjour";
+  if (!KALI_SKINS[KALI_SKIN] || KALI_SKINS[KALI_SKIN].lv > n) KALI_SKIN = "lilas";
+  KALI_EXTRAS = KALI_EXTRAS.filter((id) => n >= (KLP.ITEM_LV[id] || 99));
   $("#meKali").innerHTML = kali(cur);
-  $("#outfits").innerHTML = KLP.OUTFITS.map(([o, n, need]) => {
-    const open = lv.n >= need;
-    return `<button class="outfit-btn ${open ? "" : "locked"}" data-outfit="${o}" ${open ? `aria-pressed="${o === cur}"` : `aria-disabled="true"`}><span class="k">${kali(o, "Kali en tenue " + n)}</span>${open ? "" : `<span class="lock">${icon("lock")}</span>`}<span>${open ? n : "Niveau " + need}</span></button>`;
+  $("#dressKali").innerHTML = kali(cur);
+  $("#wornInfo").textContent = `${KALI_EXTRAS.length} / ${max} accessoire${max > 1 ? "s" : ""} · niveau ${n}`;
+  $("#undress").hidden = !KALI_EXTRAS.length;
+  $("#dtNote").textContent = dTab === "items" ? `Au niveau ${n}, Kali peut porter ${max} accessoire${max > 1 ? "s" : ""} à la fois (une chose par endroit). Monte de niveau pour en débloquer d'autres.`
+    : dTab === "colors" ? "De nouvelles couleurs arrivent aux niveaux 5 et 8." : "Chaque nouveau niveau t'offre une tenue.";
+  const lock = (need) => `<span class="lock">${icon("lock")}</span>`;
+  $("#dt-items").innerHTML = KALI_ITEMS.map(([id, name, slot]) => {
+    const need = KLP.ITEM_LV[id] || 99, open = n >= need, on = KALI_EXTRAS.includes(id);
+    return `<button class="tile-i ${open ? "" : "locked"}" data-item="${id}" ${open ? `aria-pressed="${on}"` : 'aria-disabled="true"'}><span class="th">${crop(kali("bonjour", name, KALI_SKIN, [id], KALI_BOY), CROP[slot])}</span>${open ? "" : lock(need)}<span>${open ? name : "Niveau " + need}</span>${on ? `<span class="on">${icon("check")}</span>` : ""}</button>`;
   }).join("");
-  document.querySelectorAll(".outfit-btn").forEach((b) => b.addEventListener("click", () => {
-    const o = b.dataset.outfit, f = KLP.OUTFITS.find((x) => x[0] === o);
-    if (b.classList.contains("locked")) return toast(`Cette tenue sera ton cadeau du niveau ${f[2]}`);
-    KL.write("outfit", o); paintOutfits(); kaliCheer($("#meKali .kali"));
-  }));
+  $("#dt-colors").innerHTML = Object.entries(KALI_SKINS).map(([k, s]) => {
+    const open = n >= s.lv, on = k === KALI_SKIN;
+    return `<button class="tile-i ${open ? "" : "locked"}" data-skin="${k}" ${open ? `aria-pressed="${on}"` : 'aria-disabled="true"'}><span class="th">${crop(kali("bonjour", s.name, k, [], KALI_BOY), "28 26 144 104")}</span>${open ? "" : lock(s.lv)}<span>${open ? s.name : "Niveau " + s.lv}</span>${on ? `<span class="on">${icon("check")}</span>` : ""}</button>`;
+  }).join("");
+  $("#outfits").innerHTML = KLP.OUTFITS.map(([o, name, need]) => {
+    const open = n >= need;
+    return `<button class="outfit-btn ${open ? "" : "locked"}" data-outfit="${o}" ${open ? `aria-pressed="${o === cur}"` : `aria-disabled="true"`}><span class="k">${kali(o, "Kali en tenue " + name)}</span>${open ? "" : `<span class="lock">${icon("lock")}</span>`}<span>${open ? name : "Niveau " + need}</span></button>`;
+  }).join("");
+  ["items", "colors", "outfits"].forEach((t) => { $(t === "outfits" ? "#outfits" : "#dt-" + t).hidden = t !== dTab; });
+  document.querySelectorAll("[data-dt]").forEach((b) => b.setAttribute("aria-pressed", String(b.dataset.dt === dTab)));
 }
+const cheerDress = () => { kaliCheer($("#dressKali .kali")); };
+document.querySelectorAll("[data-dt]").forEach((b) => b.addEventListener("click", () => { dTab = b.dataset.dt; paintOutfits(); }));
+$("#undress").addEventListener("click", () => { KL.write("kaliItems", []); paintOutfits(); cheerDress(); });
+$("#p-kali").addEventListener("click", (e) => {
+  const n = KLP.level().n;
+  const it = e.target.closest("[data-item]");
+  if (it) {
+    const id = it.dataset.item, need = KLP.ITEM_LV[id], slot = KALI_ITEMS.find((x) => x[0] === id)[2], name = KALI_ITEMS.find((x) => x[0] === id)[1];
+    if (n < need) return toast(`${name} : cadeau du niveau ${need}`);
+    let worn = KALI_EXTRAS.slice();
+    if (worn.includes(id)) worn = worn.filter((x) => x !== id);
+    else {
+      const same = worn.find((x) => KALI_ITEMS.find((y) => y[0] === x)[2] === slot);
+      if (same) worn = worn.filter((x) => x !== same);
+      else if (worn.length >= KLP.maxItems(n)) return toast(`Kali porte déjà ${worn.length} accessoire${worn.length > 1 ? "s" : ""} : enlève-en un, ou monte de niveau pour en porter plus`);
+      worn.push(id);
+    }
+    KL.write("kaliItems", worn); paintOutfits(); cheerDress(); return;
+  }
+  const sk = e.target.closest("[data-skin]");
+  if (sk) { const s = KALI_SKINS[sk.dataset.skin]; if (n < s.lv) return toast(`${s.name} : couleur du niveau ${s.lv}`); KL.write("kaliColor", sk.dataset.skin); paintOutfits(); cheerDress(); return; }
+  const ob = e.target.closest(".outfit-btn");
+  if (ob) { const o = ob.dataset.outfit, f = KLP.OUTFITS.find((x) => x[0] === o); if (ob.classList.contains("locked")) return toast(`Cette tenue sera ton cadeau du niveau ${f[2]}`); KL.write("outfit", o); paintOutfits(); cheerDress(); }
+});
 paintOutfits();
+$("#dressKali").addEventListener("click", (e) => { e.stopPropagation(); cheerDress(); });
 $("#meKali").addEventListener("click", () => kaliCheer($("#meKali .kali")));
 
 // ---- the Kali corner on the home page

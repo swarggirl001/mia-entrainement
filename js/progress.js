@@ -50,6 +50,9 @@ const KLP = {
     ["diplomee", "Diplômée", "Diplômé", 6], ["fete", "Fête", "Fête", 7], ["dodo", "Dodo", "Dodo", 8]],
   // [outfit, name, level], named for the girl or boy using KalaLab
   get OUTFITS() { const m = KL.read("genre", "f") === "m"; return KLP.OUTFIT_LIST.map(([o, f, b, n]) => [o, m ? b : f, n]); },
+  // accessories: the level that unlocks each one, and how many Kali can wear at once at a level
+  ITEM_LV: { chaussures: 1, bracelet: 2, solaires: 2, echarpe: 3, telephone: 3, boucles: 4, manette: 4, chaine: 5, tablette: 5, monocle: 6, cape: 7, couronne: 9 },
+  maxItems(n = KLP.level().n) { return Math.min(6, 1 + Math.floor(n / 2)); },
   outfitOpen(o, n = KLP.level().n) { const f = KLP.OUTFITS.find((x) => x[0] === o); return !!f && n >= f[2]; },
   // base64 that is safe in a link, for UTF-8 text
   enc(obj) { return btoa(unescape(encodeURIComponent(JSON.stringify(obj)))).replace(/\+/g, "-").replace(/\//g, "_").replace(/=+$/, ""); },
