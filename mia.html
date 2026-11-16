@@ -402,9 +402,9 @@ canvas.confetti { position: fixed; inset: 0; pointer-events: none; z-index: 50; 
         <div class="mia" id="heroMia"></div>
         <div class="bubble" aria-hidden="true">Hello!</div>
       </div>
-      <span class="eyebrow">Oral infirmier · Anglais</span>
+      <span class="eyebrow">Anglais · Prononciation</span>
       <h1 id="hello">Bienvenue !</h1>
-      <p class="lead">Le jour de l'oral, tu joues <b>Mia</b>. Ici, tu apprends à bien prononcer ses 7 répliques, pas à pas, jusqu'à les dire d'un seul trait.</p>
+      <p class="lead">Dans ce dialogue, tu joues <b>Mia</b>. Ici, tu apprends à bien prononcer ses 7 répliques, pas à pas, jusqu'à les dire d'un seul trait.</p>
       <button class="linkbtn" id="editMe" hidden>Ce n'est pas toi ? Modifier mon prénom</button>
     </div>
 
@@ -513,12 +513,12 @@ canvas.confetti { position: fixed; inset: 0; pointer-events: none; z-index: 50; 
       <h2>Répétition générale</h2>
     </div>
     <div class="card">
-      <h3>Comme le jour de l'oral</h3>
+      <h3>Toute la scène, en entier</h3>
       <p class="note">Toute la scène est jouée : Lola, Tess, Léa et le Dr Johnson disent leurs répliques, et quand c'est le tour de Mia, c'est à toi. Après un petit compte à rebours (3, 2, 1), dis ta réplique. Environ 5 minutes.</p>
-      <p class="note">Tu lis tes répliques <b>avec le texte</b> sous les yeux, comme à l'examen.</p>
+      <p class="note">Tu lis tes répliques <b>avec le texte</b> sous les yeux.</p>
       <div class="option">
         <button class="btn ghost" id="lvl-exam" aria-pressed="false"></button>
-        <span class="note">Facultatif : le texte est caché pendant que tu parles. Ce n'est pas demandé à l'examen, c'est juste pour aller plus loin.</span>
+        <span class="note">Facultatif : le texte est caché pendant que tu parles, pour aller plus loin.</span>
       </div>
       <button class="mic" id="fullStart"></button>
     </div>
@@ -565,8 +565,8 @@ canvas.confetti { position: fixed; inset: 0; pointer-events: none; z-index: 50; 
     </div>
     <ul class="recap" id="recap"></ul>
     <div class="card tipday">
-      <h3>Le jour de l'oral</h3>
-      <p>Respire, parle lentement et articule bien chaque mot. Si un mot t'échappe, continue tranquillement : le plus important, c'est d'être claire. Tu es prête !</p>
+      <h3>Quand tu parles anglais</h3>
+      <p>Respire, parle lentement et articule bien chaque mot. Si un mot t'échappe, continue tranquillement : le plus important, c'est de te faire comprendre.</p>
     </div>
     <div class="nextbar">
       <button class="go" id="againBtn"></button>
@@ -1627,10 +1627,10 @@ function renderHome() {
     return box;
   }));
   const DESC = { sons: "Une vidéo par son : la bouche de face et de côté.", train: "Chaque réplique mot par mot, avec le micro.",
-    full: "Toute la scène, comme le jour de l'oral." };
+    full: "Toute la scène, d'un seul trait." };
   $("path").replaceChildren(...STEPS.map((st, i) => el("li", done(st) ? "done" : "",
     `<span class="num">${done(st) ? "✓" : locked(st) ? "🔒" : i + 1}</span><span><b>${NAMES[st]}</b><small>${locked(st) ? "S'ouvre quand les 10 sons sont finis." : DESC[st]}</small></span><span class="state">${done(st) ? "fait" : ""}</span>`)),
-    el("li", "", `<span class="num">🎉</span><span><b>Félicitations !</b><small>Tu seras prête pour l'oral.</small></span><span></span>`));
+    el("li", "", `<span class="num">🎉</span><span><b>Félicitations !</b><small>Tu sauras dire tout le dialogue.</small></span><span></span>`));
   const last = store.get("screen", null), started = last && last !== "home";
   $("startBtn").innerHTML = (started ? "Continuer là où j'en étais" : "Oui, je commence") + ICON.next;
   $("startBtn").onclick = () => go(started ? last : STEPS[0]);
