@@ -95,7 +95,7 @@
   </div>
 
   <div class="install-card" id="installCard">
-    <div class="row2"><b>Installer KalaLab</b><button class="go" id="installBtn" hidden>Installer <span class="arr">→</span></button></div>
+    <div class="appline"><img src="icons/kalalab-192.png" alt=""><b>Installer l'appli KalaLab</b><button class="go" id="installBtn">Installer <span class="arr">→</span></button></div>
     <p id="installHow"></p>
     <p>Le jeu de rôle de Mia est déjà dans KalaLab. Tu peux aussi <a href="mia.html">installer l'appli Mia toute seule</a> depuis sa page d'accueil.</p>
   </div>
@@ -133,7 +133,6 @@ const root = document.documentElement;
 const reduce = matchMedia("(prefers-reduced-motion: reduce)").matches;
 document.head.insertAdjacentHTML("beforeend", `<style>${KALI_CSS}</style>`);
 paintIcons();
-$("#installHow").textContent = KL.installHow();
 
 let tt;
 function toast(msg) { const t = $("#toast"); t.textContent = msg; fixDigits(t); t.classList.add("show"); clearTimeout(tt); tt = setTimeout(() => t.classList.remove("show"), 2200); }
@@ -347,10 +346,8 @@ const io = new IntersectionObserver((entries) => entries.forEach((en) => {
 }), { threshold: .35 });
 document.querySelectorAll("[data-replay]").forEach((el) => io.observe(el));
 
-// ---- install
-let deferred = null;
-window.addEventListener("beforeinstallprompt", (e) => { e.preventDefault(); deferred = e; $("#installBtn").hidden = false; $("#installHow").textContent = "Une icône KalaLab sur ton écran d'accueil. Elle s'ouvre en plein écran et marche aussi sans internet."; });
-$("#installBtn").addEventListener("click", async () => { if (!deferred) return; deferred.prompt(); await deferred.userChoice; deferred = null; $("#installBtn").hidden = true; });
+// ---- install (the card disappears once KalaLab is installed)
+KL.setupInstall($("#installBtn"), $("#installHow"));
 if (matchMedia("(display-mode: standalone)").matches) $("#installCard").hidden = true;
 
 // Pixelify's 5 looks like an S: digits inside pixel text use the body face

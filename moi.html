@@ -202,7 +202,7 @@
         <section class="panel sticker">
           <h2>Installer KalaLab</h2>
           <p class="note" id="instNote"></p>
-          <button class="small-btn main" id="instBtn" style="justify-self:start" hidden>Installer</button>
+          <button class="small-btn main" id="instBtn" style="justify-self:start">Installer l'appli</button>
         </section>
       </div>
       <div style="display:grid;gap:16px">
@@ -251,7 +251,6 @@ const $ = (s) => document.querySelector(s);
 const root = document.documentElement;
 document.head.insertAdjacentHTML("beforeend", `<style>${KALI_CSS}</style>`);
 paintIcons();
-$("#instNote").textContent = KL.installHow();
 const esc = (t) => String(t).replace(/[<>&"'`]/g, "");
 const de = (n) => (/^[aeiouyhàâäéèêëîïôöùûüÿæœ]/i.test(n) ? "d'" : "de ") + n;   // « de Marie », « d'Aïcha »
 const fem = () => KL.read("genre", "f") !== "m";
@@ -260,10 +259,7 @@ function toast(msg) { const t = $("#toast"); t.textContent = msg; t.classList.ad
 document.querySelectorAll("[data-soon]").forEach((b) => b.addEventListener("click", () => toast(`« ${b.dataset.soon} » arrive très bientôt`)));
 
 // ---- install (Réglages): the button appears when the phone offers it
-let deferredInstall = null;
-if (matchMedia("(display-mode: standalone)").matches || navigator.standalone) $("#instNote").textContent = "KalaLab est déjà installé sur cet appareil.";
-window.addEventListener("beforeinstallprompt", (e) => { e.preventDefault(); deferredInstall = e; $("#instBtn").hidden = false; $("#instNote").textContent = "Une icône KalaLab sur ton écran d'accueil. Elle s'ouvre en plein écran et marche aussi sans internet."; });
-$("#instBtn").addEventListener("click", async () => { if (!deferredInstall) return; deferredInstall.prompt(); await deferredInstall.userChoice; deferredInstall = null; $("#instBtn").hidden = true; });
+KL.setupInstall($("#instBtn"), $("#instNote"));
 
 // ---- theme
 const isDark = () => root.dataset.theme ? root.dataset.theme === "dark" : matchMedia("(prefers-color-scheme: dark)").matches;

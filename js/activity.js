@@ -31,6 +31,19 @@ const KL = {
       : "Sur ordinateur : dans Chrome ou Edge, clique sur l'icône d'installation au bout de la barre d'adresse.";
     return how + " KalaLab marche aussi sans internet.";
   },
+  // the install button: it is always there. If the browser can install, it asks right away;
+  // otherwise it shows the steps for this device (iPhone/iPad, Android, computer)
+  setupInstall(btn, note) {
+    let evt = null; const done = matchMedia("(display-mode: standalone)").matches || navigator.standalone;
+    note.textContent = done ? "KalaLab est déjà installé sur cet appareil." : KL.installHow();
+    btn.hidden = done;
+    addEventListener("beforeinstallprompt", (e) => { e.preventDefault(); evt = e; note.textContent = "Une icône KalaLab sur ton écran d'accueil. Elle s'ouvre en plein écran et marche aussi sans internet."; });
+    addEventListener("appinstalled", () => { note.textContent = "C'est fait ! Cherche l'icône KalaLab sur ton écran d'accueil."; btn.hidden = true; });
+    btn.addEventListener("click", async () => {
+      if (evt) { evt.prompt(); await evt.userChoice; evt = null; return; }
+      note.textContent = KL.installHow(); note.classList.remove("flash"); void note.offsetWidth; note.classList.add("flash");
+    });
+  },
   firstName() {
     const me = KL.read("me", null); if (me && me.first) return String(me.first).slice(0, 40);
     try { const m = JSON.parse(localStorage.getItem("mia.me") || "null"); if (m && m.first) return String(m.first).replace(/[<>&"'`\\]/g, "").slice(0, 40); } catch (e) {}

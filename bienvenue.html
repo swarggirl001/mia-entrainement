@@ -32,6 +32,12 @@ body { overflow-x: hidden; }
 .kc-cloud { animation: kc-drift 14s ease-in-out infinite alternate; } .kc-cloud.two { animation-duration: 19s; animation-delay: -6s; }
 .kc-flower { transform-box: fill-box; transform-origin: 50% 100%; animation: kc-sway 3.2s ease-in-out infinite; }
 .kc-stars circle { animation: kc-twinkle 2.6s ease-in-out infinite; }
+.vine path { stroke-dasharray: 1; stroke-dashoffset: 1; animation: grow 2.4s ease-out .3s forwards; }
+.vbit { opacity: 0; transform-box: fill-box; transform-origin: center; animation: pop .4s cubic-bezier(.34,1.56,.64,1) forwards; }
+@keyframes grow { to { stroke-dashoffset: 0; } }
+@keyframes pop { from { opacity: 0; scale: .2; } to { opacity: 1; scale: 1; } }
+@media (prefers-reduced-motion: reduce) { .vine path { animation: none; stroke-dashoffset: 0; } .vbit { animation: none; opacity: 1; } }
+.nowrap { white-space: nowrap; }
 .hello { transform-box: fill-box; transform-origin: 20% 100%; scale: 0; transition: scale .35s cubic-bezier(.34,1.56,.64,1), opacity .2s; }
 .hello.on { scale: 1; opacity: 1; }
 
@@ -59,6 +65,7 @@ body { overflow-x: hidden; }
 .sk span { font-family: var(--pixel); font-size: 13.5px; }
 .kali-sect { background: var(--card); padding: 16px; display: grid; grid-template-columns: 120px 1fr; gap: 14px; align-items: center; }
 .kali-sect .k { width: 120px; height: 120px; }
+@media (max-width: 600px) { .kali-sect { grid-template-columns: 1fr; justify-items: center; text-align: center; } .kali-sect .k { width: 140px; height: 140px; } }
 .kali-sect b { font-family: var(--title); font-weight: 400; font-size: 20px; display: block; margin-bottom: 4px; }
 .kali-sect p { margin: 0; font-family: var(--pixel); font-size: 14.5px; color: var(--muted); }
 .why { background: var(--card); padding: 16px; display: grid; gap: 8px; }
@@ -181,7 +188,7 @@ body { overflow-x: hidden; }
   <section class="kali-sect sticker reveal">
     <span class="k" id="kaliSect"></span>
     <div><b>Kali t'accompagne</b>
-      <p class="kali-says">« Salut, moi c'est Kali ! Ma créatrice m'a dessinée pour t'accompagner tout au long de ton apprentissage. Mon nom vient de Kala<b>Lab</b> : Kala… Kali ! Je suis là pour ta série de jours, tes objectifs et tes badges. À chaque niveau, je reçois une nouvelle tenue. Touche-moi, je saute de joie ! »</p></div>
+      <p class="kali-says">« Salut, moi c'est Kali ! Ma créatrice m'a dessinée pour t'accompagner tout au long de ton apprentissage. Mon nom vient de <span class="nowrap">KalaLab</span> : ma créatrice a gardé le début, « Kala », et c'est devenu Kali ! Je suis là pour ta série de jours, tes objectifs et tes badges. À chaque niveau, je reçois une nouvelle tenue. Touche-moi, je saute de joie ! »</p></div>
   </section>
 
   <section class="why sticker reveal">
@@ -191,19 +198,18 @@ body { overflow-x: hidden; }
     <p>Tu es en Côte d'Ivoire, ailleurs en Afrique, en Europe ou à l'autre bout du monde ? Tu apprends l'anglais ? Alors KalaLab est fait pour toi.</p>
     <p class="hi">Akwaba, tout le monde est le bienvenu !</p>
     <h3 class="sub">D'où vient le nom ?</h3>
-    <p><b>Kala</b> <span class="todo">vient de « kalan », qui veut dire apprendre en dioula : à me confirmer</span>. <b>Lab</b>, comme laboratoire : un endroit où l'on essaie, où l'on se trompe, et où l'on apprend.</p>
+    <p><b class="nowrap">KalaLab</b>, c'est apprendre comme dans un laboratoire : un endroit où l'on essaie, où l'on se trompe, et où l'on apprend.</p>
     <h3 class="sub">Et demain ?</h3>
     <p>Aujourd'hui, c'est l'anglais. Demain, peut-être :</p>
     <div class="soon-list" aria-label="Idées pour la suite"><span>l'espagnol</span><span>l'allemand</span><span>les mathématiques</span><span>la philosophie</span><span>l'informatique</span></div>
   </section>
 
   <section class="maker sticker reveal">
-    <span class="draft">Brouillon : à relire avec toi</span>
     <div class="who"><span class="ph">J</span><div><h2>La créatrice de KalaLab</h2><p class="role">Joyce, étudiante en Master 2, Côte d'Ivoire</p></div></div>
-    <p>Je m'appelle <b>Joyce</b> <span class="todo">nom complet à écrire par toi</span>. Je suis en Master 2 d'études du développement, spécialité suivi-évaluation des projets et programmes de développement, et je prépare la soutenance de mon mémoire. Je suis aussi stagiaire à l'Observatoire ivoirien des politiques publiques (OIPP), <span class="todo">en suivi-évaluation et en communication : à confirmer</span>.</p>
-    <p>L'anglais n'a jamais été facile pour moi, déjà au lycée. Aujourd'hui, je me débrouille : mon niveau est entre B1 et B2. Et je continue d'apprendre, moi aussi, avec KalaLab.</p>
+    <p>Je m'appelle <b>Bohoui Thyna Joyce Cléopâtre</b>. Je suis en Master 2 d'études du développement, spécialité suivi-évaluation des projets et programmes de développement, et je prépare la soutenance de mon mémoire. Je suis aussi stagiaire en suivi, évaluation et qualité à l'Observatoire ivoirien des politiques publiques (OIPP).</p>
+    <p>L'anglais n'a jamais été facile pour moi, déjà au lycée. Aujourd'hui, je me suis bien améliorée : mon niveau est entre B1 et B2. Et je continue d'apprendre, moi aussi, avec KalaLab.</p>
     <p>Mon projet : partir en Irlande. D'abord un cours d'anglais au Cork English College, puis un programme en intelligence artificielle et cloud computing à la Technological University of the Shannon (TUS). L'anglais est au cœur de mon parcours : KalaLab, c'est pour m'aider moi, et pour aider les autres.</p>
-    <p>Tout a commencé avec Mia. Ma tante, élève infirmière en France, m'a confié le texte de son oral d'anglais, et j'ai créé Mia pour l'aider à bien le prononcer. Puis mes petites sœurs m'ont confié leurs cahiers d'anglais. Alors je me suis dit : pourquoi ne pas aller plus loin ? Créer KalaLab, qui réunit Mia et d'autres idées pour apprendre, et mettre toute cette créativité à la portée du plus grand nombre.</p>
+    <p>Tout a commencé avec Mia. Ma tante, élève infirmière en France, m'a confié le texte de son oral d'anglais, et j'ai créé Mia pour l'aider à bien le prononcer. Puis mes petites sœurs m'ont confié leurs cahiers d'anglais. Alors je me suis dit : pourquoi ne pas aller plus loin ? Créer KalaLab, qui réunit Kali, Mia et d'autres idées pour apprendre, et mettre toute cette créativité à la portée du plus grand nombre.</p>
     <p class="claude">J'ai construit KalaLab avec l'aide de Claude, une intelligence artificielle. C'est la preuve que, si on en a vraiment envie, chacun peut créer un site pour aider le plus grand nombre. L'intelligence artificielle peut servir à faire du bien autour de soi.</p>
   </section>
 
@@ -216,7 +222,7 @@ body { overflow-x: hidden; }
   </section>
 
   <div class="install-card reveal">
-    <div class="row2"><b>Installe KalaLab sur ton appareil</b><button class="go" id="installBtn" hidden>Installer <span class="arr">→</span></button></div>
+    <div class="appline"><img src="icons/kalalab-192.png" alt=""><b>Installe l'appli KalaLab sur ton appareil</b><button class="go" id="installBtn">Installer <span class="arr">→</span></button></div>
     <p id="installHow"></p>
   </div>
 
@@ -273,7 +279,6 @@ const root = document.documentElement;
 const reduce = matchMedia("(prefers-reduced-motion: reduce)").matches;
 document.head.insertAdjacentHTML("beforeend", `<style>${KALI_CSS}</style>`);
 paintIcons();
-$("#installHow").textContent = KL.installHow();
 const esc = (t) => String(t).replace(/[<>&"'`]/g, "");
 let tt;
 function toast(msg) { const t = $("#toast"); t.textContent = msg; t.classList.add("show"); clearTimeout(tt); tt = setTimeout(() => t.classList.remove("show"), 2200); }
@@ -295,6 +300,25 @@ const cloud = (x, y, cls) => `<g class="kc-cloud ${cls}"><path d="M${x} ${y} a12
 // ---- the meadow: drawn at the scene's real size. Only the arch stands in it, like a door;
 // Kali comes out from behind it, walks on the hill, waves, walks away, and later comes back home.
 let G = null;
+// a climbing plant: it comes out of the ground on the left, climbs the arch, goes over the top and down the right side
+function vine(ax, gy, ay, r, R, ah) {
+  const off = R + 4, cy = ay + r, pts = [];
+  const add = (x, y, nx, ny, s) => { const w = 3.2 * Math.sin(s / 10); pts.push([x + nx * w, y + ny * w, s]); };
+  let s = 0;
+  for (let y = gy + 4; y >= cy; y -= 3, s += 3) add(ax - off, y, -1, 0, s);                       // up the left side
+  for (let a = 180; a <= 360; a += 2, s += off * Math.PI / 90) { const t = a * Math.PI / 180; add(ax + off * Math.cos(t), cy + off * Math.sin(t), Math.cos(t), Math.sin(t), s); }
+  for (let y = cy; y <= cy + ah * .42; y += 3, s += 3) add(ax + off, y, 1, 0, s);                  // a little down the right side
+  const d = "M" + pts.map(([x, y]) => `${x.toFixed(1)} ${y.toFixed(1)}`).join(" L");
+  const cols = ["var(--petal)", "#ffd27a", "#f5b8cc", "#c9b8f0", "#a9c2f5"];
+  let deco = "", n = 0;
+  for (let k = 8; k < pts.length - 2; k += 7, n++) {
+    const [x, y] = pts[k], [x2, y2] = pts[k + 1], ang = Math.atan2(y2 - y, x2 - x) * 180 / Math.PI + (n % 2 ? 60 : -60), delay = (k / pts.length * 2.2).toFixed(2);
+    deco += n % 3 === 2
+      ? `<g transform="translate(${x.toFixed(1)} ${y.toFixed(1)})"><g class="vbit" style="animation-delay:${delay}s">${[0, 72, 144, 216, 288].map((a) => `<circle cx="${(4 * Math.cos(a * Math.PI / 180)).toFixed(1)}" cy="${(4 * Math.sin(a * Math.PI / 180)).toFixed(1)}" r="3.4" fill="${cols[n % 5]}" stroke="#141414" stroke-width="1.5"/>`).join("")}<circle r="2.3" fill="#fff" stroke="#141414" stroke-width="1.4"/></g></g>`
+      : `<g transform="translate(${x.toFixed(1)} ${y.toFixed(1)}) rotate(${ang.toFixed(0)})"><g class="vbit" style="animation-delay:${delay}s"><path d="M0 0 q6 -6 13 0 q-6 6 -13 0z" fill="#7cc48f" stroke="#141414" stroke-width="1.6" stroke-linejoin="round"/></g></g>`;
+  }
+  return `<g class="vine"><path d="${d}" fill="none" stroke="#141414" stroke-width="5.5" stroke-linecap="round" stroke-linejoin="round" pathLength="1"/><path d="${d}" fill="none" stroke="#3f8f5f" stroke-width="2.8" stroke-linecap="round" stroke-linejoin="round" pathLength="1"/>${deco}</g>`;
+}
 function drawScene() {
   const sc = $("#scene"), W = Math.round(sc.clientWidth), H = Math.round(sc.clientHeight), wide = W >= 700;
   const aw = wide ? 200 : 118, ah = Math.round(aw * 1.3), K = wide ? 180 : 116, f = Math.round(aw * .11);   // arch (inside), its lilac frame, Kali's box
@@ -337,8 +361,7 @@ function drawScene() {
     <text x="${ax}" y="${ay + ah * .56}" text-anchor="middle" font-family="Cikutra" font-weight="900" font-size="${Math.round(aw * .3)}" fill="#2e2350">Kala</text>
     <text x="${ax}" y="${ay + ah * .8}" text-anchor="middle" font-family="Cikutra" font-weight="900" font-size="${Math.round(aw * .26)}" fill="#8e7cc3">Lab</text>
     <rect x="${ax - R - 14}" y="${gy - 4}" width="${2 * R + 28}" height="${st}" rx="${st / 2}" fill="#e7d9c4" stroke="#141414" stroke-width="3"/>
-    <path d="M${ax - R + 3} ${gy - 8} C${ax - R - 10} ${gy - ah * .3} ${ax - R + 10} ${gy - ah * .5} ${ax - R - 4} ${gy - ah * .78}" fill="none" stroke="#3f8f5f" stroke-width="3" stroke-linecap="round"/>
-    ${[[.2, -6, "var(--petal)"], [.45, 6, "#ffd27a"], [.68, -5, "#f5b8cc"]].map(([k, dx, c]) => `<g transform="translate(${ax - R + dx} ${gy - ah * k})">${[0, 72, 144, 216, 288].map((a) => `<circle cx="${(4 * Math.cos(a * Math.PI / 180)).toFixed(1)}" cy="${(4 * Math.sin(a * Math.PI / 180)).toFixed(1)}" r="3.4" fill="${c}" stroke="#141414" stroke-width="1.5"/>`).join("")}<circle r="2.4" fill="#fff" stroke="#141414" stroke-width="1.5"/></g>`).join("")}
+    ${vine(ax, gy, ay, r, R, ah)}
   </g>
   ${tuft(ax - R - 26, gy + st - 2)}${tuft(ax - R + 2, gy + st - 1)}${tuft(ax + R - 10, gy + st - 1)}${tuft(ax + R + 16, gy + st - 2)}
   ${near}
@@ -470,9 +493,7 @@ function save() {
 }
 
 // ---- install (the card stays on this page, even after installing)
-let deferred = null;
-window.addEventListener("beforeinstallprompt", (e) => { e.preventDefault(); deferred = e; $("#installBtn").hidden = false; $("#installHow").textContent = "Une icône KalaLab sur ton écran d'accueil. Elle s'ouvre en plein écran et marche aussi sans internet."; });
-$("#installBtn").addEventListener("click", async () => { if (!deferred) return; deferred.prompt(); await deferred.userChoice; deferred = null; $("#installBtn").hidden = true; });
+KL.setupInstall($("#installBtn"), $("#installHow"));
 
 function confetti(x, y) {
   if (reduce) return;

@@ -229,6 +229,13 @@ canvas#confetti { position: fixed; inset: 0; width: 100%; height: 100%; pointer-
 .install-card b { font-family: var(--title); font-weight: 400; font-size: 18px; }
 .install-card p { font-family: var(--pixel); font-size: 14px; color: var(--muted); }
 .install-card a { color: var(--accent); font-weight: 700; }
+.install-card .appline { display: flex; align-items: center; gap: 12px; }
+.install-card .appline img { width: 52px; height: 52px; border-radius: 14px; border: 2px solid #141414; flex: none; }
+.install-card .appline b { flex: 1; }
+.install-card .appline { flex-wrap: wrap; }
+@media (max-width: 600px) { .install-card .appline b { flex-basis: calc(100% - 64px); } .install-card .appline .go { flex-basis: 100%; justify-content: center; } }
+.flash { animation: flash 1.2s ease; border-radius: 10px; }
+@keyframes flash { 0%, 60% { background: var(--lilac); color: #141414; } 100% { background: transparent; } }
 .foot { font-family: var(--pixel); font-size: 13px; color: var(--muted); text-align: center; }
 .tile[href] { text-decoration: none; }
 a.sticker, a.tile { color: var(--tile-ink); }
