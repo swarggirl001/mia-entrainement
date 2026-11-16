@@ -19,14 +19,12 @@
 <link rel="stylesheet" href="css/kalalab.css">
 <style>
 /* Layout: a big opening scene (sky, hills, the logo with Kali walking on it), the two buttons,
-   then short sections that explain KalaLab, then the install card. The profile is created in a sheet over the page. */
+   then short sections that explain KalaLab (and who made it), then the install card. The profile is created in a sheet over the page. */
 body { overflow-x: hidden; }
 .land { display: grid; gap: 22px; padding-bottom: 40px; }
-.scene { position: relative; height: 380px; overflow: hidden; border-radius: 28px; border: var(--bw) solid var(--line); }
-.scene .sky { position: absolute; inset: 0; width: 100%; height: 100%; }
-.scene .logo { position: absolute; left: 50%; top: 36px; width: 220px; height: 220px; translate: -50% 0; z-index: 2; filter: drop-shadow(5px 5px 0 var(--shadow)); }
-.scene .logo svg { width: 100%; height: 100%; overflow: visible; }
-@media (min-width: 900px) { .scene { height: 520px; border-radius: 32px; } .scene .logo { width: 300px; height: 300px; top: 60px; } }
+.scene { position: relative; height: 400px; overflow: hidden; border-radius: 28px; border: var(--bw) solid var(--line); }
+.scene svg { position: absolute; inset: 0; width: 100%; height: 100%; }
+@media (min-width: 900px) { .scene { height: 540px; border-radius: 32px; } }
 .kc-s1 { stop-color: var(--sky1); } .kc-s2 { stop-color: var(--sky2); }
 .kc-h1 { fill: var(--hill1); } .kc-h2 { fill: var(--hill2); } .kc-p { fill: var(--petal); }
 .kc-moon, .kc-stars { display: none; } body.night .kc-moon, body.night .kc-stars { display: inline; } body.night .kc-sun { display: none; }
@@ -69,6 +67,35 @@ body { overflow-x: hidden; }
 .prom b { font-family: var(--title); font-weight: 400; font-size: 16px; }
 .prom span { font-family: var(--pixel); font-size: 12.5px; color: var(--muted); }
 .install-card .row2 b { font-size: 20px; }
+
+/* a band of "welcome" in several languages, under the scene */
+.ribbon { overflow: hidden; border-block: var(--bw) solid #141414; background: var(--accent); color: #141414; rotate: -1.6deg; margin-inline: calc(-1 * max(16px, env(safe-area-inset-left, 0px)) - 10px); }
+.ribbon div { display: flex; gap: 28px; width: max-content; padding: 9px 0; font-family: var(--title); font-size: 19px; white-space: nowrap; animation: slide 26s linear infinite; }
+.ribbon i { font-style: normal; opacity: .55; }
+@keyframes slide { to { transform: translateX(-50%); } }
+/* cards that lean a little, and sections that slide in as you scroll */
+.skills4 .sk { transition: transform .35s cubic-bezier(.34,1.56,.64,1); }
+.skills4 .sk:nth-child(odd) { transform: rotate(-1.4deg); } .skills4 .sk:nth-child(even) { transform: rotate(1.2deg); }
+.skills4 .sk:hover { transform: rotate(0) translateY(-4px); }
+.sk:hover .ico { animation: wig .6s ease; }
+@keyframes wig { 25% { transform: rotate(-12deg); } 75% { transform: rotate(10deg); } }
+.reveal { opacity: 0; translate: 0 26px; transition: opacity .6s ease, translate .6s cubic-bezier(.34,1.56,.64,1); transition-delay: var(--d, 0s); }
+.reveal.in { opacity: 1; translate: 0 0; }
+@media (prefers-reduced-motion: reduce) { .reveal { opacity: 1; translate: none; } .ribbon div { animation: none; } }
+.why h2 { margin: 0; font-family: var(--title); font-weight: 400; font-size: 24px; }
+.why .hi { font-family: var(--display); font-weight: 900; font-size: 26px; color: var(--accent); margin: 0; }
+.soon-list { display: flex; flex-wrap: wrap; gap: 8px; }
+.soon-list span { font-family: var(--pixel); font-weight: 600; font-size: 13.5px; padding: 6px 11px; border-radius: 99px; border: 2px dashed var(--line); }
+/* the creator */
+.maker { background: var(--card); padding: 18px; display: grid; gap: 12px; position: relative; }
+.maker .who { display: grid; grid-template-columns: 84px 1fr; gap: 14px; align-items: center; }
+.maker .ph { width: 84px; height: 84px; border-radius: 50%; border: var(--bw) solid #141414; background: var(--lilac); display: grid; place-items: center; font-family: var(--display); font-weight: 900; font-size: 34px; color: #2e2350; }
+.maker h2 { margin: 0; font-family: var(--title); font-weight: 400; font-size: 22px; }
+.maker .role { margin: 2px 0 0; font-family: var(--pixel); font-size: 14px; color: var(--muted); }
+.maker p { margin: 0; font-family: var(--body); font-size: 15.5px; line-height: 1.55; }
+.maker .todo { background: var(--chip); border-radius: 6px; padding: 0 5px; color: var(--muted); font-style: italic; }
+.maker .claude { border-top: 2px dashed var(--line); padding-top: 12px; }
+.draft { position: absolute; top: -12px; right: 14px; font-family: var(--pixel); font-weight: 700; font-size: 12px; padding: 3px 9px; border-radius: 99px; background: #ffd27a; color: #141414; border: 2px solid #141414; }
 
 /* the profile sheet */
 .sheet { position: fixed; inset: 0; z-index: 20; display: grid; place-items: center; padding: 16px; background: rgba(20,20,20,.5); }
@@ -114,29 +141,14 @@ body { overflow-x: hidden; }
     <button class="theme" id="theme" aria-label="Passer en mode sombre"></button>
   </header>
 
-  <!-- the opening scene: Kali comes out from behind the arch, waves in front of "Lab", then walks away -->
-  <div class="scene" aria-hidden="true">
-    <svg class="sky" id="sky"></svg>
-    <div class="logo">
-      <svg id="logo" viewBox="0 0 300 300">
-        <defs><clipPath id="icon"><rect width="300" height="300" rx="66"/></clipPath></defs>
-        <g clip-path="url(#icon)">
-          <rect width="300" height="300" fill="#b9a6e0"/>
-          <g id="behind"></g>
-          <path d="M68 266 v-122 a82 82 0 0 1 164 0 v122z" fill="#fbeee0"/>
-          <path d="M84 266 v-120 a66 66 0 0 1 132 0 v120" fill="none" stroke="#b9a6e0" stroke-width="3"/>
-          <text x="150" y="186" text-anchor="middle" font-family="Cikutra" font-weight="900" font-size="54" fill="#2e2350">Kala</text>
-          <text x="150" y="238" text-anchor="middle" font-family="Cikutra" font-weight="900" font-size="46" fill="#8e7cc3">Lab</text>
-          <g id="front"></g>
-        </g>
-        <rect width="300" height="300" rx="66" fill="none" stroke="#141414" stroke-width="5"/>
-      </svg>
-    </div>
-  </div>
+  <!-- the opening scene: the arch stands in the meadow; Kali comes out, waves, walks away, comes back -->
+  <div class="scene" id="scene" aria-hidden="true"><svg id="sky"></svg></div>
+
+  <div class="ribbon" aria-hidden="true"><div><span>Akwaba</span><i>✦</i><span>Welcome</span><i>✦</i><span>Bienvenue</span><i>✦</i><span>Hello</span><i>✦</i><span>Akwaba</span><i>✦</i><span>Welcome</span><i>✦</i><span>Bienvenue</span><i>✦</i><span>Hello</span><i>✦</i><span>Akwaba</span><i>✦</i><span>Welcome</span><i>✦</i><span>Bienvenue</span><i>✦</i><span>Hello</span><i>✦</i><span>Akwaba</span><i>✦</i><span>Welcome</span><i>✦</i><span>Bienvenue</span><i>✦</i><span>Hello</span><i>✦</i></div></div>
 
   <section class="intro">
     <h1>Apprends l'anglais de ton cahier, <span>avec Kali</span></h1>
-    <p>Les leçons de Terminale, unité par unité : écouter, lire, parler, écrire. Un peu chaque jour.</p>
+    <p>Écouter, lire, parler, écrire : progresse pas à pas, un peu chaque jour. Pour commencer, les leçons d'anglais de Terminale.</p>
     <div class="cta">
       <button class="btn-big" id="start">Créer mon profil</button>
       <button class="btn-big ghost" id="have">J'ai déjà une progression</button>
@@ -144,7 +156,7 @@ body { overflow-x: hidden; }
     <p class="already" id="already" hidden>Tu as déjà un profil : <a href="./">va sur ton accueil</a>.</p>
   </section>
 
-  <section class="sect">
+  <section class="sect reveal">
     <h2>Ce que tu apprends</h2>
     <p>Les cours de ton cahier, transformés en exercices qui se corrigent tout seuls.</p>
     <div class="skills4">
@@ -156,18 +168,30 @@ body { overflow-x: hidden; }
     <p>Et pour l'oral : <b>le jeu de rôle de Mia</b>, réplique par réplique.</p>
   </section>
 
-  <section class="kali-sect sticker">
+  <section class="kali-sect sticker reveal">
     <span class="k" id="kaliSect"></span>
     <div><b>Kali t'accompagne</b><p>Ta série de jours, tes objectifs, tes badges. À chaque niveau, une nouvelle tenue pour Kali. Touche-la, elle saute de joie.</p></div>
   </section>
 
-  <section class="why sticker">
-    <h2 style="margin:0;font-family:var(--title);font-weight:400;font-size:22px">Pourquoi KalaLab ?</h2>
-    <p>KalaLab est né d'une idée simple : aider une élève à réviser ses cours d'anglais, à son rythme, sur son téléphone. Les leçons viennent directement du cahier de classe.</p>
-    <p>Aujourd'hui, KalaLab est ouvert à tous les élèves qui veulent progresser, un peu chaque jour.</p>
+  <section class="why sticker reveal">
+    <h2>Pourquoi KalaLab ?</h2>
+    <p>KalaLab est un site <b>ivoirien</b> pour apprendre l'anglais autrement : avec des couleurs, des animations, des jeux, et Kali pour t'encourager.</p>
+    <p>Il existe encore peu de sites ivoiriens pour apprendre l'anglais, et ils sont rarement amusants. KalaLab veut apporter de la nouveauté et de la fraîcheur, et donner envie aux élèves de toutes les classes de progresser, un peu chaque jour.</p>
+    <p>Tu es en Côte d'Ivoire, ailleurs en Afrique, en Europe ou à l'autre bout du monde ? Tu apprends l'anglais ? Alors KalaLab est fait pour toi.</p>
+    <p class="hi">Akwaba, tout le monde est le bienvenu !</p>
+    <p>Aujourd'hui, c'est l'anglais. Demain, d'autres langues et d'autres matières.</p>
+    <div class="soon-list" aria-label="Bientôt sur KalaLab"><span>Bientôt : l'anglais depuis le niveau débutant</span><span>La traduction en français</span><span>D'autres langues pour apprendre l'anglais</span></div>
   </section>
 
-  <section class="sect">
+  <section class="maker sticker reveal">
+    <span class="draft">Brouillon : à compléter avec toi</span>
+    <div class="who"><span class="ph">?</span><div><h2>La créatrice de KalaLab</h2><p class="role"><span class="todo">ton prénom, ce que tu fais</span></p></div></div>
+    <p>Je m'appelle <span class="todo">prénom</span>. <span class="todo">Ton parcours en deux ou trois phrases.</span></p>
+    <p>J'ai créé KalaLab parce que <span class="todo">ta raison, avec tes mots</span>.</p>
+    <p class="claude">J'ai construit KalaLab avec l'aide de Claude, une intelligence artificielle. C'est la preuve que, si on en a vraiment envie, chacun peut créer un site pour aider le plus grand nombre. L'intelligence artificielle peut servir à faire du bien autour de soi.</p>
+  </section>
+
+  <section class="sect reveal">
     <div class="promises">
       <div class="prom"><i data-ic="star"></i><b>Gratuit</b><span>Pour tout le monde</span></div>
       <div class="prom"><i data-ic="check"></i><b>Sans pub</b><span>Rien ne te dérange</span></div>
@@ -175,7 +199,7 @@ body { overflow-x: hidden; }
     </div>
   </section>
 
-  <div class="install-card">
+  <div class="install-card reveal">
     <div class="row2"><b>Installe KalaLab sur ton téléphone</b><button class="go" id="installBtn" hidden>Installer <span class="arr">→</span></button></div>
     <p id="installHow">Sur Android, ouvre ce site dans Chrome, touche ⋮ puis « Ajouter à l'écran d'accueil ». KalaLab marche aussi sans internet.</p>
   </div>
@@ -244,59 +268,93 @@ $("#theme").addEventListener("click", () => { root.dataset.theme = isDark() ? "l
 const hasProfile = !!(KL.read("profile", null) || KL.firstName());
 if (hasProfile) { $("#already").hidden = false; $("#topGo").hidden = false; }
 
-// ---- the sky: sun or moon, clouds, hills, flowers
 const flower = (x, y, c) => `<g class="kc-flower"><path d="M${x} ${y} v-14" stroke="#141414" stroke-width="2.5"/><g transform="translate(${x} ${y - 16})">${[0, 72, 144, 216, 288].map((a) => `<circle cx="${(5 * Math.cos(a * Math.PI / 180)).toFixed(1)}" cy="${(5 * Math.sin(a * Math.PI / 180)).toFixed(1)}" r="4.2" fill="${c}" stroke="#141414" stroke-width="1.8"/>`).join("")}<circle r="3" fill="#ffd27a" stroke="#141414" stroke-width="1.8"/></g></g>`;
 const tuft = (x, y) => `<path d="M${x} ${y} l3 -8 l2 7 l3 -9 l2 10" fill="none" stroke="#141414" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/>`;
 const cloud = (x, y, cls) => `<g class="kc-cloud ${cls}"><path d="M${x} ${y} a12 12 0 0 1 22 -6 a14 14 0 0 1 26 4 a10 10 0 0 1 2 20 h-46 a10 10 0 0 1 -4 -18 z" fill="#fff" stroke="#141414" stroke-width="2.5" stroke-linejoin="round"/></g>`;
-// drawn at the scene's real size, so nothing is cut on a wide screen
-function drawSky() {
-  const sc = $(".scene"), W = Math.round(sc.clientWidth), H = Math.round(sc.clientHeight), b = H - 100, sx = W - 50;
+// ---- the meadow: drawn at the scene's real size. Only the arch stands in it, like a door;
+// Kali comes out from behind it, walks on the hill, waves, walks away, and later comes back home.
+let G = null;
+function drawScene() {
+  const sc = $("#scene"), W = Math.round(sc.clientWidth), H = Math.round(sc.clientHeight), wide = W >= 700;
+  const aw = wide ? 200 : 118, ah = Math.round(aw * 1.3), K = wide ? 180 : 116, f = Math.round(aw * .11);   // arch (inside), its lilac frame, Kali's box
+  const ax = Math.round(wide ? W * .5 : W * .36);                                             // the arch's centre
+  const base = H - (wide ? 140 : 104);
+  const ground = (x) => base + (wide ? 18 : 12) * Math.sin((x / W) * Math.PI * 2.2 + .5);                 // top of the front hill
+  const back = (x) => base - (wide ? 70 : 44) + (wide ? 26 : 16) * Math.sin((x / W) * Math.PI * 1.6 + 2.2);             // top of the back hill
+  const line = (f) => { let d = `M-10 ${f(-10).toFixed(1)}`; for (let x = 0; x <= W + 10; x += 8) d += ` L${x} ${f(x).toFixed(1)}`; return d + ` L${W + 10} ${H + 10} L-10 ${H + 10} Z`; };
+  const gy = ground(ax), ay = gy - ah, r = aw / 2, i = Math.round(aw * .08), R = r + f, st = Math.max(8, Math.round(aw * .06));
+  const sx = W - (wide ? 90 : 50);
+  const fl = wide ? [[.04, "var(--petal)"], [.1, "#c9b8f0"], [.2, "#ffd27a"], [.3, "var(--petal)"], [.68, "#c9b8f0"], [.78, "#ffd27a"], [.88, "var(--petal)"], [.96, "#c9b8f0"]] : [[.06, "var(--petal)"], [.16, "#c9b8f0"], [.66, "#ffd27a"], [.86, "var(--petal)"], [.95, "#c9b8f0"]];
   const svg = $("#sky"); svg.setAttribute("viewBox", `0 0 ${W} ${H}`);
-  const fl = [[.1, 12, "var(--petal)"], [.2, 2, "#c9b8f0"], [.82, 0, "var(--petal)"], [.91, 12, "#ffd27a"]];
   svg.innerHTML = `
   <defs><linearGradient id="lsky" x1="0" y1="0" x2="0" y2="1"><stop offset="0" class="kc-s1"/><stop offset="1" class="kc-s2"/></linearGradient>
     <radialGradient id="lglow"><stop offset="0" stop-color="#ffd27a" stop-opacity=".55"/><stop offset="1" stop-color="#ffd27a" stop-opacity="0"/></radialGradient></defs>
   <rect width="${W}" height="${H}" fill="url(#lsky)"/>
-  <g class="kc-sun"><circle cx="${sx}" cy="58" r="44" fill="url(#lglow)"/><g class="rays"><path d="M${sx} 30 v-10 M${sx} 86 v10 M${sx - 28} 58 h-10 M${sx + 28} 58 h10 M${sx - 20} 38 l-7 -7 M${sx + 20} 78 l7 7 M${sx + 20} 38 l7 -7 M${sx - 20} 78 l-7 7" stroke="#141414" stroke-width="3" stroke-linecap="round"/></g><circle cx="${sx}" cy="58" r="17" fill="#ffd27a" stroke="#141414" stroke-width="3"/></g>
-  <g class="kc-moon"><path d="M${sx + 4} 36 a22 22 0 1 0 16 34 a17 17 0 0 1 -16 -34 z" fill="#ffd27a" stroke="#141414" stroke-width="3" stroke-linejoin="round"/></g>
-  <g class="kc-stars" fill="#fbeee0">${[[.1, 40], [.22, 110], [.75, 140], [.93, 200], [.06, 200], [.4, 30], [.62, 70]].map(([x, y], i) => `<circle cx="${(x * W).toFixed(0)}" cy="${y}" r="${i % 2 ? 2 : 2.4}"/>`).join("")}</g>
-  ${cloud(18, 70, "")}${cloud(W - 100, Math.round(H * .44), "two")}
-  <path class="kc-h2" d="M-10 ${b - 30} Q${W * .22} ${b - 70} ${W * .5} ${b - 48} T${W + 10} ${b - 60} V${H + 10} H-10 Z" stroke="#141414" stroke-width="3" stroke-linejoin="round"/>
-  <path class="kc-h1" d="M-10 ${b} Q${W * .27} ${b - 34} ${W * .57} ${b - 16} T${W + 10} ${b - 20} V${H + 10} H-10 Z" stroke="#141414" stroke-width="3" stroke-linejoin="round"/>
-  ${fl.map(([x, dy, c]) => flower(Math.round(x * W), b + dy, c)).join("")}
-  ${tuft(Math.round(W * .32), b - 4)}${tuft(Math.round(W * .05), b + 32)}${tuft(Math.round(W * .7), b + 2)}${tuft(Math.round(W * .55), b + 40)}`;
+  <g class="kc-sun"><circle cx="${sx}" cy="62" r="46" fill="url(#lglow)"/><g class="rays"><path d="M${sx} 34 v-10 M${sx} 90 v10 M${sx - 28} 62 h-10 M${sx + 28} 62 h10 M${sx - 20} 42 l-7 -7 M${sx + 20} 82 l7 7 M${sx + 20} 42 l7 -7 M${sx - 20} 82 l-7 7" stroke="#141414" stroke-width="3" stroke-linecap="round"/></g><circle cx="${sx}" cy="62" r="18" fill="#ffd27a" stroke="#141414" stroke-width="3"/></g>
+  <g class="kc-moon"><path d="M${sx + 4} 40 a22 22 0 1 0 16 34 a17 17 0 0 1 -16 -34 z" fill="#ffd27a" stroke="#141414" stroke-width="3" stroke-linejoin="round"/></g>
+  <g class="kc-stars" fill="#fbeee0">${[[.08, 40], [.2, 110], [.32, 26], [.55, 60], [.7, 130], [.82, 150], [.45, 120]].map(([x, y], n) => `<circle cx="${Math.round(x * W)}" cy="${y}" r="${n % 2 ? 2 : 2.4}"/>`).join("")}</g>
+  ${cloud(Math.round(W * .05), 64, "")}${cloud(Math.round(W * .62), wide ? 90 : 120, "two")}${wide ? cloud(Math.round(W * .3), 150, "") : ""}
+  <path class="kc-h2" d="${line(back)}" stroke="#141414" stroke-width="3" stroke-linejoin="round"/>
+  <path class="kc-h1" d="${line(ground)}" stroke="#141414" stroke-width="3" stroke-linejoin="round"/>
+  <ellipse cx="${ax}" cy="${gy + 4}" rx="${R + 26}" ry="8" fill="#141414" opacity=".12"/>
+  <g id="kBack"></g>
+  <g class="arch">
+    <path d="M${ax - R} ${gy} V${ay + r} A${R} ${R} 0 0 1 ${ax + R} ${ay + r} V${gy} Z" fill="#b9a6e0" stroke="#141414" stroke-width="4" stroke-linejoin="round"/>
+    <path d="M${ax - r} ${gy} V${ay + r} A${r} ${r} 0 0 1 ${ax + r} ${ay + r} V${gy} Z" fill="#fbeee0" stroke="#141414" stroke-width="3" stroke-linejoin="round"/>
+    <path d="M${ax - r + i} ${gy} V${ay + r} A${r - i} ${r - i} 0 0 1 ${ax + r - i} ${ay + r} V${gy}" fill="none" stroke="#b9a6e0" stroke-width="3"/>
+    <text x="${ax}" y="${ay + ah * .56}" text-anchor="middle" font-family="Cikutra" font-weight="900" font-size="${Math.round(aw * .3)}" fill="#2e2350">Kala</text>
+    <text x="${ax}" y="${ay + ah * .8}" text-anchor="middle" font-family="Cikutra" font-weight="900" font-size="${Math.round(aw * .26)}" fill="#8e7cc3">Lab</text>
+    <rect x="${ax - R - 12}" y="${gy - 2}" width="${2 * R + 24}" height="${st}" rx="${st / 2}" fill="#e7d9c4" stroke="#141414" stroke-width="3"/>
+    <path d="M${ax - R + 3} ${gy - 6} C${ax - R - 10} ${gy - ah * .3} ${ax - R + 10} ${gy - ah * .5} ${ax - R - 4} ${gy - ah * .78}" fill="none" stroke="#3f8f5f" stroke-width="3" stroke-linecap="round"/>
+    ${[[.2, -6, "var(--petal)"], [.45, 6, "#ffd27a"], [.68, -5, "#f5b8cc"]].map(([k, dx, c]) => `<g transform="translate(${ax - R + dx} ${gy - ah * k})">${[0, 72, 144, 216, 288].map((a) => `<circle cx="${(4 * Math.cos(a * Math.PI / 180)).toFixed(1)}" cy="${(4 * Math.sin(a * Math.PI / 180)).toFixed(1)}" r="3.4" fill="${c}" stroke="#141414" stroke-width="1.5"/>`).join("")}<circle r="2.4" fill="#fff" stroke="#141414" stroke-width="1.5"/></g>`).join("")}
+  </g>
+  ${tuft(ax - R - 30, gy + 6)}${tuft(ax + R + 18, gy + 7)}
+  ${fl.map(([x, c]) => flower(Math.round(x * W), Math.round(ground(x * W) + 22), c)).join("")}
+  ${tuft(Math.round(W * .3), Math.round(ground(W * .3) + 30))}${tuft(Math.round(W * .76), Math.round(ground(W * .76) + 26))}
+  <g id="kFront"></g>`;
+  const mk = (id) => { $(id).innerHTML = `<g class="walker" transform="translate(-999 0)"><svg class="kali o-bonjour" x="0" y="0" width="${K}" height="${K}" viewBox="-14 -18 228 230">${inner("bonjour")}</svg></g>`; return $(id + " .walker"); };
+  G = { W, H, K, ax, r: R, ground, stop: Math.min(ax + R + K * .7, W - K * .55), back: mk("#kBack"), front: mk("#kFront") };
 }
-drawSky();
-let skyT; addEventListener("resize", () => { clearTimeout(skyT); skyT = setTimeout(drawSky, 150); });
-
-// ---- Kali's entrance on the logo (the special moment of this page)
 const inner = (o) => kali(o).replace(/^<svg[^>]*>|<\/svg>$/g, "");
-const S = 0.36, W = 228 * S, Y = 190;
-const mk = (id) => { const g = $(id); g.innerHTML = `<g class="walker" transform="translate(-999 0)"><svg class="kali o-bonjour" x="0" y="0" width="${W}" height="${W}" viewBox="-14 -18 228 230">${inner("bonjour")}</svg></g>`; return g.querySelector(".walker"); };
-const back = mk("#behind"), front = mk("#front");
-function place(g, cx, t, walking) {
-  const hop = walking ? -Math.abs(Math.sin(t * 9)) * 6 : 0, tilt = walking ? Math.sin(t * 9) * 4 : 0;
-  g.setAttribute("transform", `translate(${cx - W / 2} ${Y + hop}) rotate(${tilt} ${W / 2} ${W})`);
+// Kali's feet sit on the hill; she is behind the arch while she overlaps it
+function put(x, t, walking) {
+  const { K, ax, r, ground, back, front } = G, hop = walking ? -Math.abs(Math.sin(t * 9)) * 5 : 0, tilt = walking ? Math.sin(t * 9) * 4 : 0;
+  const behind = Math.abs(x - ax) < r + K * .3, show = behind ? back : front, hide = behind ? front : back;
+  hide.setAttribute("transform", "translate(-999 0)");
+  show.setAttribute("transform", `translate(${(x - K / 2).toFixed(1)} ${(ground(x) + 3 - K * .887 + hop).toFixed(1)}) rotate(${tilt.toFixed(1)} ${K / 2} ${K})`);
+  return show.querySelector(".kali");
 }
-let run = 0;
-function entrance() {
-  const id = ++run, t0 = performance.now(), hide = (g) => g.setAttribute("transform", "translate(-999 0)");
-  const lerp = (a, b, k) => a + (b - a) * Math.min(1, Math.max(0, k));
+const away = () => { G.back.setAttribute("transform", "translate(-999 0)"); G.front.setAttribute("transform", "translate(-999 0)"); };
+let run = 0, visible = true;
+function story() {
+  const id = ++run, t0 = performance.now(), lerp = (a, b, k) => a + (b - a) * Math.min(1, Math.max(0, k));
+  let waved = false;
   (function frame(now) {
     if (id !== run) return;
-    const t = (now - t0) / 1000;
-    if (t < 1.4) { hide(front); place(back, lerp(150, 268, t / 1.4), t, true); }
-    else if (t < 2.9) { hide(back); place(front, lerp(268, 150, (t - 1.4) / 1.5), t, true); }
-    else if (t < 4.6) { place(front, 150, t, false); const k = front.querySelector(".kali"); if (!k.dataset.waved) { k.dataset.waved = 1; kaliWave(k); setTimeout(() => kaliCheer(k), 1700); } }
-    else if (t < 6.2) { place(front, lerp(150, -60, (t - 4.6) / 1.6), t, true); }
-    else { hide(front); hide(back); delete front.querySelector(".kali").dataset.waved; if (t > 14) return entrance(); }
+    if (!visible) { run++; return; }
+    const t = (now - t0) / 1000, { W, K, ax, stop } = G;
+    if (t < 2) put(lerp(ax, stop, t / 2), t, true);                                // comes out of the arch
+    else if (t < 5.2) { const k = put(stop, t, false); if (!waved) { waved = true; kaliWave(k); setTimeout(() => kaliCheer(k), 1700); } }   // hello!
+    else if (t < 7) put(lerp(stop, W + K, (t - 5.2) / 1.8), t, true);              // walks away
+    else if (t < 10) away();
+    else if (t < 13) put(lerp(-K, ax, (t - 10) / 3), t, true);                     // comes back home, behind the arch
+    else { away(); if (t > 16) return story(); }
     requestAnimationFrame(frame);
   })(t0);
 }
-if (!reduce) setTimeout(entrance, 400); else place(front, 150, 0, false);
+drawScene();
+if (reduce) put(G.stop, 0, false);
+else {
+  new IntersectionObserver(([e]) => { visible = e.isIntersecting; if (visible) { away(); setTimeout(story, 300); } }).observe($("#scene"));
+}
+let scT; addEventListener("resize", () => { clearTimeout(scT); scT = setTimeout(() => { drawScene(); if (reduce) put(G.stop, 0, false); }, 150); });
 
 $("#kaliSect").innerHTML = kali("diplomee");
 $("#kaliSect").addEventListener("click", () => kaliCheer($("#kaliSect .kali")));
+
+// ---- sections slide in as you scroll
+const io = new IntersectionObserver((es) => es.forEach((e) => { if (e.isIntersecting) { e.target.classList.add("in"); io.unobserve(e.target); } }), { threshold: .15 });
+document.querySelectorAll(".reveal").forEach((el) => io.observe(el));
 
 // ---- the profile sheet
 let step = 1, genre = null;
