@@ -32,6 +32,22 @@ const KLP = {
   <circle cx="50" cy="70" r="34" fill="${col}" stroke="#141414" stroke-width="4"/><circle cx="50" cy="70" r="25" fill="none" stroke="#141414" stroke-width="2" stroke-dasharray="3 4" opacity=".5"/>
   ${icon(ic, "mi").replace("<svg ", '<svg x="29" y="49" width="42" height="42" ')}</svg>`;
   },
+  // ---- levels: points earned by working; each level gives Kali a new outfit
+  xp() {
+    const T = KL.read("totals", {});
+    return (T.ex || 0) * 10 + (T.words || 0) * 2 + (T.dict || 0) * 5 + (T.speak || 0) * 5 + (T.write || 0) * 30 + KL.read("days", []).length * 5;
+  },
+  LEVELS: [0, 40, 120, 250, 420, 650, 950, 1350, 1850, 2500],
+  TITLES: [["Débutante", "Débutant"], ["Apprentie", "Apprenti"], ["Curieuse", "Curieux"], ["Exploratrice", "Explorateur"], ["Studieuse", "Studieux"],
+    ["Brillante", "Brillant"], ["Experte", "Expert"], ["Championne", "Champion"], ["Star", "Star"], ["Légende", "Légende"]],
+  level(xp = KLP.xp()) {
+    const L = KLP.LEVELS; let n = 1; while (n < L.length && xp >= L[n]) n++;
+    const cur = L[n - 1], next = L[n] ?? null, fem = KL.read("genre", "f") !== "m";
+    return { n, xp, cur, next, pct: next ? Math.round(100 * (xp - cur) / (next - cur)) : 100, title: KLP.TITLES[n - 1][fem ? 0 : 1] };
+  },
+  // [outfit, name, level that unlocks it]
+  OUTFITS: [["bonjour", "Bonjour", 1], ["lecture", "Lectrice", 2], ["dj", "DJ", 3], ["sport", "Sportive", 4], ["detective", "Détective", 5], ["diplomee", "Diplômée", 6], ["fete", "Fête", 7], ["dodo", "Dodo", 8]],
+  outfitOpen(o, n = KLP.level().n) { const f = KLP.OUTFITS.find((x) => x[0] === o); return !!f && n >= f[2]; },
   // base64 that is safe in a link, for UTF-8 text
   enc(obj) { return btoa(unescape(encodeURIComponent(JSON.stringify(obj)))).replace(/\+/g, "-").replace(/\//g, "_").replace(/=+$/, ""); },
   dec(s) { try { return JSON.parse(decodeURIComponent(escape(atob(s.replace(/-/g, "+").replace(/_/g, "/"))))); } catch (e) { return null; } },

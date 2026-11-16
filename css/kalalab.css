@@ -294,3 +294,7 @@ body.corner .hero-kali { bottom: 20px; }
 }
 .me-mini { width: 26px; height: 26px; border-radius: 50%; object-fit: cover; border: 2px solid #141414; display: block; }
 [hidden] { display: none !important; }
+/* not available yet: dashed outline, no shadow, does not move */
+.tile.soon { border-style: dashed; box-shadow: none; opacity: .85; cursor: default; }
+.tile.soon:hover, .tile.soon:active { transform: rotate(var(--r)) !important; box-shadow: none !important; }
+.tile.soon .arr { display: none; }

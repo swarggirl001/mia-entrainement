@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>Moi · KalaLab</title>
-<meta name="description" content="Ton espace KalaLab : prénom, photo, tenue de Kali, chiffres, badges et liens de progression.">
+<meta name="description" content="Ton espace KalaLab : ton niveau, tes progrès, tes badges, les tenues de Kali et tes réglages.">
 <meta name="theme-color" content="#fbfaf7" media="(prefers-color-scheme: light)">
 <meta name="theme-color" content="#262d3b" media="(prefers-color-scheme: dark)">
 <link rel="manifest" href="manifest.webmanifest">
@@ -15,82 +15,104 @@
 </script>
 <link rel="stylesheet" href="css/kalalab.css">
 <style>
-/* Layout: one column of sticker cards on phones; two columns on computers (profile and settings on the left, numbers and badges on the right). */
-.me-grid { display: grid; gap: 18px; }
-.me-col { display: grid; gap: 18px; align-content: start; }
-@media (min-width: 900px) { .me-grid { grid-template-columns: 1fr 1.15fr; align-items: start; } }
-.panel { background: var(--card); padding: 16px; display: grid; gap: 12px; }
-.panel h2 { margin: 0; font-family: var(--title); font-weight: 400; font-size: 22px; }
-.panel .note { font-family: var(--pixel); font-size: 14px; color: var(--muted); margin: 0; }
-.page-title { font-family: var(--display); font-weight: 900; font-size: clamp(30px, 8vw, 48px); margin: 6px 0 0; line-height: 1.05; }
-.page-title span { color: var(--accent); }
-
-/* profile */
-.profile { display: grid; grid-template-columns: auto 1fr; gap: 14px; align-items: center; position: relative; }
-.avatar { width: 92px; height: 92px; border-radius: 50%; border: var(--bw) solid #141414; background: var(--lilac); display: grid; place-items: center; overflow: hidden;
-  font-family: var(--display); font-weight: 900; font-size: 40px; color: #2e2350; box-shadow: 4px 4px 0 var(--shadow); }
+/* Layout: a profile card (photo, name, level) with Kali, then four tabs so each screen stays short on a phone.
+   On computers the tabs sit under the profile and the content uses two columns. */
+.me-card { background: var(--card); padding: 16px; display: grid; grid-template-columns: auto 1fr auto; gap: 14px; align-items: center; }
+.avatar { width: 78px; height: 78px; border-radius: 50%; border: var(--bw) solid #141414; background: var(--lilac); display: grid; place-items: center; overflow: hidden;
+  font-family: var(--display); font-weight: 900; font-size: 34px; color: #2e2350; box-shadow: 3px 3px 0 var(--shadow); }
 .avatar img { width: 100%; height: 100%; object-fit: cover; }
-.photo-actions { display: flex; flex-wrap: wrap; gap: 8px; grid-column: 1 / -1; }
-.small-btn { font-family: var(--pixel); font-weight: 600; font-size: 14px; padding: 7px 12px; border-radius: 12px; border: 2px solid var(--line); background: var(--chip); color: var(--fg); cursor: pointer; }
-.small-btn.main { background: var(--accent); color: #141414; border-color: #141414; }
+.who { display: grid; gap: 4px; min-width: 0; }
+.who .nm { font-family: var(--display); font-weight: 900; font-size: 26px; line-height: 1.05; overflow-wrap: anywhere; }
+.who .lv { font-family: var(--pixel); font-weight: 600; font-size: 14px; color: var(--accent); }
+.xp { height: 12px; border-radius: 99px; background: var(--track); overflow: hidden; border: 2px solid var(--line); }
+.xp i { display: block; height: 100%; width: 0; background: linear-gradient(90deg, var(--accent), #ffd27a); border-radius: 99px; transition: width 1.2s cubic-bezier(.22,1,.36,1); }
+.who small { font-family: var(--pixel); font-size: 12.5px; color: var(--muted); }
+.me-kali { width: 84px; height: 84px; }
+@media (min-width: 560px) { .me-kali { width: 120px; height: 120px; } .avatar { width: 96px; height: 96px; font-size: 42px; } .who .nm { font-size: 32px; } }
+
+/* tabs */
+.tabs2 { position: sticky; top: env(safe-area-inset-top, 0px); z-index: 4; display: grid; grid-template-columns: repeat(4, 1fr); gap: 4px; padding: 5px;
+  background: var(--card); border: var(--bw) solid var(--line); border-radius: 18px; box-shadow: 3px 3px 0 var(--shadow); }
+.tabs2 button { display: grid; justify-items: center; gap: 2px; padding: 6px 2px; border: 0; border-radius: 13px; background: none; color: var(--fg); cursor: pointer;
+  font-family: var(--pixel); font-weight: 600; font-size: 12.5px; }
+.tabs2 button .ico { width: 24px; height: 24px; }
+.tabs2 button[aria-selected="true"] { background: var(--lilac); color: #141414; }
+.tabpane { display: grid; gap: 16px; }
+.tabpane[hidden] { display: none !important; }
+@media (min-width: 900px) { .tabs2 { max-width: 640px; } .tabs2 button { font-size: 14px; grid-auto-flow: column; justify-content: center; gap: 8px; align-items: center; } }
+
+.panel { background: var(--card); padding: 16px; display: grid; gap: 12px; }
+.panel h2 { margin: 0; font-family: var(--title); font-weight: 400; font-size: 21px; }
+.panel .note { font-family: var(--pixel); font-size: 14px; color: var(--muted); margin: 0; }
+.two { display: grid; gap: 16px; }
+@media (min-width: 900px) { .two { grid-template-columns: 1fr 1fr; align-items: start; } }
+
+/* numbers: compact chips */
+.stats { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; }
+.stat { border-radius: 14px; padding: 8px 6px; background: var(--bg); border: 2px solid var(--track); display: grid; justify-items: center; text-align: center; gap: 2px; }
+.stat b { font-family: var(--body); font-weight: 700; font-size: 22px; line-height: 1; font-variant-numeric: tabular-nums; }
+.stat span { font-family: var(--pixel); font-size: 11.5px; color: var(--muted); line-height: 1.15; }
+
+/* units, each one a card */
+.unit-card { border-radius: 18px; border: var(--bw) solid var(--line); padding: 12px 14px; display: grid; gap: 10px; background: var(--bg); }
+.unit-card.on { background: var(--t1); color: #141414; }
+.unit-card.on:nth-of-type(2) { background: var(--t2); } .unit-card.on:nth-of-type(3) { background: var(--t3); }
+.unit-card.off { border-style: dashed; color: var(--muted); }
+.unit-head { display: flex; justify-content: space-between; align-items: baseline; gap: 10px; }
+.unit-head b { font-family: var(--title); font-weight: 400; font-size: 17px; }
+.unit-head span { font-family: var(--body); font-weight: 700; font-size: 15px; font-variant-numeric: tabular-nums; }
+.unit-card small { font-family: var(--pixel); font-size: 13px; }
+.lrow { display: grid; grid-template-columns: 34px 1fr auto; gap: 2px 10px; align-items: center; text-decoration: none; color: inherit; }
+.lrow .li { width: 34px; height: 34px; border-radius: 10px; background: rgba(255,255,255,.7); display: grid; place-items: center; grid-row: span 2; }
+.lrow .li .ico { width: 22px; height: 22px; }
+.lrow .lt { font-family: var(--title); font-size: 14.5px; line-height: 1.15; }
+.lrow .lt small { display: block; font-family: var(--pixel); font-size: 12px; opacity: .75; }
+.lrow .lp { font-family: var(--body); font-weight: 700; font-size: 13.5px; font-variant-numeric: tabular-nums; }
+.lrow .bar { grid-column: 2 / -1; height: 7px; border-radius: 99px; background: rgba(20,20,20,.12); overflow: hidden; }
+.lrow .bar i { display: block; height: 100%; background: #7b68c4; border-radius: 99px; }
+
+/* badges */
+.badge-list { display: grid; grid-template-columns: repeat(2, 1fr); gap: 8px; }
+@media (min-width: 900px) { .badge-list { grid-template-columns: repeat(4, 1fr); } }
+.bitem { display: grid; grid-template-columns: 50px 1fr; gap: 8px; align-items: center; padding: 6px; border-radius: 14px; }
+.bitem svg { width: 50px; height: auto; }
+.bitem b { font-family: var(--title); font-weight: 400; font-size: 14.5px; display: block; }
+.bitem span { font-family: var(--pixel); font-size: 12px; color: var(--muted); }
+.bitem.locked svg { filter: grayscale(1); opacity: .45; }
+.bitem.got { background: color-mix(in srgb, var(--t3) 45%, transparent); }
+
+/* Kali's outfits: gifts unlocked by level */
+.outfits { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; }
+.outfit-btn { position: relative; display: grid; justify-items: center; gap: 2px; padding: 8px 2px 6px; border-radius: 16px; border: 2px solid var(--track); background: var(--bg); cursor: pointer; color: var(--fg); }
+.outfit-btn .k { width: 64px; height: 64px; }
+.outfit-btn > span:last-child { font-family: var(--pixel); font-size: 12px; font-weight: 600; text-align: center; line-height: 1.15; }
+.outfit-btn[aria-pressed="true"] { border: var(--bw) solid #141414; background: var(--lilac); color: #141414; box-shadow: 3px 3px 0 var(--shadow); }
+.outfit-btn:not([aria-pressed="true"]) .kali * { animation-play-state: paused !important; }
+.outfit-btn.locked { border-style: dashed; cursor: default; }
+.outfit-btn.locked .k { filter: grayscale(1) brightness(.75) opacity(.45); }
+.outfit-btn .lock { position: absolute; top: 26px; left: 50%; translate: -50% 0; width: 28px; height: 28px; }
+
+/* settings */
 .field { display: grid; gap: 6px; }
 .field label, .field .lab { font-family: var(--pixel); font-weight: 600; font-size: 14px; color: var(--muted); }
-.field input[type=text] { font: inherit; font-family: var(--title); font-size: 20px; padding: 8px 12px; border-radius: 12px; border: var(--bw) solid var(--line); background: var(--bg); color: var(--fg); width: 100%; min-width: 0; }
+.field input[type=text] { font-family: var(--title); font-size: 19px; padding: 8px 12px; border-radius: 12px; border: var(--bw) solid var(--line); background: var(--bg); color: var(--fg); width: 100%; min-width: 0; }
 .field input[type=text]:focus { outline: 3px solid var(--accent); outline-offset: 2px; }
 .seg2 { display: inline-flex; flex-wrap: wrap; border: var(--bw) solid var(--line); border-radius: 14px; overflow: hidden; background: var(--chip); width: max-content; max-width: 100%; }
-.seg2 button { font-family: var(--pixel); font-weight: 600; font-size: 15px; padding: 8px 14px; border: 0; background: none; color: var(--fg); cursor: pointer; }
+.seg2 button { font-family: var(--pixel); font-weight: 600; font-size: 14.5px; padding: 8px 13px; border: 0; background: none; color: var(--fg); cursor: pointer; }
 .seg2 button[aria-pressed="true"] { background: var(--accent); color: #141414; }
-
-/* outfits */
-.outfits { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; }
-.outfit-btn { display: grid; justify-items: center; gap: 2px; padding: 8px 4px 6px; border-radius: 16px; border: 2px solid var(--track); background: var(--bg); cursor: pointer; color: var(--fg); }
-.outfit-btn .k { width: 70px; height: 70px; }
-.outfit-btn span { font-family: var(--pixel); font-size: 12.5px; font-weight: 600; }
-.outfit-btn[aria-pressed="true"] { border: var(--bw) solid #141414; background: var(--lilac); color: #141414; box-shadow: 3px 3px 0 var(--shadow); }
-.outfit-btn .k .kali { animation: none; }
-.outfit-btn:not([aria-pressed="true"]) .kali * { animation-play-state: paused !important; }
-
-/* numbers */
-.stats { display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px; }
-.stat { border-radius: 16px; padding: 10px 12px; background: var(--bg); border: 2px solid var(--track); display: grid; gap: 2px; }
-.stat b { font-family: var(--display); font-weight: 900; font-size: 30px; line-height: 1; font-variant-numeric: tabular-nums; }
-.stat span { font-family: var(--pixel); font-size: 13px; color: var(--muted); }
-.stat:nth-child(4n+1) { background: var(--t1); color: #141414; } .stat:nth-child(4n+2) { background: var(--t2); color: #141414; } .stat:nth-child(4n+3) { background: var(--t3); color: #141414; }
-.stat:nth-child(-n+3) span, .stat:nth-child(4n+1) span, .stat:nth-child(4n+2) span, .stat:nth-child(4n+3) span { color: #3b3b3b; }
-@media (min-width: 560px) { .stats { grid-template-columns: repeat(4, 1fr); } }
-
-/* lessons */
-.lessons-list { display: grid; gap: 8px; }
-.lrow { display: grid; grid-template-columns: 1fr auto; gap: 4px 10px; align-items: center; }
-.lrow .lt { font-family: var(--title); font-size: 15px; }
-.lrow .lt small { display: block; font-family: var(--pixel); font-size: 12.5px; color: var(--muted); }
-.lrow .lp { font-family: var(--body); font-weight: 700; font-size: 14px; font-variant-numeric: tabular-nums; }
-.lrow .bar { grid-column: 1 / -1; height: 8px; border-radius: 99px; background: var(--track); overflow: hidden; }
-.lrow .bar i { display: block; height: 100%; background: var(--accent); border-radius: 99px; }
-
-/* badges, with how to win them */
-.badge-list { display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px; }
-.bitem { display: grid; grid-template-columns: 54px 1fr; gap: 8px; align-items: center; padding: 6px; border-radius: 14px; }
-.bitem svg { width: 54px; height: auto; }
-.bitem b { font-family: var(--title); font-weight: 400; font-size: 15px; display: block; }
-.bitem span { font-family: var(--pixel); font-size: 12.5px; color: var(--muted); }
-.bitem.locked svg { filter: grayscale(1); opacity: .45; }
-.bitem.got { background: color-mix(in srgb, var(--t3) 40%, transparent); }
-
-/* share links */
+.small-btn { font-family: var(--pixel); font-weight: 600; font-size: 14px; padding: 7px 12px; border-radius: 12px; border: 2px solid var(--line); background: var(--chip); color: var(--fg); cursor: pointer; text-decoration: none; display: inline-block; }
+.small-btn.main { background: var(--accent); color: #141414; border-color: #141414; }
+.row-btns { display: flex; flex-wrap: wrap; gap: 8px; }
 .linkbox { display: grid; gap: 8px; }
 .linkbox input { font: 13px/1.3 var(--body); padding: 8px 10px; border-radius: 10px; border: 2px solid var(--track); background: var(--bg); color: var(--muted); width: 100%; min-width: 0; }
-.row-btns { display: flex; flex-wrap: wrap; gap: 8px; }
-.warn { font-family: var(--pixel); font-size: 13px; color: var(--fg); background: var(--butter); border-radius: 10px; padding: 6px 10px; }
-:root[data-theme="dark"] .warn { color: #141414; }
-@media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) .warn { color: #141414; } }
+.warn { font-family: var(--pixel); font-size: 13px; color: #141414; background: #ffe9b0; border-radius: 10px; padding: 6px 10px; margin: 0; }
 .danger { border-color: #c2414b !important; }
-.danger .small-btn.red { background: #fde2e2; color: #8a1f28; border-color: #c2414b; }
+.small-btn.red { background: #fde2e2; color: #8a1f28; border-color: #c2414b; }
 .confirm { display: grid; gap: 8px; padding: 10px 12px; border-radius: 12px; background: #fde2e2; color: #5c1219; font-family: var(--pixel); font-size: 14px; }
 
 /* someone else's progress (a "voir" link) and a transfer link */
 .banner { background: var(--lilac); color: #141414; padding: 14px 16px; display: grid; gap: 8px; }
-.banner h2 { margin: 0; font-family: var(--title); font-weight: 400; font-size: 22px; }
+.banner h2 { margin: 0; font-family: var(--title); font-weight: 400; font-size: 21px; }
 .banner p { margin: 0; font-family: var(--pixel); font-size: 14px; }
 [data-mode="voir"] .mine { display: none !important; }
 </style>
@@ -108,97 +130,97 @@
     <button class="theme" id="theme" aria-label="Passer en mode sombre"></button>
   </header>
 
-  <!-- arriving with a transfer link -->
   <section class="banner sticker" id="transferBox" hidden>
     <h2>Récupérer une progression</h2>
     <p id="transferText"></p>
     <div class="row-btns"><button class="small-btn main" id="transferYes">Oui, récupérer</button><button class="small-btn" id="transferNo">Non, garder la mienne</button></div>
   </section>
-
-  <!-- arriving with a "see my progress" link -->
   <section class="banner sticker" id="viewBox" hidden>
     <h2 id="viewTitle">La progression de …</h2>
     <p id="viewText"></p>
-    <div class="row-btns"><a class="small-btn" href="moi.html" style="text-decoration:none">Revenir à mon espace</a></div>
+    <div class="row-btns"><a class="small-btn" href="moi.html">Revenir à mon espace</a></div>
   </section>
 
-  <h1 class="page-title mine">Mon <span>espace</span></h1>
-
-  <div class="me-grid">
-    <div class="me-col">
-      <section class="panel sticker mine" aria-labelledby="pTitle">
-        <h2 id="pTitle">Mon profil</h2>
-        <div class="profile">
-          <div class="avatar" id="avatar" aria-hidden="true"></div>
-          <div class="field">
-            <label for="first">Mon prénom</label>
-            <input type="text" id="first" maxlength="30" autocomplete="given-name" placeholder="Écris ton prénom">
-          </div>
-          <div class="photo-actions">
-            <label class="small-btn main" for="photoIn">Choisir une photo</label>
-            <input type="file" id="photoIn" accept="image/*" hidden>
-            <button class="small-btn" id="photoDel" hidden>Enlever la photo</button>
-          </div>
-        </div>
-        <div class="field">
-          <span class="lab" id="genreLab">Kali te parle</span>
-          <div class="seg2" role="group" aria-labelledby="genreLab"><button data-genre="f">au féminin</button><button data-genre="m">au masculin</button></div>
-        </div>
-        <p class="note">Le prénom et la photo restent sur ce téléphone. Ils ne sont envoyés à personne.</p>
-      </section>
-
-      <section class="panel sticker mine" aria-labelledby="oTitle">
-        <h2 id="oTitle">Kali sur mon accueil</h2>
-        <p class="note">Choisis la tenue de Kali pour la journée. Le soir, elle met toujours son bonnet de nuit.</p>
-        <div class="outfits" id="outfits"></div>
-      </section>
-
-      <section class="panel sticker mine" aria-labelledby="sTitle">
-        <h2 id="sTitle">Réglages</h2>
-        <div class="field"><span class="lab" id="themeLab">Thème</span>
-          <div class="seg2" role="group" aria-labelledby="themeLab"><button data-th="auto">Comme le téléphone</button><button data-th="light">Clair</button><button data-th="dark">Sombre</button></div></div>
-        <div class="field"><span class="lab" id="cornerLab">Le coin de Kali sur l'accueil</span>
-          <div class="seg2" role="group" aria-labelledby="cornerLab"><button data-corner="1">Oui</button><button data-corner="0">Non</button></div></div>
-      </section>
+  <!-- profile: photo, name, level, Kali -->
+  <section class="me-card sticker" aria-label="Mon profil">
+    <div class="avatar" id="avatar" aria-hidden="true"></div>
+    <div class="who">
+      <span class="nm" id="nm">Moi</span>
+      <span class="lv" id="lv">Niveau 1 · Débutante</span>
+      <span class="xp" role="progressbar" aria-label="Vers le niveau suivant" aria-valuemin="0" aria-valuemax="100" id="xpBar"><i id="xpFill"></i></span>
+      <small id="xpNext"></small>
     </div>
+    <button class="me-kali mine" id="meKali" aria-label="Kali, toucher pour la faire sauter"></button>
+  </section>
 
-    <div class="me-col">
-      <section class="panel sticker" aria-labelledby="nTitle">
-        <h2 id="nTitle">Mes chiffres</h2>
-        <div class="stats" id="stats"></div>
-      </section>
+  <nav class="tabs2 mine" role="tablist" aria-label="Mon espace">
+    <button role="tab" id="t-prog" aria-controls="p-prog" aria-selected="true"><i data-ic="target"></i>Progrès</button>
+    <button role="tab" id="t-badges" aria-controls="p-badges" aria-selected="false"><i data-ic="trophy"></i>Badges</button>
+    <button role="tab" id="t-kali" aria-controls="p-kali" aria-selected="false"><i data-ic="sparkle"></i>Kali</button>
+    <button role="tab" id="t-set" aria-controls="p-set" aria-selected="false"><i data-ic="user"></i>Réglages</button>
+  </nav>
 
-      <section class="panel sticker" aria-labelledby="lTitle">
-        <h2 id="lTitle">Mes leçons d'anglais</h2>
-        <div class="lessons-list" id="lessons"></div>
-      </section>
+  <!-- Progrès -->
+  <div class="tabpane" id="p-prog" role="tabpanel" aria-labelledby="t-prog">
+    <section class="panel sticker"><h2>Mes chiffres</h2><div class="stats" id="stats"></div></section>
+    <section class="panel sticker"><h2>Mes unités d'anglais</h2><div class="two" id="units" style="gap:12px"></div></section>
+  </div>
 
-      <section class="panel sticker" aria-labelledby="bTitle">
-        <h2 id="bTitle">Mes badges <small class="note" id="badgeCount" style="font-size:14px"></small></h2>
-        <div class="badge-list" id="badgeList"></div>
-      </section>
+  <!-- Badges -->
+  <div class="tabpane" id="p-badges" role="tabpanel" aria-labelledby="t-badges" hidden>
+    <section class="panel sticker"><h2>Mes badges <small class="note" id="badgeCount" style="font-size:14px"></small></h2><div class="badge-list" id="badgeList"></div></section>
+  </div>
 
-      <section class="panel sticker mine" aria-labelledby="shTitle">
-        <h2 id="shTitle">Montrer ma progression</h2>
-        <p class="note">Un lien à envoyer à un parent ou à ton prof. Il montre tes chiffres, tes leçons et tes badges, sans rien pouvoir changer.</p>
-        <div class="linkbox"><button class="small-btn main" id="mkView" style="justify-self:start">Créer le lien</button>
-          <div id="viewLinkBox" hidden><input id="viewLink" readonly aria-label="Lien pour montrer ta progression"><div class="row-btns" style="margin-top:8px"><button class="small-btn" data-copy="viewLink">Copier</button><button class="small-btn" data-share="viewLink">Partager</button></div></div></div>
-      </section>
+  <!-- Kali -->
+  <div class="tabpane mine" id="p-kali" role="tabpanel" aria-labelledby="t-kali" hidden>
+    <section class="panel sticker">
+      <h2>La garde-robe de Kali</h2>
+      <p class="note" id="wardNote">Chaque nouveau niveau t'offre une tenue pour Kali. Choisis celle qu'elle porte sur ton accueil.</p>
+      <div class="outfits" id="outfits"></div>
+    </section>
+  </div>
 
-      <section class="panel sticker mine" aria-labelledby="trTitle">
-        <h2 id="trTitle">Continuer sur un autre téléphone</h2>
-        <p class="note">Ouvre ce lien sur l'autre téléphone ou l'ordinateur : il y retrouve ta série, tes objectifs, tes badges, tes leçons et ton jeu de rôle de Mia. La photo ne voyage pas.</p>
-        <div class="linkbox"><button class="small-btn main" id="mkTransfer" style="justify-self:start">Créer le lien</button>
-          <div id="trLinkBox" hidden><p class="warn">Ce lien contient toute ta progression : envoie-le seulement à toi-même.</p><input id="trLink" readonly aria-label="Lien pour continuer sur un autre appareil"><div class="row-btns" style="margin-top:8px"><button class="small-btn" data-copy="trLink">Copier</button><button class="small-btn" data-share="trLink">Partager</button></div></div></div>
-      </section>
-
-      <section class="panel sticker mine danger" aria-labelledby="dTitle">
-        <h2 id="dTitle">Tout effacer</h2>
-        <p class="note">Efface ton prénom, ta photo, ta série, tes badges et ta progression sur ce téléphone.</p>
-        <button class="small-btn red" id="wipe" style="justify-self:start">Tout effacer</button>
-        <div class="confirm" id="wipeConfirm" hidden>Tu es sûre ? On ne pourra pas revenir en arrière.
-          <div class="row-btns"><button class="small-btn red" id="wipeYes">Oui, tout effacer</button><button class="small-btn" id="wipeNo">Non</button></div></div>
-      </section>
+  <!-- Réglages -->
+  <div class="tabpane mine" id="p-set" role="tabpanel" aria-labelledby="t-set" hidden>
+    <div class="two">
+      <div style="display:grid;gap:16px">
+        <section class="panel sticker">
+          <h2>Mon profil</h2>
+          <div class="field"><label for="first">Mon prénom</label><input type="text" id="first" maxlength="30" autocomplete="given-name" placeholder="Écris ton prénom"></div>
+          <div class="field"><span class="lab" id="genreLab">Je suis</span>
+            <div class="seg2" role="group" aria-labelledby="genreLab"><button data-genre="f">une fille</button><button data-genre="m">un garçon</button></div></div>
+          <div class="row-btns"><label class="small-btn main" for="photoIn">Choisir une photo</label><input type="file" id="photoIn" accept="image/*" hidden><button class="small-btn" id="photoDel" hidden>Enlever la photo</button></div>
+          <p class="note">Le prénom et la photo restent sur ce téléphone.</p>
+        </section>
+        <section class="panel sticker">
+          <h2>Affichage</h2>
+          <div class="field"><span class="lab" id="themeLab">Thème</span>
+            <div class="seg2" role="group" aria-labelledby="themeLab"><button data-th="auto">Comme le téléphone</button><button data-th="light">Clair</button><button data-th="dark">Sombre</button></div></div>
+          <div class="field"><span class="lab" id="cornerLab">Le coin de Kali sur l'accueil</span>
+            <div class="seg2" role="group" aria-labelledby="cornerLab"><button data-corner="1">Oui</button><button data-corner="0">Non</button></div></div>
+        </section>
+      </div>
+      <div style="display:grid;gap:16px">
+        <section class="panel sticker">
+          <h2>Montrer ma progression</h2>
+          <p class="note">Un lien pour un parent ou ton prof : il montre tes chiffres, tes unités et tes badges, sans rien pouvoir changer.</p>
+          <div class="linkbox"><button class="small-btn main" id="mkView" style="justify-self:start">Créer le lien</button>
+            <div id="viewLinkBox" hidden><input id="viewLink" readonly aria-label="Lien pour montrer ta progression"><div class="row-btns" style="margin-top:8px"><button class="small-btn" data-copy="viewLink">Copier</button><button class="small-btn" data-share="viewLink">Partager</button></div></div></div>
+        </section>
+        <section class="panel sticker">
+          <h2>Continuer sur un autre téléphone</h2>
+          <p class="note">Ouvre ce lien sur l'autre appareil : il y retrouve ta progression KalaLab et ton jeu de rôle de Mia. La photo ne voyage pas.</p>
+          <div class="linkbox"><button class="small-btn main" id="mkTransfer" style="justify-self:start">Créer le lien</button>
+            <div id="trLinkBox" hidden><p class="warn">Ce lien contient toute ta progression : envoie-le seulement à toi-même.</p><input id="trLink" readonly aria-label="Lien pour continuer sur un autre appareil"><div class="row-btns" style="margin-top:8px"><button class="small-btn" data-copy="trLink">Copier</button><button class="small-btn" data-share="trLink">Partager</button></div></div></div>
+        </section>
+        <section class="panel sticker danger">
+          <h2>Tout effacer</h2>
+          <p class="note">Efface ton prénom, ta photo, ta série, tes badges et ta progression sur ce téléphone.</p>
+          <button class="small-btn red" id="wipe" style="justify-self:start">Tout effacer</button>
+          <div class="confirm" id="wipeConfirm" hidden><span id="wipeQ"></span>
+            <div class="row-btns"><button class="small-btn red" id="wipeYes">Oui, tout effacer</button><button class="small-btn" id="wipeNo">Non</button></div></div>
+        </section>
+      </div>
     </div>
   </div>
   <p class="foot">Tout ce qui est ici reste sur ce téléphone. KalaLab n'a ni compte ni mot de passe.</p>
@@ -225,61 +247,89 @@ const root = document.documentElement;
 document.head.insertAdjacentHTML("beforeend", `<style>${KALI_CSS}</style>`);
 paintIcons();
 const esc = (t) => String(t).replace(/[<>&"'`]/g, "");
-// « de Marie » but « d'Aïcha »
-const de = (n) => (/^[aeiouyhàâäéèêëîïôöùûüÿæœ]/i.test(n) ? "d'" : "de ") + n;
+const de = (n) => (/^[aeiouyhàâäéèêëîïôöùûüÿæœ]/i.test(n) ? "d'" : "de ") + n;   // « de Marie », « d'Aïcha »
+const fem = () => KL.read("genre", "f") !== "m";
 let tt;
 function toast(msg) { const t = $("#toast"); t.textContent = msg; t.classList.add("show"); clearTimeout(tt); tt = setTimeout(() => t.classList.remove("show"), 2200); }
 document.querySelectorAll("[data-soon]").forEach((b) => b.addEventListener("click", () => toast(`« ${b.dataset.soon} » arrive très bientôt`)));
 
 // ---- theme
 const isDark = () => root.dataset.theme ? root.dataset.theme === "dark" : matchMedia("(prefers-color-scheme: dark)").matches;
-const paintTheme = () => { $("#theme").innerHTML = icon(isDark() ? "sun" : "moon"); };
 function setTheme(t) {
   if (t === "auto") { delete root.dataset.theme; try { localStorage.removeItem("kalalab.theme"); } catch (e) {} }
   else { root.dataset.theme = t; try { localStorage.setItem("kalalab.theme", t); } catch (e) {} }
-  paintTheme(); document.querySelectorAll("[data-th]").forEach((b) => b.setAttribute("aria-pressed", String(b.dataset.th === (root.dataset.theme || "auto"))));
+  $("#theme").innerHTML = icon(isDark() ? "sun" : "moon");
+  document.querySelectorAll("[data-th]").forEach((b) => b.setAttribute("aria-pressed", String(b.dataset.th === (root.dataset.theme || "auto"))));
 }
 $("#theme").addEventListener("click", () => setTheme(isDark() ? "light" : "dark"));
 document.querySelectorAll("[data-th]").forEach((b) => b.addEventListener("click", () => setTheme(b.dataset.th)));
 setTheme(root.dataset.theme || "auto");
 
-// ---- streak pill
 const streak = KL.streak();
 $("#streakN").textContent = streak; $("#streakWord").textContent = streak > 1 ? "jours" : "jour";
 
-// ---- numbers, lessons and badges (from this phone, or from a "voir" link)
-function draw(data) {
-  const T = data.t, P = data.p;
-  const stats = [[data.s, "jours d'affilée"], [data.b, "meilleure série"], [data.days, "jours de travail"], [T.ex || 0, "exercices faits"],
-    [T.words || 0, "mots trouvés"], [T.dict || 0, "dictées réussies"], [T.speak || 0, "phrases au micro"], [T.write || 0, "textes écrits"]];
+// ---- tabs (the last one opened is remembered)
+const TABS = ["prog", "badges", "kali", "set"];
+function openTab(id) {
+  TABS.forEach((t) => { const on = t === id; $("#t-" + t).setAttribute("aria-selected", String(on)); $("#p-" + t).hidden = !on; });
+  KL.write("moiTab", id);
+}
+TABS.forEach((t) => $("#t-" + t).addEventListener("click", () => openTab(t)));
+
+// ---- skills of a lesson, from its title
+const SKILL = { Reading: ["bookopen", "Lecture"], Grammar: ["letters", "Grammaire et sons"], Writing: ["pencil", "Écriture"], Speaking: ["mic", "Oral"] };
+const skillOf = (L) => SKILL[Object.keys(SKILL).find((k) => L.title.includes(k))] || ["bookopen", "Leçon"];
+
+// ---- what to draw: this phone, or a "voir" link
+function draw(d) {
+  const T = d.t;
+  const stats = [[d.s, "série"], [d.b, "record"], [d.days, "jours"], [T.ex || 0, "exercices"], [T.words || 0, "mots"], [T.dict || 0, "dictées"], [T.speak || 0, "au micro"], [T.write || 0, "textes"]];
   $("#stats").innerHTML = stats.map(([n, l]) => `<div class="stat"><b>${n}</b><span>${l}</span></div>`).join("");
-  $("#lessons").innerHTML = LESSONS.map((L) => { const pc = data.l ? (data.l[L.id] || 0) : KLP.lessonPercent(L, P);
-    return `<div class="lrow"><span class="lt">Unit ${L.unit.replace("u", "")} · ${L.title.replace(/^Lesson \d+ · /, "")}<small>${L.topic}</small></span><span class="lp">${pc}%</span><span class="bar"><i style="width:${pc}%"></i></span></div>`; }).join("");
-  const B = data.badges;
+  // units: started ones show their lessons, the others wait (dashed)
+  $("#units").innerHTML = UNITS.map((U) => {
+    const ls = LESSONS.filter((L) => L.unit === U.id), pcs = ls.map((L) => d.pc(L)), avg = Math.round(pcs.reduce((a, b) => a + b, 0) / ls.length);
+    const started = pcs.some((x) => x > 0) || ls.some((L) => L.id === d.last);
+    const [num, name] = U.title.split(" · ");
+    if (!started) return `<div class="unit-card off"><div class="unit-head"><b>${num} · ${name}</b></div><small>Pas encore commencée. Ta progression s'affichera ici dès ta première leçon.</small></div>`;
+    return `<div class="unit-card on"><div class="unit-head"><b>${num} · ${name}</b><span>${avg}%</span></div>${ls.map((L, i) => { const [ic, sk] = skillOf(L);
+      return `<a class="lrow" href="anglais/#/l/${L.id}"><span class="li">${icon(ic)}</span><span class="lt">${sk}<small>${L.topic}</small></span><span class="lp">${pcs[i]}%</span><span class="bar"><i style="width:${pcs[i]}%"></i></span></a>`; }).join("")}</div>`;
+  }).join("");
+  const B = d.badges;
   $("#badgeList").innerHTML = B.map(([id, ic, name, col, how, got]) => `<div class="bitem ${got ? "got" : "locked"}">${KLP.medal(got ? ic : "lock", col)}<div><b>${name}</b><span>${got ? "Gagné ! " : ""}${how}</span></div></div>`).join("");
   $("#badgeCount").textContent = `· ${B.filter((b) => b[5]).length} sur ${B.length}`;
+  const lv = KLP.level(d.xp);
+  $("#nm").textContent = d.n || (d.view ? "…" : "Moi");
+  $("#lv").textContent = `Niveau ${lv.n} · ${lv.title}`;
+  requestAnimationFrame(() => { $("#xpFill").style.width = lv.pct + "%"; });
+  $("#xpBar").setAttribute("aria-valuenow", lv.pct);
+  $("#xpNext").textContent = lv.next ? `${lv.xp} points · encore ${lv.next - lv.xp} pour le niveau ${lv.n + 1}` : `${lv.xp} points · niveau maximum !`;
 }
 function mine() {
   const P = KLP.progress();
-  return { n: KL.firstName(), s: streak, b: Math.max(KL.read("bestStreak", 0), streak), days: KL.read("days", []).length, t: KL.read("totals", {}), p: P, badges: KLP.badges(P) };
+  return { n: KL.firstName(), s: streak, b: Math.max(KL.read("bestStreak", 0), streak), days: KL.read("days", []).length, t: KL.read("totals", {}), xp: KLP.xp(),
+    last: KL.read("last", null), pc: (L) => KLP.lessonPercent(L, P), badges: KLP.badges(P) };
 }
 
 // ---- arriving with a link?
-const hash = location.hash;
-const viewM = hash.match(/^#voir=([\w-]+)$/), trM = hash.match(/^#transfert=([\w-]+)$/);
+const viewM = location.hash.match(/^#voir=([\w-]+)$/), trM = location.hash.match(/^#transfert=([\w-]+)$/);
 if (viewM) {
   const v = KLP.dec(viewM[1]);
   if (v && v.v === 1) {
-    document.body.dataset.mode = "voir";
-    $("#viewBox").hidden = false;
+    document.body.dataset.mode = "voir"; $("#viewBox").hidden = false;
     const nm = esc(v.n || "quelqu'un").slice(0, 30);
     $("#viewTitle").textContent = `La progression ${de(nm)}`;
     $("#viewText").textContent = `Photo de la progression prise le ${new Date(v.d).toLocaleDateString("fr-FR", { day: "numeric", month: "long", year: "numeric" })}. Rien n'est modifié sur ce téléphone.`;
-    const bmap = Object.fromEntries(KLP.badges({}).map((b) => [b[0], b]));
-    draw({ s: v.s | 0, b: v.b | 0, days: v.dy | 0, t: v.t || {}, l: v.l || {}, p: {}, badges: Object.values(bmap).map((b) => [...b.slice(0, 5), (v.g || []).includes(b[0])]) });
-  } else { toast("Ce lien est abîmé : demande-en un nouveau."); draw(mine()); }
-} else {
+    const got = v.g || [];
+    draw({ view: 1, n: nm, s: v.s | 0, b: v.b | 0, days: v.dy | 0, t: v.t || {}, xp: v.x | 0, last: null, pc: (L) => (v.l || {})[L.id] || 0,
+      badges: KLP.badges({}).map((b) => [...b.slice(0, 5), got.includes(b[0])]) });
+    // a parent sees progress and badges, one after the other
+    $("#p-prog").hidden = false; $("#p-badges").hidden = false;
+    $("#avatar").textContent = (nm.charAt(0) || "?").toUpperCase();
+  } else { toast("Ce lien est abîmé : demande-en un nouveau."); }
+}
+if (!document.body.dataset.mode) {
   draw(mine());
+  openTab(TABS.includes(KL.read("moiTab", "prog")) ? KL.read("moiTab", "prog") : "prog");
   if (trM) {
     const t = KLP.dec(trM[1]);
     if (t && t.v === 1 && t.k && typeof t.k === "object") {
@@ -295,25 +345,26 @@ if (viewM) {
   }
 }
 
-// ---- profile: first name, photo, how Kali speaks
+// ---- profile
 const first = $("#first");
 first.value = KL.firstName();
 function avatar() {
+  if (document.body.dataset.mode) return;
   const p = KL.read("photo", null), ok = p && /^data:image\/(jpeg|png|webp);base64,/.test(p);
   $("#avatar").innerHTML = ok ? `<img src="${p}" alt="">` : esc((first.value || "?").trim().charAt(0).toUpperCase() || "?");
   $("#photoDel").hidden = !ok;
   $("#navMe").innerHTML = ok ? `<img class="me-mini" src="${p}" alt="">` : icon("user");
+  $("#nm").textContent = esc(first.value).trim() || "Moi";
 }
 avatar();
 let nameTimer;
-first.addEventListener("input", () => { avatar(); clearTimeout(nameTimer); nameTimer = setTimeout(saveName, 500); });
+first.addEventListener("input", () => { avatar(); clearTimeout(nameTimer); nameTimer = setTimeout(saveName, 600); });
 first.addEventListener("change", saveName);
 function saveName() {
   const v = esc(first.value).replace(/\s+/g, " ").trim().slice(0, 30);
-  const me = KL.read("me", {}); me.first = v; KL.write("me", me);
-  // Mia's page uses the same first name
+  const me = KL.read("me", {}); if (me.first === v) return; me.first = v; KL.write("me", me);
   try { const m = JSON.parse(localStorage.getItem("mia.me") || "null") || {}; m.first = v; localStorage.setItem("mia.me", JSON.stringify(m)); } catch (e) {}
-  toast(v ? `Enregistré : ${v}` : "Prénom effacé");
+  toast("Enregistré");
 }
 $("#photoIn").addEventListener("change", (e) => {
   const f = e.target.files && e.target.files[0]; if (!f) return;
@@ -326,19 +377,30 @@ $("#photoIn").addEventListener("change", (e) => {
   img.onerror = () => toast("Cette image ne s'ouvre pas. Essaie une autre photo.");
   img.src = url;
 });
-$("#photoDel").addEventListener("click", () => { try { localStorage.removeItem("kalalab.photo"); } catch (e) {} avatar(); toast("Photo enlevée"); });
+$("#photoDel").addEventListener("click", () => { try { localStorage.removeItem("kalalab.photo"); } catch (e) {} avatar(); });
 function paintGenre() { const g = KL.read("genre", "f"); document.querySelectorAll("[data-genre]").forEach((b) => b.setAttribute("aria-pressed", String(b.dataset.genre === g))); }
-document.querySelectorAll("[data-genre]").forEach((b) => b.addEventListener("click", () => { KL.write("genre", b.dataset.genre); paintGenre(); toast(b.dataset.genre === "m" ? "Kali te dira « prêt »" : "Kali te dira « prête »"); }));
+document.querySelectorAll("[data-genre]").forEach((b) => b.addEventListener("click", () => {
+  KL.write("genre", b.dataset.genre); paintGenre(); paintOutfits();
+  const lv = KLP.level(); $("#lv").textContent = `Niveau ${lv.n} · ${lv.title}`;
+}));
 paintGenre();
 
-// ---- Kali's outfit for the home page
-const OUT = [["bonjour", "Bonjour"], ["dj", "DJ"], ["lecture", "Lectrice"], ["diplomee", "Diplômée"], ["sport", "Sportive"], ["detective", "Détective"], ["fete", "Fête"], ["dodo", "Dodo"]];
+// ---- Kali's wardrobe: one outfit per level
 function paintOutfits() {
-  const cur = KL.read("outfit", "bonjour");
-  $("#outfits").innerHTML = OUT.map(([o, n]) => `<button class="outfit-btn" data-outfit="${o}" aria-pressed="${o === cur}"><span class="k">${kali(o, "Kali en tenue " + n)}</span><span>${n}</span></button>`).join("");
-  document.querySelectorAll("[data-outfit]").forEach((b) => b.addEventListener("click", () => { KL.write("outfit", b.dataset.outfit); paintOutfits(); kaliCheer(document.querySelector(`[data-outfit="${b.dataset.outfit}"] .kali`)); toast("Kali portera cette tenue sur ton accueil"); }));
+  const lv = KLP.level(), cur = KLP.outfitOpen(KL.read("outfit", "bonjour"), lv.n) ? KL.read("outfit", "bonjour") : "bonjour";
+  $("#meKali").innerHTML = kali(cur);
+  $("#outfits").innerHTML = KLP.OUTFITS.map(([o, n, need]) => {
+    const open = lv.n >= need;
+    return `<button class="outfit-btn ${open ? "" : "locked"}" data-outfit="${o}" ${open ? `aria-pressed="${o === cur}"` : `aria-disabled="true"`}><span class="k">${kali(o, "Kali en tenue " + n)}</span>${open ? "" : `<span class="lock">${icon("lock")}</span>`}<span>${open ? n : "Niveau " + need}</span></button>`;
+  }).join("");
+  document.querySelectorAll(".outfit-btn").forEach((b) => b.addEventListener("click", () => {
+    const o = b.dataset.outfit, f = KLP.OUTFITS.find((x) => x[0] === o);
+    if (b.classList.contains("locked")) return toast(`Cette tenue sera ton cadeau du niveau ${f[2]}`);
+    KL.write("outfit", o); paintOutfits(); kaliCheer($("#meKali .kali"));
+  }));
 }
 paintOutfits();
+$("#meKali").addEventListener("click", () => kaliCheer($("#meKali .kali")));
 
 // ---- the Kali corner on the home page
 function paintCorner() { const on = KL.read("corner", true); document.querySelectorAll("[data-corner]").forEach((b) => b.setAttribute("aria-pressed", String((b.dataset.corner === "1") === on))); }
@@ -349,7 +411,7 @@ paintCorner();
 const base = location.href.replace(/[#?].*$/, "");
 $("#mkView").addEventListener("click", () => {
   const P = KLP.progress(), d = mine();
-  const v = { v: 1, n: d.n, s: d.s, b: d.b, dy: d.days, t: d.t, d: Date.now(), l: Object.fromEntries(LESSONS.map((L) => [L.id, KLP.lessonPercent(L, P)])), g: d.badges.filter((b) => b[5]).map((b) => b[0]) };
+  const v = { v: 1, n: d.n, s: d.s, b: d.b, dy: d.days, t: d.t, x: d.xp, d: Date.now(), l: Object.fromEntries(LESSONS.map((L) => [L.id, KLP.lessonPercent(L, P)])), g: d.badges.filter((b) => b[5]).map((b) => b[0]) };
   $("#viewLink").value = `${base}#voir=${KLP.enc(v)}`; $("#viewLinkBox").hidden = false;
 });
 $("#mkTransfer").addEventListener("click", () => {
@@ -366,13 +428,25 @@ document.querySelectorAll("[data-share]").forEach((b) => {
 });
 
 // ---- wipe everything on this phone
-$("#wipe").addEventListener("click", () => { $("#wipeConfirm").firstChild.textContent = `Tu es ${KL.read("genre", "f") === "m" ? "sûr" : "sûre"} ? On ne pourra pas revenir en arrière.`; $("#wipeConfirm").hidden = false; $("#wipe").hidden = true; });
+$("#wipe").addEventListener("click", () => { $("#wipeQ").textContent = `Tu es ${fem() ? "sûre" : "sûr"} ? On ne pourra pas revenir en arrière.`; $("#wipeConfirm").hidden = false; $("#wipe").hidden = true; });
 $("#wipeNo").addEventListener("click", () => { $("#wipeConfirm").hidden = true; $("#wipe").hidden = false; });
 $("#wipeYes").addEventListener("click", () => {
   try { Object.keys(localStorage).filter((x) => /^(kalalab\.|anglais-|mia\.)/.test(x)).forEach((x) => localStorage.removeItem(x)); } catch (e) {}
   location.reload();
 });
 
+// Pixelify's 5 looks like an S: digits inside pixel text use the body face
+function fixDigits(el = document.body) {
+  const w = document.createTreeWalker(el, NodeFilter.SHOW_TEXT), nodes = [];
+  while (w.nextNode()) { const n = w.currentNode, pe = n.parentElement;
+    if (/\d/.test(n.nodeValue) && pe && !pe.classList.contains("dg") && !pe.closest("svg, #pct") && getComputedStyle(pe).fontFamily.includes("Pixelify")) nodes.push(n); }
+  nodes.forEach((n) => { const f = document.createDocumentFragment();
+    n.nodeValue.split(/(\d+)/).forEach((part, i) => { if (!part) return; if (i % 2) { const sp = document.createElement("span"); sp.className = "dg"; sp.textContent = part; f.append(sp); } else f.append(part); });
+    n.replaceWith(f); });
+}
+document.fonts.ready.then(() => fixDigits());
+// redraws put new digits on the page
+new MutationObserver(() => { clearTimeout(window.__fd); window.__fd = setTimeout(() => fixDigits(), 60); }).observe(document.querySelector(".app"), { childList: true, subtree: true, characterData: true });
 if ("serviceWorker" in navigator && location.protocol === "https:") navigator.serviceWorker.register("sw.js").catch(() => {});
 </script>
 </body>

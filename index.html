@@ -121,6 +121,7 @@
 <script src="js/kali.js"></script>
 <script src="js/activity.js"></script>
 <script src="anglais/lessons.js"></script>
+<script src="js/progress.js"></script>
 <script>
 "use strict";
 const $ = (s) => document.querySelector(s);
@@ -148,7 +149,8 @@ const name = KL.firstName(), hour = new Date().getHours(), late = hour >= 21 || 
 const fem = KL.read("genre", "f") !== "m";
 $("#hello").firstChild.textContent = (late ? "Bonsoir" : "Salut") + (name ? " " + name : "") + (fem ? ", prête à " : ", prêt à ");
 $("#bubbleText").textContent = late ? "Bonne nuit !" : "Hello!"; $("#bubble").classList.toggle("long", late);
-$("#heroKali").innerHTML = kali(late ? "dodo" : KL.read("outfit", "bonjour"));
+const myOutfit = KLP.outfitOpen(KL.read("outfit", "bonjour")) ? KL.read("outfit", "bonjour") : "bonjour";
+$("#heroKali").innerHTML = kali(late ? "dodo" : myOutfit);
 $("#heroKali").addEventListener("click", () => kaliCheer($("#heroKali .kali")));
 
 
@@ -295,17 +297,34 @@ function drawBadges(newId) {
   fixDigits($("#badges")); fixDigits($("#badgeCount"));
 }
 drawBadges();
-// a new badge since last time: Kali comes to celebrate it
+// rewards since last time: new badges, then each new level with Kali's new outfit
+const lvNow = KLP.level(), lvSeen = KL.read("levelSeen", 1);
+const queue = fresh.map((b) => ({ kind: "badge", b }));
+for (let n = lvSeen + 1; n <= lvNow.n; n++) queue.push({ kind: "level", n, outfit: KLP.OUTFITS.find((o) => o[2] === n) });
 function showReward(i) {
-  if (i >= fresh.length) return;
-  const [id, ic, name, col, how] = fresh[i];
-  $("#rewardKali").innerHTML = kali("diplomee"); $("#rewardBadge").innerHTML = medal(ic, col);
-  $("#rewardText").textContent = `Nouveau badge : « ${name} ». ${how}. Continue comme ça !`; fixDigits($("#rewardText"));
+  if (i >= queue.length) return;
+  const q = queue[i];
+  if (q.kind === "badge") {
+    const [id, ic, name, col, how] = q.b;
+    $("#rewardKali").innerHTML = kali("diplomee"); $("#rewardBadge").innerHTML = medal(ic, col); $("#rewardBadge").hidden = false;
+    $("#rewardTitle").textContent = "Badge débloqué !";
+    $("#rewardText").textContent = `Nouveau badge : « ${name} ». ${how}. Continue comme ça !`;
+  } else {
+    const o = q.outfit;
+    $("#rewardKali").innerHTML = kali(o ? o[0] : "fete"); $("#rewardBadge").hidden = true;
+    $("#rewardTitle").textContent = `Niveau ${q.n} !`;
+    $("#rewardText").textContent = o ? `Tu es maintenant ${KLP.TITLES[q.n - 1][fem ? 0 : 1]}. Ton cadeau : la tenue « ${o[1]} » pour Kali. Mets-la dans « Moi ».` : `Tu es maintenant ${KLP.TITLES[q.n - 1][fem ? 0 : 1]}. Bravo !`;
+  }
+  fixDigits($("#rewardText"));
   $("#reward").hidden = false; $("#rewardOk").focus();
-  setTimeout(() => { kaliCheer($("#rewardKali .kali")); const r = $("#rewardBadge").getBoundingClientRect(); confetti(r.left + r.width / 2, r.top + r.height / 2); }, 350);
-  $("#rewardOk").onclick = () => { $("#reward").hidden = true; seen.push(id); KL.write("badgesSeen", seen); drawBadges(id); setTimeout(() => showReward(i + 1), 500); };
+  setTimeout(() => { kaliCheer($("#rewardKali .kali")); const r = $("#rewardKali").getBoundingClientRect(); confetti(r.left + r.width / 2, r.top + r.height / 2); }, 350);
+  $("#rewardOk").onclick = () => {
+    $("#reward").hidden = true;
+    if (q.kind === "badge") { seen.push(q.b[0]); KL.write("badgesSeen", seen); drawBadges(q.b[0]); } else KL.write("levelSeen", q.n);
+    setTimeout(() => showReward(i + 1), 500);
+  };
 }
-if (fresh.length) setTimeout(() => showReward(0), 900);
+if (queue.length) setTimeout(() => showReward(0), 900);
 
 // ---- things that arrive in the next steps
 document.querySelectorAll("[data-soon]").forEach((b) => b.addEventListener("click", () => {
