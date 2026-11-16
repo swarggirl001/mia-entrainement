@@ -1,0 +1,385 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Bienvenue sur KalaLab</title>
+<meta name="description" content="KalaLab : apprends l'anglais de ton cahier avec Kali. Écouter, lire, parler, écrire. Gratuit, sans publicité, sans compte.">
+<meta property="og:title" content="KalaLab">
+<meta property="og:description" content="Apprends l'anglais de ton cahier avec Kali. Gratuit, sans publicité.">
+<meta property="og:image" content="icons/kalalab-512.png">
+<meta name="theme-color" content="#fbfaf7" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#262d3b" media="(prefers-color-scheme: dark)">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="icon" href="icons/kalalab-192.png">
+<link rel="apple-touch-icon" href="icons/kalalab-apple-touch.png">
+<script>
+  try { const t = localStorage.getItem("kalalab.theme"); if (t === "dark" || t === "light") document.documentElement.dataset.theme = t; } catch (e) {}
+</script>
+<link rel="stylesheet" href="css/kalalab.css">
+<style>
+/* Layout: a big opening scene (sky, hills, the logo with Kali walking on it), the two buttons,
+   then short sections that explain KalaLab, then the install card. The profile is created in a sheet over the page. */
+body { overflow-x: hidden; }
+.land { display: grid; gap: 22px; padding-bottom: 40px; }
+.scene { position: relative; height: 380px; overflow: hidden; border-radius: 28px; border: var(--bw) solid var(--line); }
+.scene .sky { position: absolute; inset: 0; width: 100%; height: 100%; }
+.scene .logo { position: absolute; left: 50%; top: 36px; width: 220px; height: 220px; translate: -50% 0; z-index: 2; filter: drop-shadow(5px 5px 0 var(--shadow)); }
+.scene .logo svg { width: 100%; height: 100%; overflow: visible; }
+@media (min-width: 900px) { .scene { height: 520px; border-radius: 32px; } .scene .logo { width: 300px; height: 300px; top: 60px; } }
+.kc-s1 { stop-color: var(--sky1); } .kc-s2 { stop-color: var(--sky2); }
+.kc-h1 { fill: var(--hill1); } .kc-h2 { fill: var(--hill2); } .kc-p { fill: var(--petal); }
+.kc-moon, .kc-stars { display: none; } body.night .kc-moon, body.night .kc-stars { display: inline; } body.night .kc-sun { display: none; }
+.kc-sun .rays { transform-box: fill-box; transform-origin: 50% 50%; animation: kc-spin 18s linear infinite; }
+.kc-cloud { animation: kc-drift 14s ease-in-out infinite alternate; } .kc-cloud.two { animation-duration: 19s; animation-delay: -6s; }
+.kc-flower { transform-box: fill-box; transform-origin: 50% 100%; animation: kc-sway 3.2s ease-in-out infinite; }
+.kc-stars circle { animation: kc-twinkle 2.6s ease-in-out infinite; }
+
+.intro { display: grid; gap: 14px; justify-items: center; text-align: center; position: relative; z-index: 3; }
+.intro h1 { margin: 0; font-family: var(--display); font-weight: 900; font-size: clamp(30px, 8vw, 48px); line-height: 1.05; text-wrap: balance; max-width: 18ch; }
+.intro h1 span { color: var(--accent); }
+.intro p { margin: 0; font-family: var(--pixel); font-size: 16px; color: var(--muted); max-width: 36ch; }
+.cta { display: grid; gap: 10px; width: min(340px, 100%); }
+.btn-big { font-family: var(--title); font-size: 19px; padding: 14px 18px; border-radius: 16px; border: var(--bw) solid #141414; background: var(--accent); color: #141414; box-shadow: 4px 4px 0 var(--shadow); cursor: pointer; text-decoration: none; text-align: center;
+  transition: transform .2s cubic-bezier(.34,1.56,.64,1), box-shadow .2s; }
+.btn-big:active { transform: translate(3px, 3px); box-shadow: 1px 1px 0 var(--shadow); }
+.btn-big.ghost { background: var(--card); color: var(--fg); border-color: var(--line); font-size: 16px; }
+.already { font-family: var(--pixel); font-size: 14px; color: var(--muted); }
+.already a { color: var(--accent); font-weight: 700; }
+
+.sect { display: grid; gap: 12px; }
+.sect h2 { margin: 0; font-family: var(--title); font-weight: 400; font-size: 25px; text-align: center; }
+.sect > p { margin: 0; font-family: var(--pixel); font-size: 15px; color: var(--muted); text-align: center; max-width: 52ch; justify-self: center; }
+.skills4 { display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px; }
+@media (min-width: 900px) { .skills4 { grid-template-columns: repeat(4, 1fr); } }
+.sk { padding: 14px; display: grid; gap: 6px; color: #141414; }
+.sk:nth-child(1) { background: var(--t1); } .sk:nth-child(2) { background: var(--t2); } .sk:nth-child(3) { background: var(--t3); } .sk:nth-child(4) { background: var(--lilac); }
+.sk .ico { width: 40px; height: 40px; }
+.sk b { font-family: var(--title); font-weight: 400; font-size: 18px; }
+.sk span { font-family: var(--pixel); font-size: 13.5px; }
+.kali-sect { background: var(--card); padding: 16px; display: grid; grid-template-columns: 120px 1fr; gap: 14px; align-items: center; }
+.kali-sect .k { width: 120px; height: 120px; }
+.kali-sect b { font-family: var(--title); font-weight: 400; font-size: 20px; display: block; margin-bottom: 4px; }
+.kali-sect p { margin: 0; font-family: var(--pixel); font-size: 14.5px; color: var(--muted); }
+.why { background: var(--card); padding: 16px; display: grid; gap: 8px; }
+.why p { margin: 0; font-family: var(--body); font-size: 15.5px; line-height: 1.55; }
+.promises { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; }
+.prom { border: var(--bw) dashed var(--line); border-radius: 18px; padding: 12px 8px; display: grid; justify-items: center; text-align: center; gap: 4px; }
+.prom .ico { width: 34px; height: 34px; }
+.prom b { font-family: var(--title); font-weight: 400; font-size: 16px; }
+.prom span { font-family: var(--pixel); font-size: 12.5px; color: var(--muted); }
+.install-card .row2 b { font-size: 20px; }
+
+/* the profile sheet */
+.sheet { position: fixed; inset: 0; z-index: 20; display: grid; place-items: center; padding: 16px; background: rgba(20,20,20,.5); }
+.sheet[hidden] { display: none !important; }
+.sheet-card { background: var(--card); border: var(--bw) solid #141414; border-radius: 28px; box-shadow: 6px 6px 0 #141414; width: min(420px, 100%); padding: 18px; display: grid; gap: 14px;
+  animation: reward-in .5s cubic-bezier(.34,1.56,.64,1); max-height: calc(100vh - 32px); overflow-y: auto; }
+.sheet-top { display: flex; justify-content: space-between; align-items: center; }
+.dots3 { display: flex; gap: 6px; } .dots3 i { width: 26px; height: 7px; border-radius: 99px; background: var(--track); } .dots3 i.on { background: var(--accent); }
+.x { border: 0; background: none; font-family: var(--pixel); font-size: 14px; color: var(--muted); cursor: pointer; }
+.talk { display: grid; grid-template-columns: 96px 1fr; gap: 10px; align-items: center; }
+.talk .k { width: 96px; height: 96px; }
+.say { position: relative; font-family: var(--title); font-size: 18px; background: var(--sky); color: #141414; border: var(--bw) solid #141414; border-radius: 16px; padding: 10px 12px; }
+.step { display: grid; gap: 10px; }
+.step[hidden] { display: none !important; }
+.step input[type=text] { font-family: var(--title); font-size: 22px; padding: 10px 14px; border-radius: 14px; border: var(--bw) solid var(--line); background: var(--bg); color: var(--fg); width: 100%; }
+.step input[type=text]:focus { outline: 3px solid var(--accent); outline-offset: 2px; }
+.choice2 { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+.choice2 button { font-family: var(--title); font-size: 18px; padding: 16px 8px; border-radius: 16px; border: var(--bw) solid var(--line); background: var(--bg); color: var(--fg); cursor: pointer; }
+.choice2 button[aria-pressed="true"] { background: var(--lilac); color: #141414; border-color: #141414; box-shadow: 3px 3px 0 var(--shadow); }
+.photo-pick { display: grid; justify-items: center; gap: 10px; }
+.photo-pick .avatar { width: 110px; height: 110px; border-radius: 50%; border: var(--bw) solid #141414; background: var(--lilac); display: grid; place-items: center; overflow: hidden;
+  font-family: var(--display); font-weight: 900; font-size: 46px; color: #2e2350; }
+.photo-pick .avatar img { width: 100%; height: 100%; object-fit: cover; }
+.small-btn { font-family: var(--pixel); font-weight: 600; font-size: 14px; padding: 8px 12px; border-radius: 12px; border: 2px solid var(--line); background: var(--chip); color: var(--fg); cursor: pointer; }
+.nav2 { display: flex; justify-content: space-between; gap: 10px; }
+.nav2 .btn-big { flex: 1; }
+.err { font-family: var(--pixel); font-size: 13.5px; color: #c2414b; margin: 0; }
+.done { display: grid; justify-items: center; gap: 8px; text-align: center; }
+.done .k { width: 150px; height: 150px; }
+.done h3 { margin: 0; font-family: var(--display); font-weight: 900; font-size: 30px; }
+.done p { margin: 0; font-family: var(--pixel); font-size: 15px; color: var(--muted); }
+.help { display: grid; gap: 10px; font-family: var(--body); font-size: 15px; line-height: 1.5; }
+.help ol { margin: 0; padding-left: 20px; display: grid; gap: 4px; }
+</style>
+</head>
+<body>
+<div class="app land">
+  <header class="top">
+    <svg class="mark" viewBox="0 0 300 300" aria-hidden="true"><rect width="300" height="300" rx="66" fill="#b9a6e0"/><path d="M68 266 v-122 a82 82 0 0 1 164 0 v122z" fill="#fbeee0"/><path d="M84 266 v-120 a66 66 0 0 1 132 0 v120" fill="none" stroke="#b9a6e0" stroke-width="3"/><text x="150" y="186" text-anchor="middle" font-family="Cikutra" font-weight="900" font-size="54" fill="#2e2350">Kala</text><text x="150" y="238" text-anchor="middle" font-family="Cikutra" font-weight="900" font-size="46" fill="#8e7cc3">Lab</text></svg>
+    <div class="brand">Kala<span>Lab</span></div>
+    <div class="spacer"></div>
+    <a class="small-btn" id="topGo" href="./" hidden>Mon accueil</a>
+    <button class="theme" id="theme" aria-label="Passer en mode sombre"></button>
+  </header>
+
+  <!-- the opening scene: Kali comes out from behind the arch, waves in front of "Lab", then walks away -->
+  <div class="scene" aria-hidden="true">
+    <svg class="sky" id="sky"></svg>
+    <div class="logo">
+      <svg id="logo" viewBox="0 0 300 300">
+        <defs><clipPath id="icon"><rect width="300" height="300" rx="66"/></clipPath></defs>
+        <g clip-path="url(#icon)">
+          <rect width="300" height="300" fill="#b9a6e0"/>
+          <g id="behind"></g>
+          <path d="M68 266 v-122 a82 82 0 0 1 164 0 v122z" fill="#fbeee0"/>
+          <path d="M84 266 v-120 a66 66 0 0 1 132 0 v120" fill="none" stroke="#b9a6e0" stroke-width="3"/>
+          <text x="150" y="186" text-anchor="middle" font-family="Cikutra" font-weight="900" font-size="54" fill="#2e2350">Kala</text>
+          <text x="150" y="238" text-anchor="middle" font-family="Cikutra" font-weight="900" font-size="46" fill="#8e7cc3">Lab</text>
+          <g id="front"></g>
+        </g>
+        <rect width="300" height="300" rx="66" fill="none" stroke="#141414" stroke-width="5"/>
+      </svg>
+    </div>
+  </div>
+
+  <section class="intro">
+    <h1>Apprends l'anglais de ton cahier, <span>avec Kali</span></h1>
+    <p>Les leçons de Terminale, unité par unité : écouter, lire, parler, écrire. Un peu chaque jour.</p>
+    <div class="cta">
+      <button class="btn-big" id="start">Créer mon profil</button>
+      <button class="btn-big ghost" id="have">J'ai déjà une progression</button>
+    </div>
+    <p class="already" id="already" hidden>Tu as déjà un profil : <a href="./">va sur ton accueil</a>.</p>
+  </section>
+
+  <section class="sect">
+    <h2>Ce que tu apprends</h2>
+    <p>Les cours de ton cahier, transformés en exercices qui se corrigent tout seuls.</p>
+    <div class="skills4">
+      <div class="sk sticker"><i data-ic="headphones"></i><b>Écouter</b><span>Dictées et phrases lues par une vraie voix anglaise.</span></div>
+      <div class="sk sticker"><i data-ic="bookopen"></i><b>Lire</b><span>Les textes du cours, le vocabulaire et les questions.</span></div>
+      <div class="sk sticker"><i data-ic="mic"></i><b>Parler</b><span>Tu lis au micro, le site te dit ce qu'il a compris.</span></div>
+      <div class="sk sticker"><i data-ic="pencil"></i><b>Écrire</b><span>Discours, e-mail, article : un plan, une vérification, un modèle.</span></div>
+    </div>
+    <p>Et pour l'oral : <b>le jeu de rôle de Mia</b>, réplique par réplique.</p>
+  </section>
+
+  <section class="kali-sect sticker">
+    <span class="k" id="kaliSect"></span>
+    <div><b>Kali t'accompagne</b><p>Ta série de jours, tes objectifs, tes badges. À chaque niveau, une nouvelle tenue pour Kali. Touche-la, elle saute de joie.</p></div>
+  </section>
+
+  <section class="why sticker">
+    <h2 style="margin:0;font-family:var(--title);font-weight:400;font-size:22px">Pourquoi KalaLab ?</h2>
+    <p>KalaLab est né d'une idée simple : aider une élève à réviser ses cours d'anglais, à son rythme, sur son téléphone. Les leçons viennent directement du cahier de classe.</p>
+    <p>Aujourd'hui, KalaLab est ouvert à tous les élèves qui veulent progresser, un peu chaque jour.</p>
+  </section>
+
+  <section class="sect">
+    <div class="promises">
+      <div class="prom"><i data-ic="star"></i><b>Gratuit</b><span>Pour tout le monde</span></div>
+      <div class="prom"><i data-ic="check"></i><b>Sans pub</b><span>Rien ne te dérange</span></div>
+      <div class="prom"><i data-ic="lock"></i><b>Sans compte</b><span>Tout reste sur ton téléphone</span></div>
+    </div>
+  </section>
+
+  <div class="install-card">
+    <div class="row2"><b>Installe KalaLab sur ton téléphone</b><button class="go" id="installBtn" hidden>Installer <span class="arr">→</span></button></div>
+    <p id="installHow">Sur Android, ouvre ce site dans Chrome, touche ⋮ puis « Ajouter à l'écran d'accueil ». KalaLab marche aussi sans internet.</p>
+  </div>
+
+  <div class="cta" style="justify-self:center"><button class="btn-big" id="start2">Créer mon profil</button></div>
+  <p class="foot">KalaLab n'a ni compte ni mot de passe : ton prénom et ta progression restent sur ce téléphone.</p>
+</div>
+
+<!-- create the profile: 3 short steps, then welcome -->
+<div class="sheet" id="sheet" hidden>
+  <div class="sheet-card" role="dialog" aria-modal="true" aria-labelledby="sayText">
+    <div class="sheet-top"><div class="dots3" id="dots"><i></i><i></i><i></i></div><button class="x" id="close">Fermer</button></div>
+    <div class="talk"><span class="k" id="sheetKali"></span><p class="say" id="sayText">Salut ! Moi, c'est Kali. Et toi, comment tu t'appelles ?</p></div>
+
+    <div class="step" id="s1">
+      <input type="text" id="first" maxlength="30" autocomplete="given-name" placeholder="Ton prénom" aria-label="Ton prénom">
+      <p class="err" id="err1" hidden>Écris ton prénom pour continuer.</p>
+    </div>
+    <div class="step" id="s2" hidden>
+      <div class="choice2" role="group" aria-label="Tu es"><button data-g="f" aria-pressed="false">Une fille</button><button data-g="m" aria-pressed="false">Un garçon</button></div>
+      <p class="err" id="err2" hidden>Choisis une réponse pour continuer.</p>
+    </div>
+    <div class="step" id="s3" hidden>
+      <div class="photo-pick"><div class="avatar" id="avatar"></div>
+        <div class="row-btns" style="display:flex;gap:8px;flex-wrap:wrap;justify-content:center"><label class="small-btn" for="photoIn">Choisir une photo</label><input type="file" id="photoIn" accept="image/*" hidden><button class="small-btn" id="skipPhoto">Plus tard</button></div></div>
+    </div>
+    <div class="step done" id="s4" hidden>
+      <span class="k" id="doneKali"></span>
+      <h3 id="doneTitle">Bienvenue !</h3>
+      <p>Ton profil est prêt. Ta première leçon t'attend.</p>
+    </div>
+    <div class="step help" id="sHave" hidden>
+      <p>Ta progression est sur un autre téléphone ? Récupère-la en 3 gestes :</p>
+      <ol><li>Sur l'ancien téléphone, ouvre KalaLab, puis <b>Moi › Réglages</b>.</li><li>Touche <b>« Continuer sur un autre téléphone »</b>, puis <b>Créer le lien</b>.</li><li>Envoie-toi ce lien et ouvre-le ici : tout revient.</li></ol>
+      <p>Si c'est déjà ce téléphone, va simplement sur ton accueil.</p>
+    </div>
+
+    <div class="nav2" id="nav2"><button class="btn-big ghost" id="back">Retour</button><button class="btn-big" id="next">Suivant</button></div>
+  </div>
+</div>
+<div class="toast" id="toast" role="status" aria-live="polite"></div>
+<canvas id="confetti" aria-hidden="true"></canvas>
+
+<script src="js/icons.js"></script>
+<script src="js/kali.js"></script>
+<script src="js/activity.js"></script>
+<script>
+"use strict";
+const $ = (s) => document.querySelector(s);
+const root = document.documentElement;
+const reduce = matchMedia("(prefers-reduced-motion: reduce)").matches;
+document.head.insertAdjacentHTML("beforeend", `<style>${KALI_CSS}</style>`);
+paintIcons();
+const esc = (t) => String(t).replace(/[<>&"'`]/g, "");
+let tt;
+function toast(msg) { const t = $("#toast"); t.textContent = msg; t.classList.add("show"); clearTimeout(tt); tt = setTimeout(() => t.classList.remove("show"), 2200); }
+
+// ---- theme
+const isDark = () => root.dataset.theme ? root.dataset.theme === "dark" : matchMedia("(prefers-color-scheme: dark)").matches;
+const hour = new Date().getHours(), late = hour >= 21 || hour < 5;
+const paintTheme = () => { $("#theme").innerHTML = icon(isDark() ? "sun" : "moon"); document.body.classList.toggle("night", isDark() || late); };
+paintTheme();
+$("#theme").addEventListener("click", () => { root.dataset.theme = isDark() ? "light" : "dark"; try { localStorage.setItem("kalalab.theme", root.dataset.theme); } catch (e) {} paintTheme(); });
+
+// ---- already has a profile? say so, and offer the way home
+const hasProfile = !!(KL.read("profile", null) || KL.firstName());
+if (hasProfile) { $("#already").hidden = false; $("#topGo").hidden = false; }
+
+// ---- the sky: sun or moon, clouds, hills, flowers
+const flower = (x, y, c) => `<g class="kc-flower"><path d="M${x} ${y} v-14" stroke="#141414" stroke-width="2.5"/><g transform="translate(${x} ${y - 16})">${[0, 72, 144, 216, 288].map((a) => `<circle cx="${(5 * Math.cos(a * Math.PI / 180)).toFixed(1)}" cy="${(5 * Math.sin(a * Math.PI / 180)).toFixed(1)}" r="4.2" fill="${c}" stroke="#141414" stroke-width="1.8"/>`).join("")}<circle r="3" fill="#ffd27a" stroke="#141414" stroke-width="1.8"/></g></g>`;
+const tuft = (x, y) => `<path d="M${x} ${y} l3 -8 l2 7 l3 -9 l2 10" fill="none" stroke="#141414" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/>`;
+const cloud = (x, y, cls) => `<g class="kc-cloud ${cls}"><path d="M${x} ${y} a12 12 0 0 1 22 -6 a14 14 0 0 1 26 4 a10 10 0 0 1 2 20 h-46 a10 10 0 0 1 -4 -18 z" fill="#fff" stroke="#141414" stroke-width="2.5" stroke-linejoin="round"/></g>`;
+// drawn at the scene's real size, so nothing is cut on a wide screen
+function drawSky() {
+  const sc = $(".scene"), W = Math.round(sc.clientWidth), H = Math.round(sc.clientHeight), b = H - 100, sx = W - 50;
+  const svg = $("#sky"); svg.setAttribute("viewBox", `0 0 ${W} ${H}`);
+  const fl = [[.1, 12, "var(--petal)"], [.2, 2, "#c9b8f0"], [.82, 0, "var(--petal)"], [.91, 12, "#ffd27a"]];
+  svg.innerHTML = `
+  <defs><linearGradient id="lsky" x1="0" y1="0" x2="0" y2="1"><stop offset="0" class="kc-s1"/><stop offset="1" class="kc-s2"/></linearGradient>
+    <radialGradient id="lglow"><stop offset="0" stop-color="#ffd27a" stop-opacity=".55"/><stop offset="1" stop-color="#ffd27a" stop-opacity="0"/></radialGradient></defs>
+  <rect width="${W}" height="${H}" fill="url(#lsky)"/>
+  <g class="kc-sun"><circle cx="${sx}" cy="58" r="44" fill="url(#lglow)"/><g class="rays"><path d="M${sx} 30 v-10 M${sx} 86 v10 M${sx - 28} 58 h-10 M${sx + 28} 58 h10 M${sx - 20} 38 l-7 -7 M${sx + 20} 78 l7 7 M${sx + 20} 38 l7 -7 M${sx - 20} 78 l-7 7" stroke="#141414" stroke-width="3" stroke-linecap="round"/></g><circle cx="${sx}" cy="58" r="17" fill="#ffd27a" stroke="#141414" stroke-width="3"/></g>
+  <g class="kc-moon"><path d="M${sx + 4} 36 a22 22 0 1 0 16 34 a17 17 0 0 1 -16 -34 z" fill="#ffd27a" stroke="#141414" stroke-width="3" stroke-linejoin="round"/></g>
+  <g class="kc-stars" fill="#fbeee0">${[[.1, 40], [.22, 110], [.75, 140], [.93, 200], [.06, 200], [.4, 30], [.62, 70]].map(([x, y], i) => `<circle cx="${(x * W).toFixed(0)}" cy="${y}" r="${i % 2 ? 2 : 2.4}"/>`).join("")}</g>
+  ${cloud(18, 70, "")}${cloud(W - 100, Math.round(H * .44), "two")}
+  <path class="kc-h2" d="M-10 ${b - 30} Q${W * .22} ${b - 70} ${W * .5} ${b - 48} T${W + 10} ${b - 60} V${H + 10} H-10 Z" stroke="#141414" stroke-width="3" stroke-linejoin="round"/>
+  <path class="kc-h1" d="M-10 ${b} Q${W * .27} ${b - 34} ${W * .57} ${b - 16} T${W + 10} ${b - 20} V${H + 10} H-10 Z" stroke="#141414" stroke-width="3" stroke-linejoin="round"/>
+  ${fl.map(([x, dy, c]) => flower(Math.round(x * W), b + dy, c)).join("")}
+  ${tuft(Math.round(W * .32), b - 4)}${tuft(Math.round(W * .05), b + 32)}${tuft(Math.round(W * .7), b + 2)}${tuft(Math.round(W * .55), b + 40)}`;
+}
+drawSky();
+let skyT; addEventListener("resize", () => { clearTimeout(skyT); skyT = setTimeout(drawSky, 150); });
+
+// ---- Kali's entrance on the logo (the special moment of this page)
+const inner = (o) => kali(o).replace(/^<svg[^>]*>|<\/svg>$/g, "");
+const S = 0.36, W = 228 * S, Y = 190;
+const mk = (id) => { const g = $(id); g.innerHTML = `<g class="walker" transform="translate(-999 0)"><svg class="kali o-bonjour" x="0" y="0" width="${W}" height="${W}" viewBox="-14 -18 228 230">${inner("bonjour")}</svg></g>`; return g.querySelector(".walker"); };
+const back = mk("#behind"), front = mk("#front");
+function place(g, cx, t, walking) {
+  const hop = walking ? -Math.abs(Math.sin(t * 9)) * 6 : 0, tilt = walking ? Math.sin(t * 9) * 4 : 0;
+  g.setAttribute("transform", `translate(${cx - W / 2} ${Y + hop}) rotate(${tilt} ${W / 2} ${W})`);
+}
+let run = 0;
+function entrance() {
+  const id = ++run, t0 = performance.now(), hide = (g) => g.setAttribute("transform", "translate(-999 0)");
+  const lerp = (a, b, k) => a + (b - a) * Math.min(1, Math.max(0, k));
+  (function frame(now) {
+    if (id !== run) return;
+    const t = (now - t0) / 1000;
+    if (t < 1.4) { hide(front); place(back, lerp(150, 268, t / 1.4), t, true); }
+    else if (t < 2.9) { hide(back); place(front, lerp(268, 150, (t - 1.4) / 1.5), t, true); }
+    else if (t < 4.6) { place(front, 150, t, false); const k = front.querySelector(".kali"); if (!k.dataset.waved) { k.dataset.waved = 1; kaliWave(k); setTimeout(() => kaliCheer(k), 1700); } }
+    else if (t < 6.2) { place(front, lerp(150, -60, (t - 4.6) / 1.6), t, true); }
+    else { hide(front); hide(back); delete front.querySelector(".kali").dataset.waved; if (t > 14) return entrance(); }
+    requestAnimationFrame(frame);
+  })(t0);
+}
+if (!reduce) setTimeout(entrance, 400); else place(front, 150, 0, false);
+
+$("#kaliSect").innerHTML = kali("diplomee");
+$("#kaliSect").addEventListener("click", () => kaliCheer($("#kaliSect .kali")));
+
+// ---- the profile sheet
+let step = 1, genre = null;
+const steps = ["s1", "s2", "s3", "s4", "sHave"];
+const SAY = {
+  1: () => "Salut ! Moi, c'est Kali. Et toi, comment tu t'appelles ?",
+  2: () => `Enchantée, ${esc($("#first").value.trim())} ! Tu es… ?`,
+  3: () => "Une photo pour ton profil ? Tu peux aussi la mettre plus tard.",
+};
+function show(n) {
+  step = n;
+  steps.forEach((s) => { $("#" + s).hidden = true; });
+  $(n === "have" ? "#sHave" : "#s" + n).hidden = false;
+  document.querySelectorAll("#dots i").forEach((d, i) => d.classList.toggle("on", typeof n === "number" && i < n));
+  $("#dots").style.visibility = n === "have" || n === 4 ? "hidden" : "visible";
+  $(".talk").hidden = n === 4;
+  if (SAY[n]) $("#sayText").textContent = SAY[n]();
+  if (n === "have") $("#sayText").textContent = "Tu as déjà travaillé avec moi ? Super !";
+  $("#back").hidden = n === 1 || n === 4 || n === "have";
+  $("#next").textContent = n === 3 ? "Terminer" : n === 4 ? "Découvrir mon accueil" : n === "have" ? "Aller à mon accueil" : "Suivant";
+  if (n === 1) setTimeout(() => $("#first").focus(), 80);
+}
+function open(n) { $("#sheet").hidden = false; $("#sheetKali").innerHTML = kali("bonjour"); setTimeout(() => kaliWave($("#sheetKali .kali")), 300); show(n); }
+$("#start").addEventListener("click", () => open(1));
+$("#start2").addEventListener("click", () => open(1));
+$("#have").addEventListener("click", () => open("have"));
+$("#close").addEventListener("click", () => { $("#sheet").hidden = true; });
+$("#first").value = KL.firstName();
+$("#first").addEventListener("keydown", (e) => { if (e.key === "Enter") $("#next").click(); });
+document.querySelectorAll("[data-g]").forEach((b) => b.addEventListener("click", () => {
+  genre = b.dataset.g; document.querySelectorAll("[data-g]").forEach((x) => x.setAttribute("aria-pressed", String(x === b))); $("#err2").hidden = true;
+  kaliCheer($("#sheetKali .kali"));
+}));
+function avatar() {
+  const p = KL.read("photo", null), ok = p && /^data:image\/(jpeg|png|webp);base64,/.test(p);
+  $("#avatar").innerHTML = ok ? `<img src="${p}" alt="">` : esc($("#first").value.trim().charAt(0).toUpperCase() || "?");
+}
+$("#photoIn").addEventListener("change", (e) => {
+  const f = e.target.files && e.target.files[0]; if (!f) return;
+  const img = new Image(), url = URL.createObjectURL(f);
+  img.onload = () => { const c = document.createElement("canvas"), s = 240, m = Math.min(img.width, img.height); c.width = c.height = s;
+    c.getContext("2d").drawImage(img, (img.width - m) / 2, (img.height - m) / 2, m, m, 0, 0, s, s); KL.write("photo", c.toDataURL("image/jpeg", .82)); URL.revokeObjectURL(url); avatar(); };
+  img.onerror = () => toast("Cette image ne s'ouvre pas. Essaie une autre photo.");
+  img.src = url;
+});
+$("#skipPhoto").addEventListener("click", () => $("#next").click());
+$("#back").addEventListener("click", () => { if (typeof step === "number" && step > 1) show(step - 1); });
+$("#next").addEventListener("click", () => {
+  if (step === "have" || step === 4) { location.href = "./"; return; }
+  if (step === 1) { const v = esc($("#first").value).replace(/\s+/g, " ").trim(); if (!v) { $("#err1").hidden = false; $("#first").focus(); return; } $("#err1").hidden = true; return show(2); }
+  if (step === 2) { if (!genre) { $("#err2").hidden = false; return; } avatar(); return show(3); }
+  if (step === 3) { save(); return show(4); }
+});
+// the profile: also shared with Mia's page, so Mia never asks for the name again
+function save() {
+  const v = esc($("#first").value).replace(/\s+/g, " ").trim().slice(0, 30);
+  const me = KL.read("me", {}); me.first = v; KL.write("me", me);
+  KL.write("genre", genre); KL.write("profile", { created: KL.today() });
+  try { const m = JSON.parse(localStorage.getItem("mia.me") || "null") || {}; m.first = v; localStorage.setItem("mia.me", JSON.stringify(m)); } catch (e) {}
+  $("#doneTitle").textContent = `Bienvenue, ${v} !`;
+  $("#doneKali").innerHTML = kali("fete");
+  setTimeout(() => { kaliCheer($("#doneKali .kali")); const r = $("#doneKali").getBoundingClientRect(); confetti(r.left + r.width / 2, r.top + r.height / 3); }, 250);
+}
+
+// ---- install (the card stays on this page, even after installing)
+let deferred = null;
+window.addEventListener("beforeinstallprompt", (e) => { e.preventDefault(); deferred = e; $("#installBtn").hidden = false; $("#installHow").textContent = "Une icône KalaLab sur ton écran d'accueil. Elle s'ouvre en plein écran et marche aussi sans internet."; });
+$("#installBtn").addEventListener("click", async () => { if (!deferred) return; deferred.prompt(); await deferred.userChoice; deferred = null; $("#installBtn").hidden = true; });
+
+function confetti(x, y) {
+  if (reduce) return;
+  const c = $("#confetti"), ctx = c.getContext("2d"), dpr = devicePixelRatio || 1;
+  c.width = innerWidth * dpr; c.height = innerHeight * dpr; ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+  const cols = ["#c9b8f0", "#ffd27a", "#f5b8cc", "#a9e0c8", "#a9c2f5"];
+  const bits = Array.from({ length: 80 }, () => ({ x, y, vx: (Math.random() - .5) * 12, vy: -Math.random() * 11 - 3, r: Math.random() * 6 + 4, a: Math.random() * 6, c: cols[Math.floor(Math.random() * cols.length)] }));
+  let f = 0;
+  (function stepC() {
+    ctx.clearRect(0, 0, innerWidth, innerHeight);
+    bits.forEach((b) => { b.x += b.vx; b.y += b.vy; b.vy += .35; b.a += .2; ctx.save(); ctx.translate(b.x, b.y); ctx.rotate(b.a); ctx.fillStyle = b.c; ctx.fillRect(-b.r / 2, -b.r / 4, b.r, b.r / 2); ctx.restore(); });
+    if (++f < 100) requestAnimationFrame(stepC); else ctx.clearRect(0, 0, innerWidth, innerHeight);
+  })();
+}
+if ("serviceWorker" in navigator && location.protocol === "https:") navigator.serviceWorker.register("sw.js").catch(() => {});
+</script>
+</body>
+</html>

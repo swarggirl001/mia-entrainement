@@ -14,6 +14,10 @@
 <script>
   // Old links to Mia's page (#sons, #son-3, #transfert=…) now open mia.html.
   if (location.hash.length > 1) location.replace("mia.html" + location.hash);
+  // first visit (no profile, no name, no work yet): the welcome page comes first
+  try { const L = localStorage, has = (k) => L.getItem(k) !== null;
+    if (!has("kalalab.profile") && !has("kalalab.me") && !has("mia.me") && !has("kalalab.days") && !has("anglais-progress-v1")) location.replace("bienvenue.html");
+  } catch (e) {}
   // the theme chosen by hand wins over the phone's setting
   try { const t = localStorage.getItem("kalalab.theme"); if (t === "dark" || t === "light") document.documentElement.dataset.theme = t; } catch (e) {}
 </script>
@@ -23,8 +27,8 @@
 <body>
 <div class="app">
   <header class="top">
-    <svg class="mark" viewBox="0 0 300 300" aria-hidden="true"><rect width="300" height="300" rx="66" fill="#b9a6e0"/><path d="M68 266 v-122 a82 82 0 0 1 164 0 v122z" fill="#fbeee0"/><path d="M84 266 v-120 a66 66 0 0 1 132 0 v120" fill="none" stroke="#b9a6e0" stroke-width="3"/><text x="150" y="186" text-anchor="middle" font-family="Cikutra" font-weight="900" font-size="54" fill="#2e2350">Kala</text><text x="150" y="238" text-anchor="middle" font-family="Cikutra" font-weight="900" font-size="46" fill="#8e7cc3">Lab</text></svg>
-    <div class="brand">Kala<span>Lab</span></div>
+    <a class="logo-link" href="bienvenue.html" aria-label="KalaLab, page de présentation"><svg class="mark" viewBox="0 0 300 300" aria-hidden="true"><rect width="300" height="300" rx="66" fill="#b9a6e0"/><path d="M68 266 v-122 a82 82 0 0 1 164 0 v122z" fill="#fbeee0"/><path d="M84 266 v-120 a66 66 0 0 1 132 0 v120" fill="none" stroke="#b9a6e0" stroke-width="3"/><text x="150" y="186" text-anchor="middle" font-family="Cikutra" font-weight="900" font-size="54" fill="#2e2350">Kala</text><text x="150" y="238" text-anchor="middle" font-family="Cikutra" font-weight="900" font-size="46" fill="#8e7cc3">Lab</text></svg>
+    <div class="brand">Kala<span>Lab</span></div></a>
     <nav class="topnav" aria-label="Menu">
       <a aria-current="page" href="./">Accueil</a><a href="anglais/">Cours</a><button data-soon="Mes mots">Mes mots</button><a href="moi.html">Moi</a>
     </nav>

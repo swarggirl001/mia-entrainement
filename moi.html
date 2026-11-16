@@ -199,6 +199,11 @@
           <div class="field"><span class="lab" id="cornerLab">Le coin de Kali sur l'accueil</span>
             <div class="seg2" role="group" aria-labelledby="cornerLab"><button data-corner="1">Oui</button><button data-corner="0">Non</button></div></div>
         </section>
+        <section class="panel sticker">
+          <h2>Installer KalaLab</h2>
+          <p class="note" id="instNote">Sur Android, ouvre ce site dans Chrome, touche ⋮ puis « Ajouter à l'écran d'accueil ». KalaLab marche aussi sans internet.</p>
+          <button class="small-btn main" id="instBtn" style="justify-self:start" hidden>Installer</button>
+        </section>
       </div>
       <div style="display:grid;gap:16px">
         <section class="panel sticker">
@@ -252,6 +257,12 @@ const fem = () => KL.read("genre", "f") !== "m";
 let tt;
 function toast(msg) { const t = $("#toast"); t.textContent = msg; t.classList.add("show"); clearTimeout(tt); tt = setTimeout(() => t.classList.remove("show"), 2200); }
 document.querySelectorAll("[data-soon]").forEach((b) => b.addEventListener("click", () => toast(`« ${b.dataset.soon} » arrive très bientôt`)));
+
+// ---- install (Réglages): the button appears when the phone offers it
+let deferredInstall = null;
+if (matchMedia("(display-mode: standalone)").matches || navigator.standalone) $("#instNote").textContent = "KalaLab est déjà installé sur ce téléphone.";
+window.addEventListener("beforeinstallprompt", (e) => { e.preventDefault(); deferredInstall = e; $("#instBtn").hidden = false; $("#instNote").textContent = "Une icône KalaLab sur ton écran d'accueil. Elle s'ouvre en plein écran et marche aussi sans internet."; });
+$("#instBtn").addEventListener("click", async () => { if (!deferredInstall) return; deferredInstall.prompt(); await deferredInstall.userChoice; deferredInstall = null; $("#instBtn").hidden = true; });
 
 // ---- theme
 const isDark = () => root.dataset.theme ? root.dataset.theme === "dark" : matchMedia("(prefers-color-scheme: dark)").matches;
@@ -432,7 +443,7 @@ $("#wipe").addEventListener("click", () => { $("#wipeQ").textContent = `Tu es ${
 $("#wipeNo").addEventListener("click", () => { $("#wipeConfirm").hidden = true; $("#wipe").hidden = false; });
 $("#wipeYes").addEventListener("click", () => {
   try { Object.keys(localStorage).filter((x) => /^(kalalab\.|anglais-|mia\.)/.test(x)).forEach((x) => localStorage.removeItem(x)); } catch (e) {}
-  location.reload();
+  location.href = "bienvenue.html";
 });
 
 // Pixelify's 5 looks like an S: digits inside pixel text use the body face
