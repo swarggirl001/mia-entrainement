@@ -190,18 +190,18 @@
           <div class="field"><span class="lab" id="genreLab">Je suis</span>
             <div class="seg2" role="group" aria-labelledby="genreLab"><button data-genre="f">une fille</button><button data-genre="m">un garçon</button></div></div>
           <div class="row-btns"><label class="small-btn main" for="photoIn">Choisir une photo</label><input type="file" id="photoIn" accept="image/*" hidden><button class="small-btn" id="photoDel" hidden>Enlever la photo</button></div>
-          <p class="note">Le prénom et la photo restent sur ce téléphone.</p>
+          <p class="note">Le prénom et la photo restent sur cet appareil.</p>
         </section>
         <section class="panel sticker">
           <h2>Affichage</h2>
           <div class="field"><span class="lab" id="themeLab">Thème</span>
-            <div class="seg2" role="group" aria-labelledby="themeLab"><button data-th="auto">Comme le téléphone</button><button data-th="light">Clair</button><button data-th="dark">Sombre</button></div></div>
+            <div class="seg2" role="group" aria-labelledby="themeLab"><button data-th="auto">Comme l'appareil</button><button data-th="light">Clair</button><button data-th="dark">Sombre</button></div></div>
           <div class="field"><span class="lab" id="cornerLab">Le coin de Kali sur l'accueil</span>
             <div class="seg2" role="group" aria-labelledby="cornerLab"><button data-corner="1">Oui</button><button data-corner="0">Non</button></div></div>
         </section>
         <section class="panel sticker">
           <h2>Installer KalaLab</h2>
-          <p class="note" id="instNote">Sur Android, ouvre ce site dans Chrome, touche ⋮ puis « Ajouter à l'écran d'accueil ». KalaLab marche aussi sans internet.</p>
+          <p class="note" id="instNote"></p>
           <button class="small-btn main" id="instBtn" style="justify-self:start" hidden>Installer</button>
         </section>
       </div>
@@ -213,14 +213,14 @@
             <div id="viewLinkBox" hidden><input id="viewLink" readonly aria-label="Lien pour montrer ta progression"><div class="row-btns" style="margin-top:8px"><button class="small-btn" data-copy="viewLink">Copier</button><button class="small-btn" data-share="viewLink">Partager</button></div></div></div>
         </section>
         <section class="panel sticker">
-          <h2>Continuer sur un autre téléphone</h2>
+          <h2>Continuer sur un autre appareil</h2>
           <p class="note">Ouvre ce lien sur l'autre appareil : il y retrouve ta progression KalaLab et ton jeu de rôle de Mia. La photo ne voyage pas.</p>
           <div class="linkbox"><button class="small-btn main" id="mkTransfer" style="justify-self:start">Créer le lien</button>
             <div id="trLinkBox" hidden><p class="warn">Ce lien contient toute ta progression : envoie-le seulement à toi-même.</p><input id="trLink" readonly aria-label="Lien pour continuer sur un autre appareil"><div class="row-btns" style="margin-top:8px"><button class="small-btn" data-copy="trLink">Copier</button><button class="small-btn" data-share="trLink">Partager</button></div></div></div>
         </section>
         <section class="panel sticker danger">
           <h2>Tout effacer</h2>
-          <p class="note">Efface ton prénom, ta photo, ta série, tes badges et ta progression sur ce téléphone.</p>
+          <p class="note">Efface ton prénom, ta photo, ta série, tes badges et ta progression sur cet appareil.</p>
           <button class="small-btn red" id="wipe" style="justify-self:start">Tout effacer</button>
           <div class="confirm" id="wipeConfirm" hidden><span id="wipeQ"></span>
             <div class="row-btns"><button class="small-btn red" id="wipeYes">Oui, tout effacer</button><button class="small-btn" id="wipeNo">Non</button></div></div>
@@ -228,7 +228,7 @@
       </div>
     </div>
   </div>
-  <p class="foot">Tout ce qui est ici reste sur ce téléphone. KalaLab n'a ni compte ni mot de passe.</p>
+  <p class="foot">Tout ce qui est ici reste sur cet appareil. KalaLab n'a ni compte ni mot de passe.</p>
 </div>
 
 <nav class="nav" aria-label="Menu">
@@ -251,6 +251,7 @@ const $ = (s) => document.querySelector(s);
 const root = document.documentElement;
 document.head.insertAdjacentHTML("beforeend", `<style>${KALI_CSS}</style>`);
 paintIcons();
+$("#instNote").textContent = KL.installHow();
 const esc = (t) => String(t).replace(/[<>&"'`]/g, "");
 const de = (n) => (/^[aeiouyhàâäéèêëîïôöùûüÿæœ]/i.test(n) ? "d'" : "de ") + n;   // « de Marie », « d'Aïcha »
 const fem = () => KL.read("genre", "f") !== "m";
@@ -260,7 +261,7 @@ document.querySelectorAll("[data-soon]").forEach((b) => b.addEventListener("clic
 
 // ---- install (Réglages): the button appears when the phone offers it
 let deferredInstall = null;
-if (matchMedia("(display-mode: standalone)").matches || navigator.standalone) $("#instNote").textContent = "KalaLab est déjà installé sur ce téléphone.";
+if (matchMedia("(display-mode: standalone)").matches || navigator.standalone) $("#instNote").textContent = "KalaLab est déjà installé sur cet appareil.";
 window.addEventListener("beforeinstallprompt", (e) => { e.preventDefault(); deferredInstall = e; $("#instBtn").hidden = false; $("#instNote").textContent = "Une icône KalaLab sur ton écran d'accueil. Elle s'ouvre en plein écran et marche aussi sans internet."; });
 $("#instBtn").addEventListener("click", async () => { if (!deferredInstall) return; deferredInstall.prompt(); await deferredInstall.userChoice; deferredInstall = null; $("#instBtn").hidden = true; });
 
@@ -329,7 +330,7 @@ if (viewM) {
     document.body.dataset.mode = "voir"; $("#viewBox").hidden = false;
     const nm = esc(v.n || "quelqu'un").slice(0, 30);
     $("#viewTitle").textContent = `La progression ${de(nm)}`;
-    $("#viewText").textContent = `Photo de la progression prise le ${new Date(v.d).toLocaleDateString("fr-FR", { day: "numeric", month: "long", year: "numeric" })}. Rien n'est modifié sur ce téléphone.`;
+    $("#viewText").textContent = `Photo de la progression prise le ${new Date(v.d).toLocaleDateString("fr-FR", { day: "numeric", month: "long", year: "numeric" })}. Rien n'est modifié sur cet appareil.`;
     const got = v.g || [];
     draw({ view: 1, n: nm, s: v.s | 0, b: v.b | 0, days: v.dy | 0, t: v.t || {}, xp: v.x | 0, last: null, pc: (L) => (v.l || {})[L.id] || 0,
       badges: KLP.badges({}).map((b) => [...b.slice(0, 5), got.includes(b[0])]) });
@@ -346,7 +347,7 @@ if (!document.body.dataset.mode) {
     if (t && t.v === 1 && t.k && typeof t.k === "object") {
       $("#transferBox").hidden = false;
       let who = ""; try { who = (JSON.parse(t.k["kalalab.me"] || t.k["mia.me"] || "{}") || {}).first || ""; } catch (e) {}
-      $("#transferText").textContent = `Ce lien contient la progression${who ? " " + de(esc(who)) : ""}. La récupérer remplace celle de ce téléphone.`;
+      $("#transferText").textContent = `Ce lien contient la progression${who ? " " + de(esc(who)) : ""}. La récupérer remplace celle de cet appareil.`;
       $("#transferYes").onclick = () => {
         try { Object.entries(t.k).forEach(([k, val]) => { if (/^(kalalab\.(?!photo)|anglais-|mia\.)/.test(k) && typeof val === "string") localStorage.setItem(k, val); }); } catch (e) {}
         history.replaceState(null, "", "moi.html"); location.reload();

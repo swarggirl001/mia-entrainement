@@ -32,6 +32,8 @@ body { overflow-x: hidden; }
 .kc-cloud { animation: kc-drift 14s ease-in-out infinite alternate; } .kc-cloud.two { animation-duration: 19s; animation-delay: -6s; }
 .kc-flower { transform-box: fill-box; transform-origin: 50% 100%; animation: kc-sway 3.2s ease-in-out infinite; }
 .kc-stars circle { animation: kc-twinkle 2.6s ease-in-out infinite; }
+.hello { transform-box: fill-box; transform-origin: 20% 100%; scale: 0; transition: scale .35s cubic-bezier(.34,1.56,.64,1), opacity .2s; }
+.hello.on { scale: 1; opacity: 1; }
 
 .intro { display: grid; gap: 14px; justify-items: center; text-align: center; position: relative; z-index: 3; }
 .intro h1 { margin: 0; font-family: var(--display); font-weight: 900; font-size: clamp(30px, 8vw, 48px); line-height: 1.05; text-wrap: balance; max-width: 18ch; }
@@ -82,6 +84,9 @@ body { overflow-x: hidden; }
 .reveal { opacity: 0; translate: 0 26px; transition: opacity .6s ease, translate .6s cubic-bezier(.34,1.56,.64,1); transition-delay: var(--d, 0s); }
 .reveal.in { opacity: 1; translate: 0 0; }
 @media (prefers-reduced-motion: reduce) { .reveal { opacity: 1; translate: none; } .ribbon div { animation: none; } }
+.why .sub { margin: 6px 0 0; font-family: var(--title); font-weight: 400; font-size: 18px; }
+.why .todo { background: var(--chip); border-radius: 6px; padding: 0 5px; color: var(--muted); font-style: italic; }
+.kali-sect .kali-says { font-family: var(--body); font-size: 15px; line-height: 1.5; color: var(--fg); }
 .why h2 { margin: 0; font-family: var(--title); font-weight: 400; font-size: 24px; }
 .why .hi { font-family: var(--display); font-weight: 900; font-size: 26px; color: var(--accent); margin: 0; }
 .soon-list { display: flex; flex-wrap: wrap; gap: 8px; }
@@ -103,7 +108,12 @@ body { overflow-x: hidden; }
 .sheet-card { background: var(--card); border: var(--bw) solid #141414; border-radius: 28px; box-shadow: 6px 6px 0 #141414; width: min(420px, 100%); padding: 18px; display: grid; gap: 14px;
   animation: reward-in .5s cubic-bezier(.34,1.56,.64,1); max-height: calc(100vh - 32px); overflow-y: auto; }
 .sheet-top { display: flex; justify-content: space-between; align-items: center; }
-.dots3 { display: flex; gap: 6px; } .dots3 i { width: 26px; height: 7px; border-radius: 99px; background: var(--track); } .dots3 i.on { background: var(--accent); }
+.dots3 { display: flex; gap: 6px; } .skins { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; }
+.skins button { display: grid; justify-items: center; gap: 2px; padding: 6px 2px 8px; border-radius: 16px; border: var(--bw) solid var(--line); background: var(--bg); color: var(--fg); cursor: pointer; font-family: var(--pixel); font-weight: 600; font-size: 12.5px; }
+.skins button .k { width: 62px; height: 62px; }
+.skins button[aria-pressed="true"] { border-color: #141414; background: var(--lilac); color: #141414; box-shadow: 3px 3px 0 var(--shadow); }
+.hint { margin: 0; font-family: var(--pixel); font-size: 13px; color: var(--muted); text-align: center; }
+.dots3 i { width: 26px; height: 7px; border-radius: 99px; background: var(--track); } .dots3 i.on { background: var(--accent); }
 .x { border: 0; background: none; font-family: var(--pixel); font-size: 14px; color: var(--muted); cursor: pointer; }
 .talk { display: grid; grid-template-columns: 96px 1fr; gap: 10px; align-items: center; }
 .talk .k { width: 96px; height: 96px; }
@@ -170,26 +180,30 @@ body { overflow-x: hidden; }
 
   <section class="kali-sect sticker reveal">
     <span class="k" id="kaliSect"></span>
-    <div><b>Kali t'accompagne</b><p>Ta série de jours, tes objectifs, tes badges. À chaque niveau, une nouvelle tenue pour Kali. Touche-la, elle saute de joie.</p></div>
+    <div><b>Kali t'accompagne</b>
+      <p class="kali-says">« Salut, moi c'est Kali ! Ma créatrice m'a dessinée pour t'accompagner tout au long de ton apprentissage. Mon nom vient de Kala<b>Lab</b> : Kala… Kali ! Je suis là pour ta série de jours, tes objectifs et tes badges. À chaque niveau, je reçois une nouvelle tenue. Touche-moi, je saute de joie ! »</p></div>
   </section>
 
   <section class="why sticker reveal">
     <h2>Pourquoi KalaLab ?</h2>
     <p>KalaLab est un site <b>ivoirien</b> pour apprendre l'anglais autrement : avec des couleurs, des animations, des jeux, et Kali pour t'encourager.</p>
-    <p>Il existe encore peu de sites ivoiriens pour apprendre l'anglais, et ils sont rarement amusants. KalaLab veut apporter de la nouveauté et de la fraîcheur, et donner envie aux élèves de toutes les classes de progresser, un peu chaque jour.</p>
+    <p>Il existe encore peu de sites ivoiriens pour apprendre l'anglais, et ils sont rarement amusants. KalaLab veut apporter de la nouveauté et de la fraîcheur, et donner envie aux élèves et aux étudiants de progresser, un peu chaque jour.</p>
     <p>Tu es en Côte d'Ivoire, ailleurs en Afrique, en Europe ou à l'autre bout du monde ? Tu apprends l'anglais ? Alors KalaLab est fait pour toi.</p>
     <p class="hi">Akwaba, tout le monde est le bienvenu !</p>
-    <p>Aujourd'hui, c'est l'anglais. Demain, d'autres langues et d'autres matières.</p>
-    <div class="soon-list" aria-label="Bientôt sur KalaLab"><span>Bientôt : l'anglais depuis le niveau débutant</span><span>La traduction en français</span><span>D'autres langues pour apprendre l'anglais</span></div>
+    <h3 class="sub">D'où vient le nom ?</h3>
+    <p><b>Kala</b> <span class="todo">vient de « kalan », qui veut dire apprendre en dioula : à me confirmer</span>. <b>Lab</b>, comme laboratoire : un endroit où l'on essaie, où l'on se trompe, et où l'on apprend.</p>
+    <h3 class="sub">Et demain ?</h3>
+    <p>Aujourd'hui, c'est l'anglais. Demain, peut-être :</p>
+    <div class="soon-list" aria-label="Idées pour la suite"><span>l'espagnol</span><span>l'allemand</span><span>les mathématiques</span><span>la philosophie</span><span>l'informatique</span></div>
   </section>
 
   <section class="maker sticker reveal">
-    <span class="draft">Brouillon : à compléter avec toi</span>
-    <div class="who"><span class="ph">?</span><div><h2>La créatrice de KalaLab</h2><p class="role"><span class="todo">ton prénom, ce que tu fais</span></p></div></div>
-    <p>Je m'appelle <span class="todo">prénom</span>. <span class="todo">Ton parcours en deux ou trois phrases.</span></p>
-    <p>Au départ, je voulais aider mes petites sœurs à apprendre l'anglais. L'une d'elles m'a confié son cahier de Terminale : les leçons de KalaLab viennent de là.</p>
-    <p>Le jeu de rôle de Mia est né pour ma tante, élève infirmière en France, pour qu'elle prononce bien l'anglais le jour de son examen.</p>
-    <p>Puis je me suis dit : pourquoi ne pas ouvrir tout ça à tout le monde ? <span class="todo">à reformuler avec tes mots si tu veux</span></p>
+    <span class="draft">Brouillon : à relire avec toi</span>
+    <div class="who"><span class="ph">J</span><div><h2>La créatrice de KalaLab</h2><p class="role">Joyce, étudiante en Master 2, Côte d'Ivoire</p></div></div>
+    <p>Je m'appelle <b>Joyce</b> <span class="todo">nom complet à écrire par toi</span>. Je suis en Master 2 d'études du développement, spécialité suivi-évaluation des projets et programmes de développement, et je prépare la soutenance de mon mémoire. Je suis aussi stagiaire à l'Observatoire ivoirien des politiques publiques (OIPP), <span class="todo">en suivi-évaluation et en communication : à confirmer</span>.</p>
+    <p>L'anglais n'a jamais été facile pour moi, déjà au lycée. Aujourd'hui, je me débrouille : mon niveau est entre B1 et B2. Et je continue d'apprendre, moi aussi, avec KalaLab.</p>
+    <p>Mon projet : partir en Irlande. D'abord un cours d'anglais au Cork English College, puis un programme en intelligence artificielle et cloud computing à la Technological University of the Shannon (TUS). L'anglais est au cœur de mon parcours : KalaLab, c'est pour m'aider moi, et pour aider les autres.</p>
+    <p>Tout a commencé avec Mia. Ma tante, élève infirmière en France, m'a confié le texte de son oral d'anglais, et j'ai créé Mia pour l'aider à bien le prononcer. Puis mes petites sœurs m'ont confié leurs cahiers d'anglais. Alors je me suis dit : pourquoi ne pas aller plus loin ? Créer KalaLab, qui réunit Mia et d'autres idées pour apprendre, et mettre toute cette créativité à la portée du plus grand nombre.</p>
     <p class="claude">J'ai construit KalaLab avec l'aide de Claude, une intelligence artificielle. C'est la preuve que, si on en a vraiment envie, chacun peut créer un site pour aider le plus grand nombre. L'intelligence artificielle peut servir à faire du bien autour de soi.</p>
   </section>
 
@@ -197,23 +211,23 @@ body { overflow-x: hidden; }
     <div class="promises">
       <div class="prom"><i data-ic="star"></i><b>Gratuit</b><span>Pour tout le monde</span></div>
       <div class="prom"><i data-ic="check"></i><b>Sans pub</b><span>Rien ne te dérange</span></div>
-      <div class="prom"><i data-ic="lock"></i><b>Sans compte</b><span>Tout reste sur ton téléphone</span></div>
+      <div class="prom"><i data-ic="lock"></i><b>Sans compte</b><span>Tout reste sur ton appareil</span></div>
     </div>
   </section>
 
   <div class="install-card reveal">
-    <div class="row2"><b>Installe KalaLab sur ton téléphone</b><button class="go" id="installBtn" hidden>Installer <span class="arr">→</span></button></div>
-    <p id="installHow">Sur Android, ouvre ce site dans Chrome, touche ⋮ puis « Ajouter à l'écran d'accueil ». KalaLab marche aussi sans internet.</p>
+    <div class="row2"><b>Installe KalaLab sur ton appareil</b><button class="go" id="installBtn" hidden>Installer <span class="arr">→</span></button></div>
+    <p id="installHow"></p>
   </div>
 
   <div class="cta" style="justify-self:center"><button class="btn-big" id="start2">Créer mon profil</button></div>
-  <p class="foot">KalaLab n'a ni compte ni mot de passe : ton prénom et ta progression restent sur ce téléphone.</p>
+  <p class="foot">KalaLab n'a ni compte ni mot de passe : ton prénom et ta progression restent sur cet appareil.</p>
 </div>
 
 <!-- create the profile: 3 short steps, then welcome -->
 <div class="sheet" id="sheet" hidden>
   <div class="sheet-card" role="dialog" aria-modal="true" aria-labelledby="sayText">
-    <div class="sheet-top"><div class="dots3" id="dots"><i></i><i></i><i></i></div><button class="x" id="close">Fermer</button></div>
+    <div class="sheet-top"><div class="dots3" id="dots"><i></i><i></i><i></i><i></i></div><button class="x" id="close">Fermer</button></div>
     <div class="talk"><span class="k" id="sheetKali"></span><p class="say" id="sayText">Salut ! Moi, c'est Kali. Et toi, comment tu t'appelles ?</p></div>
 
     <div class="step" id="s1">
@@ -223,6 +237,10 @@ body { overflow-x: hidden; }
     <div class="step" id="s2" hidden>
       <div class="choice2" role="group" aria-label="Tu es"><button data-g="f" aria-pressed="false">Une fille</button><button data-g="m" aria-pressed="false">Un garçon</button></div>
       <p class="err" id="err2" hidden>Choisis une réponse pour continuer.</p>
+    </div>
+    <div class="step" id="sColor" hidden>
+      <div class="skins" id="skins" role="group" aria-label="La couleur de Kali"></div>
+      <p class="hint">D'autres couleurs se débloquent quand tu avances.</p>
     </div>
     <div class="step" id="s3" hidden>
       <div class="photo-pick"><div class="avatar" id="avatar"></div>
@@ -234,9 +252,9 @@ body { overflow-x: hidden; }
       <p>Ton profil est prêt. Ta première leçon t'attend.</p>
     </div>
     <div class="step help" id="sHave" hidden>
-      <p>Ta progression est sur un autre téléphone ? Récupère-la en 3 gestes :</p>
-      <ol><li>Sur l'ancien téléphone, ouvre KalaLab, puis <b>Moi › Réglages</b>.</li><li>Touche <b>« Continuer sur un autre téléphone »</b>, puis <b>Créer le lien</b>.</li><li>Envoie-toi ce lien et ouvre-le ici : tout revient.</li></ol>
-      <p>Si c'est déjà ce téléphone, va simplement sur ton accueil.</p>
+      <p>Ta progression est sur un autre appareil ? Récupère-la en 3 gestes :</p>
+      <ol><li>Sur l'ancien appareil, ouvre KalaLab, puis <b>Moi › Réglages</b>.</li><li>Touche <b>« Continuer sur un autre appareil »</b>, puis <b>Créer le lien</b>.</li><li>Envoie-toi ce lien et ouvre-le ici : tout revient.</li></ol>
+      <p>Si c'est déjà cet appareil, va simplement sur ton accueil.</p>
     </div>
 
     <div class="nav2" id="nav2"><button class="btn-big ghost" id="back">Retour</button><button class="btn-big" id="next">Suivant</button></div>
@@ -255,6 +273,7 @@ const root = document.documentElement;
 const reduce = matchMedia("(prefers-reduced-motion: reduce)").matches;
 document.head.insertAdjacentHTML("beforeend", `<style>${KALI_CSS}</style>`);
 paintIcons();
+$("#installHow").textContent = KL.installHow();
 const esc = (t) => String(t).replace(/[<>&"'`]/g, "");
 let tt;
 function toast(msg) { const t = $("#toast"); t.textContent = msg; t.classList.add("show"); clearTimeout(tt); tt = setTimeout(() => t.classList.remove("show"), 2200); }
@@ -279,14 +298,24 @@ let G = null;
 function drawScene() {
   const sc = $("#scene"), W = Math.round(sc.clientWidth), H = Math.round(sc.clientHeight), wide = W >= 700;
   const aw = wide ? 200 : 118, ah = Math.round(aw * 1.3), K = wide ? 180 : 116, f = Math.round(aw * .11);   // arch (inside), its lilac frame, Kali's box
-  const ax = Math.round(wide ? W * .5 : W * .36);                                             // the arch's centre
-  const base = H - (wide ? 140 : 104);
-  const ground = (x) => base + (wide ? 18 : 12) * Math.sin((x / W) * Math.PI * 2.2 + .5);                 // top of the front hill
-  const back = (x) => base - (wide ? 70 : 44) + (wide ? 26 : 16) * Math.sin((x / W) * Math.PI * 1.6 + 2.2);             // top of the back hill
-  const line = (f) => { let d = `M-10 ${f(-10).toFixed(1)}`; for (let x = 0; x <= W + 10; x += 8) d += ` L${x} ${f(x).toFixed(1)}`; return d + ` L${W + 10} ${H + 10} L-10 ${H + 10} Z`; };
-  const gy = ground(ax), ay = gy - ah, r = aw / 2, i = Math.round(aw * .08), R = r + f, st = Math.max(8, Math.round(aw * .06));
+  const ax = Math.round(W * .5), R = aw / 2 + f;                                              // the arch's centre, its outer half-width
+  const base = H - (wide ? 140 : 104), flat = R + K * .9;                                     // the ground is flat around the arch
+  const wave = (x) => base + (wide ? 18 : 12) * Math.sin(((x - ax) / W) * Math.PI * 2.2);
+  const ease = (k) => k * k * (3 - 2 * k);
+  const ground = (x) => { const d = Math.abs(x - ax); if (d <= flat) return base; const k = ease(Math.min(1, (d - flat) / (W * .18))); return base + (wave(x) - base) * k; };
+  const back = (x) => base - (wide ? 70 : 46) + (wide ? 22 : 14) * Math.sin((x / W) * Math.PI * 1.6 + 2.2);   // the hill behind
+  const line = (fn) => { let d = `M-10 ${fn(-10).toFixed(1)}`; for (let x = 0; x <= W + 10; x += 6) d += ` L${x} ${fn(x).toFixed(1)}`; return d + ` L${W + 10} ${H + 10} L-10 ${H + 10} Z`; };
+  const gy = base, ay = gy - ah, r = aw / 2, i = Math.round(aw * .08), st = Math.max(9, Math.round(aw * .07));
   const sx = W - (wide ? 90 : 50);
-  const fl = wide ? [[.04, "var(--petal)"], [.1, "#c9b8f0"], [.2, "#ffd27a"], [.3, "var(--petal)"], [.68, "#c9b8f0"], [.78, "#ffd27a"], [.88, "var(--petal)"], [.96, "#c9b8f0"]] : [[.06, "var(--petal)"], [.16, "#c9b8f0"], [.66, "#ffd27a"], [.86, "var(--petal)"], [.95, "#c9b8f0"]];
+  const petals = ["var(--petal)", "#c9b8f0", "#ffd27a", "#f5b8cc", "#a9c2f5"];
+  // far flowers and grass on the hill behind (smaller, as they are further away)
+  const far = Array.from({ length: wide ? 16 : 8 }, (_, n) => { const x = Math.round(((n + .5) / (wide ? 16 : 8)) * W + (n % 2 ? 9 : -7)); return [x, back(x) + 10 + (n % 3) * 6]; })
+    .filter(([x]) => Math.abs(x - ax) > R + 6)
+    .map(([x, y], n) => n % 2 ? `<g transform="translate(${x} ${y}) scale(.6)" style="transform-box:view-box">${flower(0, 0, petals[n % 5])}</g>` : `<g transform="translate(${x} ${y}) scale(.7)" style="transform-box:view-box">${tuft(0, 0)}</g>`).join("");
+  // near flowers and grass on the front hill
+  const nearX = wide ? [.04, .1, .17, .25, .33, .67, .75, .83, .9, .96] : [.05, .14, .24, .8, .9, .97];
+  const near = nearX.map((k, n) => { const x = Math.round(k * W); return flower(x, Math.round(ground(x) + 18 + (n % 3) * 9), petals[n % 5]); }).join("")
+    + [.08, .2, .3, .44, .58, .7, .86].map((k, n) => { const x = Math.round(k * W); return tuft(x, Math.round(ground(x) + 26 + (n % 2) * 18)); }).join("");
   const svg = $("#sky"); svg.setAttribute("viewBox", `0 0 ${W} ${H}`);
   svg.innerHTML = `
   <defs><linearGradient id="lsky" x1="0" y1="0" x2="0" y2="1"><stop offset="0" class="kc-s1"/><stop offset="1" class="kc-s2"/></linearGradient>
@@ -295,61 +324,69 @@ function drawScene() {
   <g class="kc-sun"><circle cx="${sx}" cy="62" r="46" fill="url(#lglow)"/><g class="rays"><path d="M${sx} 34 v-10 M${sx} 90 v10 M${sx - 28} 62 h-10 M${sx + 28} 62 h10 M${sx - 20} 42 l-7 -7 M${sx + 20} 82 l7 7 M${sx + 20} 42 l7 -7 M${sx - 20} 82 l-7 7" stroke="#141414" stroke-width="3" stroke-linecap="round"/></g><circle cx="${sx}" cy="62" r="18" fill="#ffd27a" stroke="#141414" stroke-width="3"/></g>
   <g class="kc-moon"><path d="M${sx + 4} 40 a22 22 0 1 0 16 34 a17 17 0 0 1 -16 -34 z" fill="#ffd27a" stroke="#141414" stroke-width="3" stroke-linejoin="round"/></g>
   <g class="kc-stars" fill="#fbeee0">${[[.08, 40], [.2, 110], [.32, 26], [.55, 60], [.7, 130], [.82, 150], [.45, 120]].map(([x, y], n) => `<circle cx="${Math.round(x * W)}" cy="${y}" r="${n % 2 ? 2 : 2.4}"/>`).join("")}</g>
-  ${cloud(Math.round(W * .05), 64, "")}${cloud(Math.round(W * .62), wide ? 90 : 120, "two")}${wide ? cloud(Math.round(W * .3), 150, "") : ""}
+  ${cloud(Math.round(W * .05), 64, "")}${cloud(Math.round(W * .64), wide ? 96 : 118, "two")}${wide ? cloud(Math.round(W * .28), 140, "") : ""}
   <path class="kc-h2" d="${line(back)}" stroke="#141414" stroke-width="3" stroke-linejoin="round"/>
+  ${far}
   <path class="kc-h1" d="${line(ground)}" stroke="#141414" stroke-width="3" stroke-linejoin="round"/>
-  <ellipse cx="${ax}" cy="${gy + 4}" rx="${R + 26}" ry="8" fill="#141414" opacity=".12"/>
+  <ellipse cx="${ax}" cy="${gy + 6}" rx="${R + 30}" ry="8" fill="#141414" opacity=".12"/>
   <g id="kBack"></g>
   <g class="arch">
-    <path d="M${ax - R} ${gy} V${ay + r} A${R} ${R} 0 0 1 ${ax + R} ${ay + r} V${gy} Z" fill="#b9a6e0" stroke="#141414" stroke-width="4" stroke-linejoin="round"/>
-    <path d="M${ax - r} ${gy} V${ay + r} A${r} ${r} 0 0 1 ${ax + r} ${ay + r} V${gy} Z" fill="#fbeee0" stroke="#141414" stroke-width="3" stroke-linejoin="round"/>
-    <path d="M${ax - r + i} ${gy} V${ay + r} A${r - i} ${r - i} 0 0 1 ${ax + r - i} ${ay + r} V${gy}" fill="none" stroke="#b9a6e0" stroke-width="3"/>
+    <path d="M${ax - R} ${gy + 2} V${ay + r} A${R} ${R} 0 0 1 ${ax + R} ${ay + r} V${gy + 2} Z" fill="#b9a6e0" stroke="#141414" stroke-width="4" stroke-linejoin="round"/>
+    <path d="M${ax - r} ${gy + 2} V${ay + r} A${r} ${r} 0 0 1 ${ax + r} ${ay + r} V${gy + 2} Z" fill="#fbeee0" stroke="#141414" stroke-width="3" stroke-linejoin="round"/>
+    <path d="M${ax - r + i} ${gy + 2} V${ay + r} A${r - i} ${r - i} 0 0 1 ${ax + r - i} ${ay + r} V${gy + 2}" fill="none" stroke="#b9a6e0" stroke-width="3"/>
     <text x="${ax}" y="${ay + ah * .56}" text-anchor="middle" font-family="Cikutra" font-weight="900" font-size="${Math.round(aw * .3)}" fill="#2e2350">Kala</text>
     <text x="${ax}" y="${ay + ah * .8}" text-anchor="middle" font-family="Cikutra" font-weight="900" font-size="${Math.round(aw * .26)}" fill="#8e7cc3">Lab</text>
-    <rect x="${ax - R - 12}" y="${gy - 2}" width="${2 * R + 24}" height="${st}" rx="${st / 2}" fill="#e7d9c4" stroke="#141414" stroke-width="3"/>
-    <path d="M${ax - R + 3} ${gy - 6} C${ax - R - 10} ${gy - ah * .3} ${ax - R + 10} ${gy - ah * .5} ${ax - R - 4} ${gy - ah * .78}" fill="none" stroke="#3f8f5f" stroke-width="3" stroke-linecap="round"/>
+    <rect x="${ax - R - 14}" y="${gy - 4}" width="${2 * R + 28}" height="${st}" rx="${st / 2}" fill="#e7d9c4" stroke="#141414" stroke-width="3"/>
+    <path d="M${ax - R + 3} ${gy - 8} C${ax - R - 10} ${gy - ah * .3} ${ax - R + 10} ${gy - ah * .5} ${ax - R - 4} ${gy - ah * .78}" fill="none" stroke="#3f8f5f" stroke-width="3" stroke-linecap="round"/>
     ${[[.2, -6, "var(--petal)"], [.45, 6, "#ffd27a"], [.68, -5, "#f5b8cc"]].map(([k, dx, c]) => `<g transform="translate(${ax - R + dx} ${gy - ah * k})">${[0, 72, 144, 216, 288].map((a) => `<circle cx="${(4 * Math.cos(a * Math.PI / 180)).toFixed(1)}" cy="${(4 * Math.sin(a * Math.PI / 180)).toFixed(1)}" r="3.4" fill="${c}" stroke="#141414" stroke-width="1.5"/>`).join("")}<circle r="2.4" fill="#fff" stroke="#141414" stroke-width="1.5"/></g>`).join("")}
   </g>
-  ${tuft(ax - R - 30, gy + 6)}${tuft(ax + R + 18, gy + 7)}
-  ${fl.map(([x, c]) => flower(Math.round(x * W), Math.round(ground(x * W) + 22), c)).join("")}
-  ${tuft(Math.round(W * .3), Math.round(ground(W * .3) + 30))}${tuft(Math.round(W * .76), Math.round(ground(W * .76) + 26))}
-  <g id="kFront"></g>`;
+  ${tuft(ax - R - 26, gy + st - 2)}${tuft(ax - R + 2, gy + st - 1)}${tuft(ax + R - 10, gy + st - 1)}${tuft(ax + R + 16, gy + st - 2)}
+  ${near}
+  <g id="kFront"></g>
+  <g id="hello" class="hello" opacity="0"><path d="M0 0 h${wide ? 96 : 76} a14 14 0 0 1 14 14 v${wide ? 18 : 14} a14 14 0 0 1 -14 14 h-${wide ? 70 : 56} l-14 12 l2 -12 h-${wide ? 12 : 6} a14 14 0 0 1 -14 -14 v-${wide ? 18 : 14} a14 14 0 0 1 14 -14z" fill="#fff" stroke="#141414" stroke-width="3" stroke-linejoin="round"/>
+    <text x="${wide ? 48 : 38}" y="${wide ? 31 : 27}" text-anchor="middle" font-family="Bagel Fat One, sans-serif" font-size="${wide ? 24 : 19}" fill="#2e2350">Hello!</text></g>`;
   const mk = (id) => { $(id).innerHTML = `<g class="walker" transform="translate(-999 0)"><svg class="kali o-bonjour" x="0" y="0" width="${K}" height="${K}" viewBox="-14 -18 228 230">${inner("bonjour")}</svg></g>`; return $(id + " .walker"); };
-  G = { W, H, K, ax, r: R, ground, stop: Math.min(ax + R + K * .7, W - K * .55), back: mk("#kBack"), front: mk("#kFront") };
+  G = { W, H, K, ax, R, ground, wide, out: ax - R - K * .46, back: mk("#kBack"), front: mk("#kFront") };
 }
 const inner = (o) => kali(o).replace(/^<svg[^>]*>|<\/svg>$/g, "");
-// Kali's feet sit on the hill; she is behind the arch while she overlaps it
-function put(x, t, walking) {
-  const { K, ax, r, ground, back, front } = G, hop = walking ? -Math.abs(Math.sin(t * 9)) * 5 : 0, tilt = walking ? Math.sin(t * 9) * 4 : 0;
-  const behind = Math.abs(x - ax) < r + K * .3, show = behind ? back : front, hide = behind ? front : back;
+// Kali's feet sit on the ground; "behind" = she is hidden by the arch
+function put(x, t, walking, behind) {
+  const { K, ground, back, front } = G, hop = walking ? -Math.abs(Math.sin(t * 9)) * 5 : 0, tilt = walking ? Math.sin(t * 9) * 4 : 0;
+  const show = behind ? back : front, hide = behind ? front : back;
   hide.setAttribute("transform", "translate(-999 0)");
   show.setAttribute("transform", `translate(${(x - K / 2).toFixed(1)} ${(ground(x) + 3 - K * .887 + hop).toFixed(1)}) rotate(${tilt.toFixed(1)} ${K / 2} ${K})`);
   return show.querySelector(".kali");
 }
-const away = () => { G.back.setAttribute("transform", "translate(-999 0)"); G.front.setAttribute("transform", "translate(-999 0)"); };
+const away = () => { G.back.setAttribute("transform", "translate(-999 0)"); G.front.setAttribute("transform", "translate(-999 0)"); hello(false); };
+function hello(on) {
+  const b = $("#hello"); if (!b) return;
+  if (on) { const { ax, K, base = G.ground(G.ax) } = G; b.setAttribute("transform", `translate(${Math.round(ax + K * .22)} ${Math.round(base - K * 1.02 - (G.wide ? 46 : 40))})`); }
+  b.classList.toggle("on", on);
+}
 let run = 0, visible = true;
+// the story: she comes out from behind the arch on the left, walks to the front of the arch,
+// says hello, then walks away to the right. A pause, and again.
 function story() {
   const id = ++run, t0 = performance.now(), lerp = (a, b, k) => a + (b - a) * Math.min(1, Math.max(0, k));
   let waved = false;
   (function frame(now) {
     if (id !== run) return;
     if (!visible) { run++; return; }
-    const t = (now - t0) / 1000, { W, K, ax, stop } = G;
-    if (t < 2) put(lerp(ax, stop, t / 2), t, true);                                // comes out of the arch
-    else if (t < 5.2) { const k = put(stop, t, false); if (!waved) { waved = true; kaliWave(k); setTimeout(() => kaliCheer(k), 1700); } }   // hello!
-    else if (t < 7) put(lerp(stop, W + K, (t - 5.2) / 1.8), t, true);              // walks away
-    else if (t < 10) away();
-    else if (t < 13) put(lerp(-K, ax, (t - 10) / 3), t, true);                     // comes back home, behind the arch
-    else { away(); if (t > 16) return story(); }
+    const t = (now - t0) / 1000, { W, K, ax, out } = G;
+    if (t < 1.4) put(lerp(ax, out, t / 1.4), t, true, true);                           // out of the arch, on the left
+    else if (t < 2.8) put(lerp(out, ax, (t - 1.4) / 1.4), t, true, false);            // to the front of the arch
+    else if (t < 6.2) { const k = put(ax, t, false, false); if (!waved) { waved = true; kaliWave(k); hello(true); setTimeout(() => kaliCheer(k), 1800); setTimeout(() => hello(false), 2900); } }
+    else if (t < 8.4) put(lerp(ax, W + K, (t - 6.2) / 2.2), t, true, false);          // away to the right
+    else { away(); if (t > 12) return story(); }
     requestAnimationFrame(frame);
   })(t0);
 }
 drawScene();
-if (reduce) put(G.stop, 0, false);
+if (reduce) put(G.ax, 0, false, false);
 else {
   new IntersectionObserver(([e]) => { visible = e.isIntersecting; if (visible) { away(); setTimeout(story, 300); } }).observe($("#scene"));
 }
-let scT; addEventListener("resize", () => { clearTimeout(scT); scT = setTimeout(() => { drawScene(); if (reduce) put(G.stop, 0, false); }, 150); });
+let scT; addEventListener("resize", () => { clearTimeout(scT); scT = setTimeout(() => { drawScene(); if (reduce) put(G.ax, 0, false, false); }, 150); });
 
 $("#kaliSect").innerHTML = kali("diplomee");
 $("#kaliSect").addEventListener("click", () => kaliCheer($("#kaliSect .kali")));
@@ -358,28 +395,37 @@ $("#kaliSect").addEventListener("click", () => kaliCheer($("#kaliSect .kali")));
 const io = new IntersectionObserver((es) => es.forEach((e) => { if (e.isIntersecting) { e.target.classList.add("in"); io.unobserve(e.target); } }), { threshold: .15 });
 document.querySelectorAll(".reveal").forEach((el) => io.observe(el));
 
-// ---- the profile sheet
-let step = 1, genre = null;
-const steps = ["s1", "s2", "s3", "s4", "sHave"];
+// ---- the profile sheet: 1 first name, 2 girl or boy, 3 Kali's colour, 4 photo, 5 welcome
+let step = 1, genre = null, skin = "lilas";
+const IDS = { 1: "s1", 2: "s2", 3: "sColor", 4: "s3", 5: "s4", have: "sHave" };
 const SAY = {
   1: () => "Salut ! Moi, c'est Kali. Et toi, comment tu t'appelles ?",
   2: () => `Enchantée, ${esc($("#first").value.trim())} ! Tu es… ?`,
-  3: () => "Une photo pour ton profil ? Tu peux aussi la mettre plus tard.",
+  3: () => "Et moi, de quelle couleur tu me vois ?",
+  4: () => "Une photo pour ton profil ? Tu peux aussi la mettre plus tard.",
+  have: () => "Tu as déjà travaillé avec moi ? Super !",
 };
+// Kali in the sheet follows the choices: cap for a boy, bow for a girl, and the colour picked
+const sheetKali = () => { $("#sheetKali").innerHTML = kali("bonjour", "Kali", skin, [], genre === "m"); };
 function show(n) {
   step = n;
-  steps.forEach((s) => { $("#" + s).hidden = true; });
-  $(n === "have" ? "#sHave" : "#s" + n).hidden = false;
+  Object.values(IDS).forEach((s) => { $("#" + s).hidden = true; });
+  $("#" + IDS[n]).hidden = false;
   document.querySelectorAll("#dots i").forEach((d, i) => d.classList.toggle("on", typeof n === "number" && i < n));
-  $("#dots").style.visibility = n === "have" || n === 4 ? "hidden" : "visible";
-  $(".talk").hidden = n === 4;
+  $("#dots").style.visibility = n === "have" || n === 5 ? "hidden" : "visible";
+  $(".talk").hidden = n === 5;
   if (SAY[n]) $("#sayText").textContent = SAY[n]();
-  if (n === "have") $("#sayText").textContent = "Tu as déjà travaillé avec moi ? Super !";
-  $("#back").hidden = n === 1 || n === 4 || n === "have";
-  $("#next").textContent = n === 3 ? "Terminer" : n === 4 ? "Découvrir mon accueil" : n === "have" ? "Aller à mon accueil" : "Suivant";
+  $("#back").hidden = n === 1 || n === 5 || n === "have";
+  $("#next").textContent = n === 4 ? "Terminer" : n === 5 ? "Découvrir mon accueil" : n === "have" ? "Aller à mon accueil" : "Suivant";
   if (n === 1) setTimeout(() => $("#first").focus(), 80);
+  if (n === 3) paintSkins();
 }
-function open(n) { $("#sheet").hidden = false; $("#sheetKali").innerHTML = kali("bonjour"); setTimeout(() => kaliWave($("#sheetKali .kali")), 300); show(n); }
+function paintSkins() {
+  $("#skins").innerHTML = Object.entries(KALI_SKINS).filter(([, s]) => s.lv === 1).map(([k, s]) =>
+    `<button data-skin="${k}" aria-pressed="${k === skin}"><span class="k">${kali("bonjour", "Kali " + s.name, k, [], genre === "m")}</span>${s.name}</button>`).join("");
+}
+$("#skins").addEventListener("click", (e) => { const b = e.target.closest("[data-skin]"); if (!b) return; skin = b.dataset.skin; paintSkins(); sheetKali(); kaliCheer($("#sheetKali .kali")); });
+function open(n) { $("#sheet").hidden = false; sheetKali(); setTimeout(() => kaliWave($("#sheetKali .kali")), 300); show(n); }
 $("#start").addEventListener("click", () => open(1));
 $("#start2").addEventListener("click", () => open(1));
 $("#have").addEventListener("click", () => open("have"));
@@ -388,7 +434,7 @@ $("#first").value = KL.firstName();
 $("#first").addEventListener("keydown", (e) => { if (e.key === "Enter") $("#next").click(); });
 document.querySelectorAll("[data-g]").forEach((b) => b.addEventListener("click", () => {
   genre = b.dataset.g; document.querySelectorAll("[data-g]").forEach((x) => x.setAttribute("aria-pressed", String(x === b))); $("#err2").hidden = true;
-  kaliCheer($("#sheetKali .kali"));
+  sheetKali(); kaliCheer($("#sheetKali .kali"));
 }));
 function avatar() {
   const p = KL.read("photo", null), ok = p && /^data:image\/(jpeg|png|webp);base64,/.test(p);
@@ -405,16 +451,18 @@ $("#photoIn").addEventListener("change", (e) => {
 $("#skipPhoto").addEventListener("click", () => $("#next").click());
 $("#back").addEventListener("click", () => { if (typeof step === "number" && step > 1) show(step - 1); });
 $("#next").addEventListener("click", () => {
-  if (step === "have" || step === 4) { location.href = "./"; return; }
+  if (step === "have" || step === 5) { location.href = "./"; return; }
   if (step === 1) { const v = esc($("#first").value).replace(/\s+/g, " ").trim(); if (!v) { $("#err1").hidden = false; $("#first").focus(); return; } $("#err1").hidden = true; return show(2); }
-  if (step === 2) { if (!genre) { $("#err2").hidden = false; return; } avatar(); return show(3); }
-  if (step === 3) { save(); return show(4); }
+  if (step === 2) { if (!genre) { $("#err2").hidden = false; return; } return show(3); }
+  if (step === 3) { avatar(); return show(4); }
+  if (step === 4) { save(); return show(5); }
 });
 // the profile: also shared with Mia's page, so Mia never asks for the name again
 function save() {
   const v = esc($("#first").value).replace(/\s+/g, " ").trim().slice(0, 30);
   const me = KL.read("me", {}); me.first = v; KL.write("me", me);
-  KL.write("genre", genre); KL.write("profile", { created: KL.today() });
+  KL.write("genre", genre); KL.write("kaliColor", skin); KL.write("profile", { created: KL.today() });
+  KALI_SKIN = skin; KALI_BOY = genre === "m";
   try { const m = JSON.parse(localStorage.getItem("mia.me") || "null") || {}; m.first = v; localStorage.setItem("mia.me", JSON.stringify(m)); } catch (e) {}
   $("#doneTitle").textContent = `Bienvenue, ${v} !`;
   $("#doneKali").innerHTML = kali("fete");

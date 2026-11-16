@@ -275,7 +275,7 @@ function home() {
           el("div", {}, el("b", {}, L.title), el("span", {}, L.topic)),
           el("div", { class: "ring", style: `--p:${pc}`, "aria-label": `${pc} % fait` }, el("i", {}, `${pc}%`)));
       }))))),
-    el("p", { class: "note", style: "margin-top:18px" }, "🔒 La progression reste sur ce téléphone. Le micro marche dans Google Chrome, avec internet."),
+    el("p", { class: "note", style: "margin-top:18px" }, "🔒 La progression reste sur cet appareil. Le micro marche dans Google Chrome, avec internet."),
   );
 }
 
@@ -448,7 +448,7 @@ function renderSpeak(L, pane, i = 0) {
       if (pc >= 80) KL.log("speak");
       if (pc >= 80 && !p.speak[i]) { p.speak[i] = 1; save(); }
       out.replaceChildren(el("p", { class: "score" }, `${pc} % des mots compris`),
-        el("p", { class: "heard" }, heardTxt ? `Le téléphone a entendu : « ${heardTxt} »` : "Je n'ai rien entendu. Parle un peu plus fort, près du téléphone."),
+        el("p", { class: "heard" }, heardTxt ? `L'appareil a entendu : « ${heardTxt} »` : "Je n'ai rien entendu. Parle un peu plus fort, près du micro."),
         el("p", { class: "note" }, pc >= 80 ? "Bravo ! 🎉" : "Les mots en rouge n'ont pas été compris. Écoute-les (touche la phrase) et réessaie."),
         el("button", { class: "btn go", onclick: () => redo((i + 1) % L.speak.length) }, i + 1 < L.speak.length ? "Phrase suivante →" : "Revenir à la phrase 1"));
     } catch (err) {
@@ -467,7 +467,7 @@ const LINKS = ["first", "firstly", "secondly", "moreover", "furthermore", "howev
 function renderWrite(L, pane) {
   const W = L.writing, p = lp(L.id), dkey = `anglais-draft-${L.id}`;
   let draft = ""; try { draft = localStorage.getItem(dkey) || ""; } catch (e) {}
-  const ta = el("textarea", { class: "big", placeholder: "Écris ton texte ici… Il est gardé sur ce téléphone.", spellcheck: "true", lang: "en", "aria-label": "Ton texte" });
+  const ta = el("textarea", { class: "big", placeholder: "Écris ton texte ici… Il est gardé sur cet appareil.", spellcheck: "true", lang: "en", "aria-label": "Ton texte" });
   ta.value = draft;
   const count = el("span", { class: "count" });
   const list = el("ul", { class: "checks" });

@@ -96,10 +96,10 @@
 
   <div class="install-card" id="installCard">
     <div class="row2"><b>Installer KalaLab</b><button class="go" id="installBtn" hidden>Installer <span class="arr">→</span></button></div>
-    <p id="installHow">Sur Android, ouvre ce site dans Chrome, touche ⋮ puis « Ajouter à l'écran d'accueil ». KalaLab marche aussi sans internet.</p>
+    <p id="installHow"></p>
     <p>Le jeu de rôle de Mia est déjà dans KalaLab. Tu peux aussi <a href="mia.html">installer l'appli Mia toute seule</a> depuis sa page d'accueil.</p>
   </div>
-  <p class="foot">La progression reste sur ce téléphone, elle n'est envoyée à personne. Le micro marche dans Google Chrome, avec internet.</p>
+  <p class="foot">La progression reste sur cet appareil, elle n'est envoyée à personne. Le micro marche dans Google Chrome, avec internet.</p>
 </div>
 
 <nav class="nav" aria-label="Menu">
@@ -133,6 +133,7 @@ const root = document.documentElement;
 const reduce = matchMedia("(prefers-reduced-motion: reduce)").matches;
 document.head.insertAdjacentHTML("beforeend", `<style>${KALI_CSS}</style>`);
 paintIcons();
+$("#installHow").textContent = KL.installHow();
 
 let tt;
 function toast(msg) { const t = $("#toast"); t.textContent = msg; fixDigits(t); t.classList.add("show"); clearTimeout(tt); tt = setTimeout(() => t.classList.remove("show"), 2200); }

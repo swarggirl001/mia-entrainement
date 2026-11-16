@@ -2,54 +2,99 @@
 // each with its own animation (CSS classes .o-<outfit> on the <svg>, see KALI_CSS).
 const KALI_INK = "#141414";
 const KALI = { body: "#c9b8f0", inner: "#f7c9d9", light: "#fbeee0", bow: "#7b68c4", cheek: "#ff9fb8", butter: "#ffd27a", blue: "#a9c2f5", mint: "#a9e0c8", peach: "#f7b9a0", rose: "#f5a3bd" };
-const KALI_OUTFITS = ["bonjour", "dj", "lecture", "diplomee", "sport", "dodo", "detective", "fete", "casquette", "foot"];
-// her colours: body, inside of the ears and belly, and the colour of her bow or cap
+const KALI_OUTFITS = ["bonjour", "dj", "lecture", "diplomee", "sport", "dodo", "detective", "fete", "casquette", "foot", "ordi", "triste", "chaud"];
+// her colours: body, inside of the ears and belly, and the colour of her bow or cap. lv = level that unlocks it
 const KALI_SKINS = {
-  lilas: { name: "Lilas", body: "#c9b8f0", inner: "#f7c9d9", bow: "#7b68c4" },
-  ciel: { name: "Bleu ciel", body: "#a9c8f2", inner: "#f7c9d9", bow: "#3f6fc4" },
-  menthe: { name: "Menthe", body: "#a9e0c8", inner: "#f7d3c4", bow: "#2f8a63" },
-  rose: { name: "Rose", body: "#f5b8cc", inner: "#fde0ea", bow: "#d0507c" },
-  caramel: { name: "Caramel", body: "#f2c39b", inner: "#fde3d0", bow: "#b0643a" },
-  soleil: { name: "Soleil", body: "#ffe08a", inner: "#fbd0c0", bow: "#e0782f" },
-  gris: { name: "Gris éléphant", body: "#c3c7cf", inner: "#f7c9d9", bow: "#5b6170" },
+  lilas: { name: "Lilas", body: "#c9b8f0", inner: "#f7c9d9", bow: "#7b68c4", lv: 1 },
+  ciel: { name: "Bleu ciel", body: "#a9c8f2", inner: "#f7c9d9", bow: "#3f6fc4", lv: 1 },
+  rose: { name: "Rose", body: "#f5b8cc", inner: "#fde0ea", bow: "#d0507c", lv: 1 },
+  menthe: { name: "Menthe", body: "#a9e0c8", inner: "#f7d3c4", bow: "#2f8a63", lv: 1 },
+  caramel: { name: "Caramel", body: "#f2c39b", inner: "#fde3d0", bow: "#b0643a", lv: 5 },
+  soleil: { name: "Soleil", body: "#ffe08a", inner: "#fbd0c0", bow: "#e0782f", lv: 5 },
+  gris: { name: "Gris éléphant", body: "#c3c7cf", inner: "#f7c9d9", bow: "#5b6170", lv: 5 },
+  corail: { name: "Corail", body: "#ffb4a2", inner: "#ffe1d8", bow: "#d9534f", lv: 5 },
+  turquoise: { name: "Turquoise", body: "#8fdbd6", inner: "#f7d3c4", bow: "#1f8f8a", lv: 8 },
+  pomme: { name: "Vert pomme", body: "#c4e38f", inner: "#f7d9c4", bow: "#5a9a2e", lv: 8 },
+  chocolat: { name: "Chocolat", body: "#c49a7e", inner: "#f3d5c4", bow: "#6e4330", lv: 8 },
+  nuit: { name: "Bleu nuit", body: "#9aa6e0", inner: "#f7c9d9", bow: "#2e3a7a", lv: 8 },
 };
-let KALI_SKIN = "lilas";   // a page can set it from the saved choice
+// things to dress her up with: [id, name, where it goes]
+const KALI_ITEMS = [["couronne", "Couronne", "tête"], ["solaires", "Lunettes de soleil", "yeux"], ["monocle", "Monocle", "yeux"], ["echarpe", "Écharpe", "cou"],
+  ["chaine", "Chaîne", "cou"], ["boucles", "Boucles d'oreilles", "oreilles"], ["bracelet", "Bracelet", "bras"], ["chaussures", "Baskets", "pieds"], ["cape", "Cape", "dos"],
+  ["manette", "Manette", "main"], ["telephone", "Téléphone", "main"]];
+// the saved choices: her colour, a cap instead of a bow for a boy, the things she wears
+const kaliSaved = (k, d) => { try { const v = localStorage.getItem("kalalab." + k); return v == null ? d : JSON.parse(v); } catch (e) { return d; } };
+let KALI_SKIN = kaliSaved("kaliColor", "lilas");
+let KALI_BOY = kaliSaved("genre", "f") === "m";
+let KALI_EXTRAS = kaliSaved("kaliItems", []);
 
-function kali(outfit = "bonjour", label = "Kali, l'éléphante de KalaLab", skin = KALI_SKIN) {
+function kali(outfit = "bonjour", label = "Kali, l'éléphante de KalaLab", skin = KALI_SKIN, extras = KALI_EXTRAS, boy = KALI_BOY) {
   const I = KALI_INK, C = Object.assign({}, KALI, KALI_SKINS[skin] || KALI_SKINS.lilas), o = KALI_OUTFITS.includes(outfit) ? outfit : "bonjour";
   const tube = (d, w = 17, inner = 10.5, col = C.body) => `<path d="${d}" fill="none" stroke="${I}" stroke-width="${w}" stroke-linecap="round" stroke-linejoin="round"/><path d="${d}" fill="none" stroke="${col}" stroke-width="${inner}" stroke-linecap="round" stroke-linejoin="round"/>`;
+  const has = (id) => (extras || []).includes(id), gold = "#f1c24e";
   const ear = (s) => `<g class="ear${s > 0 ? "L" : "R"}">
     <path d="M${100 - s * 28} 60 C${100 - s * 72} 30, ${100 - s * 100} 64, ${100 - s * 90} 106 C${100 - s * 84} 136, ${100 - s * 50} 138, ${100 - s * 32} 114 Z" fill="${C.body}" stroke="${I}" stroke-width="4" stroke-linejoin="round"/>
-    <path d="M${100 - s * 36} 70 C${100 - s * 66} 50, ${100 - s * 86} 76, ${100 - s * 79} 104 C${100 - s * 74} 122, ${100 - s * 52} 124, ${100 - s * 39} 108 Z" fill="${C.inner}"/></g>`;
+    <path d="M${100 - s * 36} 70 C${100 - s * 66} 50, ${100 - s * 86} 76, ${100 - s * 79} 104 C${100 - s * 74} 122, ${100 - s * 52} 124, ${100 - s * 39} 108 Z" fill="${C.inner}"/>${has("boucles") ? `<circle cx="${100 - s * 70}" cy="136" r="6.5" fill="none" stroke="${I}" stroke-width="5.5"/><circle cx="${100 - s * 70}" cy="136" r="6.5" fill="none" stroke="${gold}" stroke-width="2.6"/>` : ""}</g>`;
 
   // what she holds in her right hand (drawn inside the arm, so it moves with it)
   const magnifier = `<g><path d="M146 172 L156 190" stroke="#8a5a3b" stroke-width="7" stroke-linecap="round"/>
     <circle cx="160" cy="198" r="11" fill="#dff3ff" fill-opacity=".7" stroke="${I}" stroke-width="4"/><path d="M155 193 q3 -3 7 -2" stroke="#fff" stroke-width="2.5" stroke-linecap="round" fill="none"/></g>`;
-  const arms = `
-    <g class="armL">${tube("M70 139 L57 167")}<path d="M54 167 h3 M58 170 h3" stroke="${C.light}" stroke-width="2.5" stroke-linecap="round"/></g>
-    <g class="armR">${tube("M130 139 L143 167")}<path d="M140 170 h3 M144 167 h3" stroke="${C.light}" stroke-width="2.5" stroke-linecap="round"/>${o === "detective" ? magnifier : ""}</g>`;
+  // the arms. When she holds something with both hands, her arms bend to it (she only has two!)
+  const HOLD = { foot: [[83, 158], [117, 158]], ordi: [[70, 156], [130, 156]], lecture: [[68, 158], [132, 158]] }, hold = HOLD[o];
+  const fanR = `<g class="fan"><path d="M146 170 L152 186" stroke="${I}" stroke-width="5" stroke-linecap="round"/><circle cx="155" cy="194" r="13" fill="#fff" fill-opacity=".6" stroke="${I}" stroke-width="3.5"/>
+    <g class="blades"><path d="M155 194 l0 -10 a5 5 0 0 1 5 5z M155 194 l10 0 a5 5 0 0 1 -5 5z M155 194 l0 10 a5 5 0 0 1 -5 -5z M155 194 l-10 0 a5 5 0 0 1 5 -5z" fill="${C.blue}" stroke="${I}" stroke-width="1.8" stroke-linejoin="round"/></g><circle cx="155" cy="194" r="2.5" fill="${I}"/></g>`;
+  const pad = `<g transform="translate(150 178) rotate(-14)" style="transform-box:view-box"><path d="M-15 -6 q0 -6 7 -6 h16 q7 0 7 6 l3 11 q1 7 -5 7 q-4 0 -6 -5 h-10 q-2 5 -6 5 q-6 0 -5 -7z" fill="#3b3f4c" stroke="${I}" stroke-width="3" stroke-linejoin="round"/>
+    <path d="M-9 -2 h6 M-6 -5 v6" stroke="#fff" stroke-width="2.2" stroke-linecap="round"/><circle cx="6" cy="-4" r="2" fill="${C.rose}"/><circle cx="10" cy="0" r="2" fill="${C.mint}"/></g>`;
+  const phone = `<g transform="translate(146 160) rotate(-12)" style="transform-box:view-box"><rect width="17" height="28" rx="4" fill="${I}"/><rect x="2.5" y="3" width="12" height="20" rx="2" fill="${C.blue}"/><circle cx="8.5" cy="25.5" r="1.3" fill="#fff"/></g>`;
+  const handR = `${o === "detective" ? magnifier : o === "chaud" ? fanR : has("manette") ? pad : has("telephone") ? phone : ""}`;
+  const bracelet = has("bracelet") ? `<ellipse cx="61" cy="158" rx="9.5" ry="4" transform="rotate(24 61 158)" style="transform-box:view-box" fill="${gold}" stroke="${I}" stroke-width="2.5"/>` : "";
+  const arms = hold
+    ? `<g class="armL">${tube(`M70 139 Q60 152 ${hold[0][0]} ${hold[0][1]}`)}</g><g class="armR">${tube(`M130 139 Q140 152 ${hold[1][0]} ${hold[1][1]}`)}</g>`
+    : `<g class="armL">${tube("M70 139 L57 167")}<path d="M54 167 h3 M58 170 h3" stroke="${C.light}" stroke-width="2.5" stroke-linecap="round"/>${bracelet}</g>
+    <g class="armR">${tube("M130 139 L143 167")}<path d="M140 170 h3 M144 167 h3" stroke="${C.light}" stroke-width="2.5" stroke-linecap="round"/>${handR}</g>`;
 
   // eyes: open, asleep, or looking around (the pupils move)
   const lashes = (x, s) => `<path d="M${x + s * 5.5} 84 l${s * 6} -3.5 M${x + s * 6.5} 88.5 l${s * 6.5} -0.5" stroke="${I}" stroke-width="2.3" stroke-linecap="round"/>`;
   const eyes = o === "dodo"
-    ? `<g class="eyes sleep"><path d="M75 90 q7 6 14 0 M111 90 q7 6 14 0" fill="none" stroke="${I}" stroke-width="3.5" stroke-linecap="round"/>${lashes(82, -1)}${lashes(118, 1)}</g>`
+    ? `<g class="eyes sleep"><path d="M75 90 q7 6 14 0 M111 90 q7 6 14 0" fill="none" stroke="${I}" stroke-width="3.5" stroke-linecap="round"/><path d="M76 92 l-5 3 M79.5 94.5 l-3 4.5 M124 92 l5 3 M120.5 94.5 l3 4.5" stroke="${I}" stroke-width="2.3" stroke-linecap="round"/></g>`
     : `<g class="eyes"><g class="pupils"><ellipse cx="82" cy="89" rx="6.5" ry="8.5" fill="${I}"/><ellipse cx="118" cy="89" rx="6.5" ry="8.5" fill="${I}"/>
        <circle cx="84.5" cy="85.5" r="2.7" fill="#fff"/><circle cx="120.5" cy="85.5" r="2.7" fill="#fff"/><circle cx="80.5" cy="92" r="1.2" fill="#fff"/><circle cx="116.5" cy="92" r="1.2" fill="#fff"/></g>${lashes(82, -1)}${lashes(118, 1)}</g>`;
-  const mouth = o === "dodo" ? `<ellipse cx="92" cy="119" rx="3" ry="2.5" fill="${I}"/>` : `<path d="M86 117 q6 8 12 3" fill="none" stroke="${I}" stroke-width="3.5" stroke-linecap="round"/>`;
+  const mouth = o === "dodo" ? `<ellipse cx="92" cy="119" rx="3" ry="2.5" fill="${I}"/>`
+    : o === "triste" ? `<path d="M86 122 q6 -7 12 -2" fill="none" stroke="${I}" stroke-width="3.5" stroke-linecap="round"/>`
+    : o === "chaud" ? `<ellipse cx="92" cy="119" rx="4.5" ry="5" fill="${I}"/><ellipse cx="92" cy="121.5" rx="2.6" ry="2" fill="#ff86ab"/>`
+    : `<path d="M86 117 q6 8 12 3" fill="none" stroke="${I}" stroke-width="3.5" stroke-linecap="round"/>`;
+  // feelings: sad eyebrows and a tear, or hot and sweating
+  const mood = o === "triste" ? `<path d="M70 76 l14 -6 M130 76 l-14 -6" stroke="${I}" stroke-width="3.2" stroke-linecap="round"/><path class="tear" d="M74 99 q-5 8 0 11 q5 -3 0 -11z" fill="#bfe6ff" stroke="${I}" stroke-width="2"/>`
+    : o === "chaud" ? `<path class="drop" d="M136 62 q-5 8 0 11 q5 -3 0 -11z" fill="#bfe6ff" stroke="${I}" stroke-width="2"/><path class="drop d2" d="M62 70 q-4 7 0 9 q4 -2 0 -9z" fill="#bfe6ff" stroke="${I}" stroke-width="2"/>` : "";
+  // things on her face and neck
+  const crown = `<g class="crown"><path d="M70 60 L72 30 L86 46 L100 22 L114 46 L128 30 L130 60 Q100 50 70 60 Z" fill="${gold}" stroke="${I}" stroke-width="3.5" stroke-linejoin="round"/>
+    <circle cx="100" cy="22" r="4.5" fill="${C.rose}" stroke="${I}" stroke-width="2.5"/><circle cx="72" cy="30" r="3.5" fill="${C.blue}" stroke="${I}" stroke-width="2.5"/><circle cx="128" cy="30" r="3.5" fill="${C.mint}" stroke="${I}" stroke-width="2.5"/><circle cx="100" cy="47" r="4.5" fill="${C.bow}" stroke="${I}" stroke-width="2.5"/></g>`;
+  const faceItems = (has("solaires") ? `<g class="shades"><path d="M56 82 L68 84 M144 82 L132 84" stroke="${I}" stroke-width="3.5" stroke-linecap="round"/><path d="M67 82 h29 v5 q0 14 -15 14 q-14 0 -14 -14z M104 82 h29 v5 q0 14 -14 14 q-15 0 -15 -14z" fill="#2b2b3a" stroke="${I}" stroke-width="3.2" stroke-linejoin="round"/>
+      <path d="M96 85 h8" stroke="${I}" stroke-width="3.2"/><path d="M72 87 l7 -2.5 M109 87 l7 -2.5" stroke="#fff" stroke-width="2.5" stroke-linecap="round" opacity=".75"/></g>`
+    : has("monocle") ? `<g class="monocle"><path d="M129 99 Q148 116 138 140" fill="none" stroke="${gold}" stroke-width="2.6" stroke-dasharray="3 2.5"/><circle cx="118" cy="89" r="14" fill="#fff" fill-opacity=".22" stroke="${I}" stroke-width="5.5"/><circle cx="118" cy="89" r="14" fill="none" stroke="${gold}" stroke-width="2.6"/><path d="M110 82 q4 -3 9 -2" stroke="#fff" stroke-width="2.4" fill="none" stroke-linecap="round"/></g>` : "");
+  const neck = (has("echarpe") ? `<g class="scarf"><path d="M76 166 L70 190 L86 188 L88 168" fill="${C.rose}" stroke="${I}" stroke-width="3.5" stroke-linejoin="round"/><path d="M72 181 h14" stroke="#fff" stroke-width="3" opacity=".8"/>
+      <path d="M60 130 Q100 152 140 130 L142 144 Q100 168 58 144 Z" fill="${C.rose}" stroke="${I}" stroke-width="3.5" stroke-linejoin="round"/><path d="M66 140 Q100 158 134 140" fill="none" stroke="#fff" stroke-width="3" stroke-dasharray="7 6" opacity=".8"/></g>` : "")
+    + (has("chaine") ? `<g class="chain"><path d="M70 134 Q100 172 130 134" fill="none" stroke="${I}" stroke-width="5.5" stroke-linecap="round"/><path d="M70 134 Q100 172 130 134" fill="none" stroke="${gold}" stroke-width="3" stroke-dasharray="4 2" stroke-linecap="round"/><path d="M100 150 l4 6 -4 6 -4 -6z" fill="${gold}" stroke="${I}" stroke-width="2.2" stroke-linejoin="round"/></g>` : "");
+  const shoes = has("chaussures") ? [74, 105].map((x) => `<path d="M${x - 3} 178 h27 a6.5 6.5 0 0 1 0 13 h-27 a6.5 6.5 0 0 1 0 -13z" fill="${C.bow}" stroke="${I}" stroke-width="3.5"/><path d="M${x - 1} 187 h25" stroke="#fff" stroke-width="2.5" stroke-linecap="round"/><path d="M${x + 6} 181 l3 3 M${x + 11} 181 l3 3" stroke="#fff" stroke-width="2" stroke-linecap="round"/>`).join("") : "";
+  const cape = has("cape") ? `<g class="cape"><path d="M68 128 Q100 120 132 128 L160 192 Q100 204 40 192 Z" fill="#e85d6a" stroke="${I}" stroke-width="4" stroke-linejoin="round"/><path d="M76 134 L56 188 M124 134 L144 188" stroke="#b83a48" stroke-width="3" opacity=".6"/></g>` : "";
 
   // headwear
   const bow = `<g class="bow"><path d="M100 46 C88 34, 76 40, 80 50 C83 58, 94 54, 100 48 C106 54, 117 58, 120 50 C124 40, 112 34, 100 46 Z" fill="${C.bow}" stroke="${I}" stroke-width="3.5" stroke-linejoin="round"/><circle cx="100" cy="47" r="5" fill="${C.butter}" stroke="${I}" stroke-width="3"/></g>`;
   const cap = `<g class="capb"><path d="M56 70 Q56 28 100 28 Q144 28 144 70 Q100 58 56 70 Z" fill="${C.bow}" stroke="${I}" stroke-width="3.5" stroke-linejoin="round"/>
     <path d="M100 30 V62 M76 36 Q72 50 72 64 M124 36 Q128 50 128 64" fill="none" stroke="${I}" stroke-width="2" opacity=".35"/><circle cx="100" cy="29" r="4" fill="${C.butter}" stroke="${I}" stroke-width="2.5"/>
     <path d="M58 68 Q100 54 148 64 Q164 68 158 76 Q140 74 100 70 Q74 70 58 76 Z" fill="${C.butter}" stroke="${I}" stroke-width="3.5" stroke-linejoin="round"/></g>`;
+  const top = has("couronne") ? crown : boy ? cap : bow;
   const head = {
-    bonjour: bow,
-    casquette: cap,
+    bonjour: top,
+    casquette: has("couronne") ? crown : cap,
     foot: cap,
-    dj: `${bow}<g class="phones"><path d="M54 92 C52 30, 148 30, 146 92" fill="none" stroke="${I}" stroke-width="8" stroke-linecap="round"/><path d="M54 92 C52 30, 148 30, 146 92" fill="none" stroke="${C.mint}" stroke-width="3" stroke-linecap="round"/>
+    ordi: top,
+    triste: top,
+    chaud: has("couronne") ? crown : cap,
+    dj: `${boy || has("couronne") ? "" : bow}<g class="phones"><path d="M54 92 C52 30, 148 30, 146 92" fill="none" stroke="${I}" stroke-width="8" stroke-linecap="round"/><path d="M54 92 C52 30, 148 30, 146 92" fill="none" stroke="${C.mint}" stroke-width="3" stroke-linecap="round"/>
       <rect x="42" y="78" width="20" height="32" rx="9" fill="${C.bow}" stroke="${I}" stroke-width="4"/><rect x="138" y="78" width="20" height="32" rx="9" fill="${C.bow}" stroke="${I}" stroke-width="4"/>
       <circle cx="52" cy="94" r="4" fill="${C.mint}"/><circle cx="148" cy="94" r="4" fill="${C.mint}"/></g>`,
-    lecture: `${bow}<g class="glasses"><circle cx="82" cy="89" r="12" fill="#fff" fill-opacity=".25" stroke="${I}" stroke-width="3.5"/><circle cx="118" cy="89" r="12" fill="#fff" fill-opacity=".25" stroke="${I}" stroke-width="3.5"/><path d="M94 88 q6 -4 12 0" fill="none" stroke="${I}" stroke-width="3.5"/></g>`,
+    lecture: `${top}<g class="glasses"><circle cx="82" cy="89" r="12" fill="#fff" fill-opacity=".25" stroke="${I}" stroke-width="3.5"/><circle cx="118" cy="89" r="12" fill="#fff" fill-opacity=".25" stroke="${I}" stroke-width="3.5"/><path d="M94 88 q6 -4 12 0" fill="none" stroke="${I}" stroke-width="3.5"/></g>`,
     diplomee: `<g class="cap"><path d="M58 52 L100 33 L142 52 L100 69 Z" fill="${I}"/><path d="M80 58 v10 q20 8 40 0 v-10" fill="${I}"/><g class="tassel"><path d="M142 52 v22" stroke="${C.butter}" stroke-width="3.5"/><path d="M138 74 h8 l-1 8 h-6 z" fill="${C.butter}" stroke="${I}" stroke-width="2"/></g></g>`,
     sport: `<g class="band"><path d="M52 74 Q100 46 148 74 L148 86 Q100 58 52 86 Z" fill="${C.rose}" stroke="${I}" stroke-width="3.5" stroke-linejoin="round"/><path d="M60 77 Q100 54 140 77" fill="none" stroke="#fff" stroke-width="3" stroke-dasharray="6 6"/></g>`,
     dodo: `<g class="nightcap"><path d="M56 70 Q80 20 136 28 Q172 34 176 70 Q160 56 148 66 Q104 46 56 70 Z" fill="${C.blue}" stroke="${I}" stroke-width="3.5" stroke-linejoin="round"/>
@@ -63,14 +108,18 @@ function kali(outfit = "bonjour", label = "Kali, l'éléphante de KalaLab", skin
 
   // things in front of her body
   const front = {
-    foot: `<g class="ball"><circle cx="100" cy="158" r="18" fill="#fff" stroke="${I}" stroke-width="3.5"/><path d="M100 151 l7 5 -3 8 h-8 l-3 -8z" fill="${I}"/>
-      <path d="M100 151 v-9 M107 156 l8 -3 M104 164 l5 7 M96 164 l-5 7 M93 156 l-8 -3" stroke="${I}" stroke-width="2.2"/>
-      <circle cx="80" cy="160" r="7" fill="${C.body}" stroke="${I}" stroke-width="3.5"/><circle cx="120" cy="160" r="7" fill="${C.body}" stroke="${I}" stroke-width="3.5"/></g>`,
+    fete: `<g class="balloon"><path d="M56 168 C40 120, 30 90, 26 58" fill="none" stroke="${I}" stroke-width="2"/><ellipse cx="24" cy="40" rx="17" ry="20" fill="${C.rose}" stroke="${I}" stroke-width="3.5"/><path d="M19 30 q4 -5 9 -4" stroke="#fff" stroke-width="3" fill="none" stroke-linecap="round"/><path d="M21 60 l3 -2 3 2 z" fill="${C.rose}" stroke="${I}" stroke-width="2"/></g>`,
+  }[o] || "";
+
+  // what she holds with both hands (drawn before her arms, so her hands are on it)
+  const held = {
     lecture: `<g class="book"><path d="M66 146 Q84 140 100 148 Q116 140 134 146 V174 Q116 168 100 176 Q84 168 66 174 Z" fill="${C.light}" stroke="${I}" stroke-width="4" stroke-linejoin="round"/>
       <path d="M100 148 V176" stroke="${I}" stroke-width="3"/><path d="M73 153 h20 M73 160 h18 M73 167 h16 M107 153 h20 M109 160 h18" stroke="${I}" stroke-width="2" opacity=".35"/>
       <path class="page" d="M100 148 Q116 140 134 146 V174 Q116 168 100 176 Z" fill="#fff" stroke="${I}" stroke-width="3" stroke-linejoin="round"/>
-      <circle cx="68" cy="160" r="7" fill="${C.body}" stroke="${I}" stroke-width="3.5"/><circle cx="132" cy="160" r="7" fill="${C.body}" stroke="${I}" stroke-width="3.5"/></g>`,
-    fete: `<g class="balloon"><path d="M56 168 C40 120, 30 90, 26 58" fill="none" stroke="${I}" stroke-width="2"/><ellipse cx="24" cy="40" rx="17" ry="20" fill="${C.rose}" stroke="${I}" stroke-width="3.5"/><path d="M19 30 q4 -5 9 -4" stroke="#fff" stroke-width="3" fill="none" stroke-linecap="round"/><path d="M21 60 l3 -2 3 2 z" fill="${C.rose}" stroke="${I}" stroke-width="2"/></g>`,
+</g>`,
+    foot: `<g class="ball"><circle cx="100" cy="160" r="18" fill="#fff" stroke="${I}" stroke-width="3.5"/><path d="M100 153 l7 5 -3 8 h-8 l-3 -8z" fill="${I}"/>
+      <path d="M100 153 v-9 M107 158 l8 -3 M104 166 l5 7 M96 166 l-5 7 M93 158 l-8 -3" stroke="${I}" stroke-width="2.2"/></g>`,
+    ordi: `<g class="laptop"><rect x="66" y="138" width="68" height="44" rx="6" fill="#dfe3ec" stroke="${I}" stroke-width="4"/><path d="M93 168 v-8 a7 7 0 0 1 14 0 v8z" fill="${C.bow}" stroke="${I}" stroke-width="2.5" stroke-linejoin="round"/></g>`,
   }[o] || "";
 
   // little things floating around her
@@ -93,9 +142,9 @@ function kali(outfit = "bonjour", label = "Kali, l'éléphante de KalaLab", skin
   <defs><radialGradient id="kblush"><stop offset="0" stop-color="#ff86ab" stop-opacity=".85"/><stop offset=".6" stop-color="#ff9fb8" stop-opacity=".45"/><stop offset="1" stop-color="#ff9fb8" stop-opacity="0"/></radialGradient></defs>
   <g class="all">
     <g class="tail"><path d="M134 160 q15 -1 17 -15" fill="none" stroke="${I}" stroke-width="4" stroke-linecap="round"/><path d="M151 145 l-4 -7 M151 145 l3 -8 M151 145 l7 -4" stroke="${I}" stroke-width="3" stroke-linecap="round"/></g>
-    ${ear(1)}${ear(-1)}
+    ${cape}${ear(1)}${ear(-1)}
     <g class="legs"><rect x="74" y="152" width="21" height="34" rx="10" fill="${C.body}" stroke="${I}" stroke-width="4"/><rect x="105" y="152" width="21" height="34" rx="10" fill="${C.body}" stroke="${I}" stroke-width="4"/>
-      <path d="M78 183 h4 M86 183 h4 M109 183 h4 M117 183 h4" stroke="${C.light}" stroke-width="4" stroke-linecap="round"/></g>
+      <path d="M78 183 h4 M86 183 h4 M109 183 h4 M117 183 h4" stroke="${C.light}" stroke-width="4" stroke-linecap="round"/>${shoes}</g>
     <ellipse cx="100" cy="150" rx="38" ry="29" fill="${C.body}" stroke="${I}" stroke-width="4"/>
     <ellipse cx="100" cy="157" rx="21" ry="14" fill="${C.inner}" opacity=".85"/>
     <g class="head">
@@ -103,9 +152,10 @@ function kali(outfit = "bonjour", label = "Kali, l'éléphante de KalaLab", skin
       <ellipse cx="82" cy="66" rx="16" ry="8" fill="#fff" opacity=".35" transform="rotate(-18 82 66)"/>
       <g class="blush"><ellipse cx="72" cy="107" rx="13" ry="8.5" fill="url(#kblush)"/><ellipse cx="128" cy="107" rx="13" ry="8.5" fill="url(#kblush)"/>
         <path d="M66 105 l-2.5 4 M71 105 l-2.5 4 M76 105 l-2.5 4 M126 105 l-2.5 4 M131 105 l-2.5 4 M136 105 l-2.5 4" stroke="#e8789c" stroke-width="1.6" stroke-linecap="round" opacity=".55"/></g>
-      ${eyes}${mouth}
+      ${eyes}${mouth}${mood}${faceItems}
       ${head}
     </g>
+    ${neck}${held}
     ${arms}
     <g class="head"><g class="trunk">
       <!-- open at the top, so it grows out of the face; the two lines end round at the top, the tip is rounded -->
@@ -154,12 +204,31 @@ const KALI_CSS = `
 @keyframes k-groove { 0%,100% { transform: rotate(-5deg); } 50% { transform: rotate(5deg); } }
 @keyframes k-danceL { 0%,100% { transform: rotate(10deg); } 50% { transform: rotate(70deg); } }
 @keyframes k-danceR { 0%,100% { transform: rotate(-70deg); } 50% { transform: rotate(-10deg); } }
-.kali.o-foot .ball { animation: k-bounce .7s ease-in-out infinite; }
+.kali.o-foot .armL, .kali.o-foot .armR, .kali.o-ordi .armL, .kali.o-ordi .armR { animation: none; }
+.kali.o-foot .all { animation: k-bounce .7s ease-in-out infinite; }
+/* ordi: typing, head nodding to the screen */
+.kali.o-ordi .head { animation: k-nod 2.4s ease-in-out infinite; }
+.kali.o-ordi .laptop { animation: k-type .35s ease-in-out infinite; }
+@keyframes k-type { 50% { transform: translateY(1.5px); } }
+/* triste: ears and arms down, a tear rolling */
+.kali.o-triste .all { animation: k-breathe 4s ease-in-out infinite; }
+.kali.o-triste .earL { animation: none; transform: rotate(16deg); } .kali.o-triste .earR { animation: none; transform: rotate(-16deg); }
+.kali.o-triste .armL, .kali.o-triste .armR { animation: none; }
+.kali.o-triste .tear { animation: k-tear 2s ease-in infinite; }
+@keyframes k-tear { 0% { opacity: 0; transform: translateY(-4px); } 20% { opacity: 1; } 100% { opacity: 0; transform: translateY(26px); } }
+/* chaud: the fan turns near her face, sweat drops */
+.kali.o-chaud .armR { animation: k-fanning 1.2s ease-in-out infinite; }
+@keyframes k-fanning { 0%,100% { transform: rotate(-104deg); } 50% { transform: rotate(-96deg); } }
+.kali.o-chaud .blades { transform-origin: 50% 50%; animation: k-spin .3s linear infinite; }
+.kali.o-chaud .drop { animation: k-tear 1.6s ease-in infinite; } .kali.o-chaud .d2 { animation-delay: .8s; }
+@keyframes k-spin { to { transform: rotate(360deg); } }
+.kali .cape { transform-origin: 50% 0%; animation: k-cape 2.6s ease-in-out infinite; }
+@keyframes k-cape { 0%,100% { transform: skewX(0); } 50% { transform: skewX(-4deg); } }
 .kali.o-casquette .capb, .kali.o-foot .capb { transform-origin: 50% 100%; animation: k-bow 3s ease-in-out infinite; }
 @keyframes k-bounce { 0%,100% { transform: translateY(0); } 50% { transform: translateY(-5px); } }
 
 /* lecture: arms hold the book, a page turns, she nods */
-.kali.o-lecture .armL { animation: none; transform: rotate(-62deg); } .kali.o-lecture .armR { animation: none; transform: rotate(62deg); }
+.kali.o-lecture .armL, .kali.o-lecture .armR { animation: none; }
 .kali.o-lecture .head { animation: k-nod 3s ease-in-out infinite; }
 .kali.o-lecture .page { transform-origin: 0% 50%; animation: k-page 3s ease-in-out infinite; }
 @keyframes k-nod { 0%,100% { transform: rotate(0); } 40% { transform: rotate(4deg) translateY(2px); } }

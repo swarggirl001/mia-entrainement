@@ -23,6 +23,14 @@ const KL = {
     while (days.has(KL.today(d))) { n++; d.setDate(d.getDate() - 1); }
     return n;
   },
+  // how to install KalaLab, for the device in hand (iPhone/iPad, Android, computer)
+  installHow() {
+    const ua = navigator.userAgent, ios = /iPhone|iPad|iPod/.test(ua) || (/Macintosh/.test(ua) && navigator.maxTouchPoints > 1);
+    const how = ios ? "Sur iPhone ou iPad : ouvre ce site dans Safari, touche le bouton Partager, puis « Sur l'écran d'accueil »."
+      : /Android/.test(ua) ? "Sur Android : ouvre ce site dans Chrome, touche ⋮ puis « Ajouter à l'écran d'accueil »."
+      : "Sur ordinateur : dans Chrome ou Edge, clique sur l'icône d'installation au bout de la barre d'adresse.";
+    return how + " KalaLab marche aussi sans internet.";
+  },
   firstName() {
     const me = KL.read("me", null); if (me && me.first) return String(me.first).slice(0, 40);
     try { const m = JSON.parse(localStorage.getItem("mia.me") || "null"); if (m && m.first) return String(m.first).replace(/[<>&"'`\\]/g, "").slice(0, 40); } catch (e) {}
