@@ -68,13 +68,6 @@ body { overflow-x: hidden; }
 @media (max-width: 600px) { .kali-sect { grid-template-columns: 1fr; justify-items: center; text-align: center; } .kali-sect .k { width: 140px; height: 140px; } }
 .kali-sect b { font-family: var(--title); font-weight: 400; font-size: 20px; display: block; margin-bottom: 4px; }
 .kali-sect p { margin: 0; font-family: var(--pixel); font-size: 14.5px; color: var(--muted); }
-.why { background: var(--card); padding: 16px; display: grid; gap: 8px; }
-.why p { margin: 0; font-family: var(--body); font-size: 15.5px; line-height: 1.55; }
-.promises { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; }
-.prom { border: var(--bw) dashed var(--line); border-radius: 18px; padding: 12px 8px; display: grid; justify-items: center; text-align: center; gap: 4px; }
-.prom .ico { width: 34px; height: 34px; }
-.prom b { font-family: var(--title); font-weight: 400; font-size: 16px; }
-.prom span { font-family: var(--pixel); font-size: 12.5px; color: var(--muted); }
 .install-card .row2 b { font-size: 20px; }
 
 /* a band of "welcome" in several languages, under the scene */
@@ -91,23 +84,100 @@ body { overflow-x: hidden; }
 .reveal { opacity: 0; translate: 0 26px; transition: opacity .6s ease, translate .6s cubic-bezier(.34,1.56,.64,1); transition-delay: var(--d, 0s); }
 .reveal.in { opacity: 1; translate: 0 0; }
 @media (prefers-reduced-motion: reduce) { .reveal { opacity: 1; translate: none; } .ribbon div { animation: none; } }
-.why .sub { margin: 6px 0 0; font-family: var(--title); font-weight: 400; font-size: 18px; }
-.why .todo { background: var(--chip); border-radius: 6px; padding: 0 5px; color: var(--muted); font-style: italic; }
 .kali-sect .kali-says { font-family: var(--body); font-size: 15px; line-height: 1.5; color: var(--fg); }
-.why h2 { margin: 0; font-family: var(--title); font-weight: 400; font-size: 24px; }
-.why .hi { font-family: var(--display); font-weight: 900; font-size: 26px; color: var(--accent); margin: 0; }
-.soon-list { display: flex; flex-wrap: wrap; gap: 8px; }
-.soon-list span { font-family: var(--pixel); font-weight: 600; font-size: 13.5px; padding: 6px 11px; border-radius: 99px; border: 2px dashed var(--line); }
 /* the creator */
-.maker { background: var(--card); padding: 18px; display: grid; gap: 12px; position: relative; }
-.maker .who { display: grid; grid-template-columns: 84px 1fr; gap: 14px; align-items: center; }
-.maker .ph { width: 84px; height: 84px; border-radius: 50%; border: var(--bw) solid #141414; background: var(--lilac); display: grid; place-items: center; font-family: var(--display); font-weight: 900; font-size: 34px; color: #2e2350; }
-.maker h2 { margin: 0; font-family: var(--title); font-weight: 400; font-size: 22px; }
-.maker .role { margin: 2px 0 0; font-family: var(--pixel); font-size: 14px; color: var(--muted); }
+
+/* ---- lower part of the page: reasons, Akwaba banner, name and tomorrow, the creator, promises, last call */
+.center-h { margin: 0; text-align: center; font-family: var(--title); font-weight: 400; font-size: 25px; }
+.why { display: grid; gap: 16px; }
+.reasons { display: grid; gap: 12px; }
+@media (min-width: 900px) { .reasons { grid-template-columns: repeat(3, 1fr); } }
+.reason { padding: 14px; display: grid; grid-template-columns: 58px 1fr; column-gap: 12px; row-gap: 2px; align-content: start; color: #141414; transition: transform .35s cubic-bezier(.34,1.56,.64,1); }
+.reason.r1 { background: var(--t2); transform: rotate(-1deg); } .reason.r2 { background: var(--t3); transform: rotate(.8deg); } .reason.r3 { background: var(--t1); transform: rotate(-.6deg); }
+.reason:hover { transform: rotate(0) translateY(-4px); }
+.reason .rico { grid-row: span 2; width: 58px; height: 58px; }
+.reason .rico svg { width: 100%; height: 100%; overflow: visible; }
+.reason b { font-family: var(--title); font-weight: 400; font-size: 18px; }
+.reason > span:last-child { font-family: var(--body); font-size: 14.5px; line-height: 1.45; }
+.for-you { margin: 0; justify-self: center; max-width: 46ch; text-align: center; font-family: var(--body); font-size: 16px; line-height: 1.55; }
+.for-you b { font-family: var(--title); font-weight: 400; font-size: 20px; color: var(--accent); }
+
+.akwaba { position: relative; overflow: hidden; text-align: center; padding: 38px 18px 26px; border-radius: 28px; border: var(--bw) solid #141414; color: #141414; cursor: pointer; user-select: none; -webkit-tap-highlight-color: transparent;
+  background: radial-gradient(circle at 14% 22%, rgba(255,255,255,.45) 0 9%, transparent 10%), radial-gradient(circle at 88% 78%, rgba(255,255,255,.35) 0 12%, transparent 13%), linear-gradient(135deg, #c9b8f0, #f5b8cc 55%, #ffd27a);
+  box-shadow: 6px 6px 0 var(--shadow); }
+.reason .wavef { transform-box: fill-box; transform-origin: 0 50%; animation: flag 2.2s ease-in-out infinite; }
+@keyframes flag { 50% { transform: skewY(-4deg) scaleX(.96); } }
+.reason .tw1, .reason .tw2 { transform-box: fill-box; transform-origin: center; animation: twinkle 2s ease-in-out infinite; } .reason .tw2 { animation-delay: .7s; }
+.akwaba::before { content: ""; position: absolute; inset: 9px; border: 2px dashed rgba(20,20,20,.35); border-radius: 20px; pointer-events: none; }
+.ak-big { position: relative; margin: 0; white-space: nowrap; font-family: var(--display); font-weight: 900; font-size: clamp(44px, 13vw, 104px); line-height: 1; color: #2e2350; text-shadow: 3px 3px 0 #fbeee0; }
+.ak-word span { display: inline-block; }
+.akwaba.wave .ak-word span { animation: akw .75s cubic-bezier(.34,1.56,.64,1) both; animation-delay: calc(var(--i) * 70ms); }
+@keyframes akw { 30% { transform: translateY(-24px) rotate(-7deg); } 62% { transform: translateY(4px) rotate(2deg); } }
+.ak-line { position: relative; margin: 8px 0 0; font-family: var(--title); font-size: clamp(19px, 5vw, 30px); }
+.ak-hint { position: relative; margin: 12px 0 0; font-family: var(--pixel); font-weight: 600; font-size: 12.5px; opacity: .65; }
+.ak-deco { position: absolute; inset: 0; pointer-events: none; }
+.ak-deco .af { position: absolute; width: 38px; height: 50px; }
+.ak-deco .af svg, .ak-deco .sp svg { width: 100%; height: 100%; overflow: visible; }
+.ak-deco .af1 { left: 16px; bottom: 10px; } .ak-deco .af2 { left: 48px; bottom: 6px; width: 28px; height: 38px; } .ak-deco .af3 { right: 16px; bottom: 10px; } .ak-deco .af4 { right: 50px; bottom: 4px; width: 26px; height: 36px; }
+.ak-deco .sp { position: absolute; width: 22px; height: 22px; animation: twinkle 2.4s ease-in-out infinite; }
+.ak-deco .sp1 { left: 9%; top: 18%; } .ak-deco .sp2 { right: 11%; top: 14%; animation-delay: .8s; } .ak-deco .sp3 { left: 38%; top: 9%; width: 16px; height: 16px; animation-delay: 1.4s; } .ak-deco .sp4 { right: 34%; top: 7%; width: 16px; height: 16px; animation-delay: .4s; }
+@keyframes twinkle { 0%, 100% { transform: scale(.7) rotate(0); opacity: .6; } 50% { transform: scale(1.1) rotate(20deg); opacity: 1; } }
+.akwaba.wave .af { animation: hop .7s cubic-bezier(.34,1.56,.64,1); } .akwaba.wave .af2, .akwaba.wave .af4 { animation-delay: .12s; }
+@keyframes hop { 40% { transform: translateY(-10px) rotate(-8deg); } }
+@media (prefers-reduced-motion: reduce) { .akwaba.wave .ak-word span, .akwaba.wave .af, .ak-deco .sp { animation: none; } }
+
+.twin { display: grid; gap: 12px; }
+@media (min-width: 900px) { .twin { grid-template-columns: 1fr 1fr; } }
+.tw { background: var(--card); padding: 18px 16px; display: grid; gap: 10px; justify-items: center; align-content: start; text-align: center; }
+.tw h3 { margin: 0; font-family: var(--title); font-weight: 400; font-size: 21px; }
+.tw p { margin: 0; max-width: 40ch; font-family: var(--body); font-size: 15.5px; line-height: 1.5; }
+.name-eq { display: flex; align-items: center; gap: 8px; }
+.name-eq .pill { font-family: var(--display); font-weight: 900; font-size: 24px; padding: 4px 16px; border-radius: 99px; border: 2px solid #141414; color: #2e2350; box-shadow: 2px 2px 0 #141414; }
+.name-eq .p1 { background: #fbeee0; } .name-eq .p2 { background: #b9a6e0; }
+.name-eq .op { font-family: var(--title); font-size: 24px; }
+.soon-list { display: flex; flex-wrap: wrap; justify-content: center; gap: 8px; }
+.soon-list span { font-family: var(--pixel); font-weight: 600; font-size: 13.5px; padding: 6px 12px; border-radius: 99px; border: 2px dashed var(--line); animation: bob 3s ease-in-out infinite; }
+.soon-list span:nth-child(2) { animation-delay: .4s; } .soon-list span:nth-child(3) { animation-delay: .8s; } .soon-list span:nth-child(4) { animation-delay: 1.2s; } .soon-list span:nth-child(5) { animation-delay: 1.6s; }
+@keyframes bob { 50% { transform: translateY(-3px); } }
+
+.maker { background: var(--card); padding: 0; overflow: hidden; display: grid; }
+.maker-top { display: grid; grid-template-columns: 100px 1fr; gap: 14px; align-items: center; padding: 18px; color: #141414; background: linear-gradient(135deg, #c9b8f0, #cfeee0); border-bottom: var(--bw) solid #141414; }
+.maker .ph { position: relative; width: 100px; height: 100px; border-radius: 50%; border: var(--bw) solid #141414; background: #fbeee0; display: grid; place-items: center; overflow: hidden; box-shadow: 3px 3px 0 #141414;
+  font-family: var(--display); font-weight: 900; font-size: 42px; color: #2e2350; }
+.maker .ph img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
+.maker .eyebrow { color: #5a4796; margin: 0; font-family: var(--pixel); font-weight: 700; font-size: 12.5px; letter-spacing: .05em; text-transform: uppercase; }
+.maker h2 { margin: 2px 0 8px; font-family: var(--title); font-weight: 400; font-size: 21px; line-height: 1.15; }
+.facts { display: flex; flex-wrap: wrap; gap: 6px; }
+.facts span { font-family: var(--pixel); font-weight: 600; font-size: 12px; padding: 4px 9px; border-radius: 99px; background: rgba(255,255,255,.6); border: 1.5px solid #141414; }
 .maker p { margin: 0; font-family: var(--body); font-size: 15.5px; line-height: 1.55; }
-.maker .todo { background: var(--chip); border-radius: 6px; padding: 0 5px; color: var(--muted); font-style: italic; }
-.maker .claude { border-top: 2px dashed var(--line); padding-top: 12px; }
-.draft { position: absolute; top: -12px; right: 14px; font-family: var(--pixel); font-weight: 700; font-size: 12px; padding: 3px 9px; border-radius: 99px; background: #ffd27a; color: #141414; border: 2px solid #141414; }
+.maker-body { padding: 16px 18px 4px; display: grid; gap: 10px; }
+.story-h { margin: 10px 18px 0; font-family: var(--title); font-weight: 400; font-size: 19px; }
+.story { list-style: none; margin: 0; padding: 12px 18px 2px; display: grid; }
+.story li { position: relative; display: grid; grid-template-columns: 38px 1fr; gap: 12px; padding-bottom: 14px; }
+.story li:not(:last-child)::before { content: ""; position: absolute; left: 18px; top: 38px; bottom: 2px; border-left: 3px dashed var(--accent); }
+.story .dot { width: 36px; height: 36px; border-radius: 50%; display: grid; place-items: center; background: var(--accent); color: #141414; border: 2px solid #141414; font-family: var(--display); font-weight: 900; font-size: 17px; }
+.story b { display: block; font-family: var(--title); font-weight: 400; font-size: 17px; }
+.story li span:not(.dot) { font-family: var(--body); font-size: 15px; line-height: 1.5; }
+.ai-box { margin: 4px 18px 18px; padding: 14px; border-radius: 18px; background: var(--chip); border: 2px dashed var(--line); display: grid; gap: 8px; }
+.ai-box b { font-family: var(--title); font-weight: 400; font-size: 17px; }
+@media (min-width: 900px) { .maker { grid-template-columns: 1.15fr 1fr; align-items: start; } .maker-top, .ai-box { grid-column: 1 / -1; }
+  .maker-body { grid-column: 1; grid-row: 2 / span 2; padding-bottom: 12px; } .story-h { grid-column: 2; grid-row: 2; margin-top: 18px; } .story { grid-column: 2; grid-row: 3; } }
+@media (max-width: 520px) { .maker-top { grid-template-columns: 1fr; justify-items: center; text-align: center; } .facts { justify-content: center; } }
+
+.promises { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; }
+.prom { border-radius: 18px; padding: 14px 8px; display: grid; justify-items: center; text-align: center; gap: 4px; color: #141414; transition: transform .35s cubic-bezier(.34,1.56,.64,1); }
+.prom.pr1 { background: #ffe9b0; transform: rotate(-1.5deg); } .prom.pr2 { background: #cfeee0; transform: rotate(1deg); } .prom.pr3 { background: #d9cdf6; transform: rotate(-.8deg); }
+.prom:hover { transform: rotate(0) translateY(-4px); } .prom:hover .ico { animation: wig .6s ease; }
+.prom .ico { width: 34px; height: 34px; }
+.prom b { font-family: var(--title); font-weight: 400; font-size: 17px; }
+.prom span { font-family: var(--pixel); font-size: 12.5px; }
+
+.final { display: grid; grid-template-columns: 130px 1fr; gap: 16px; align-items: center; padding: 20px; color: #fbeee0; background: linear-gradient(135deg, #2e2350, #5a4796); }
+.final .k { width: 130px; height: 130px; cursor: pointer; }
+.final-big { margin: 0; font-family: var(--display); font-weight: 900; font-size: 34px; }
+.final-small { margin: 4px 0 14px; font-family: var(--pixel); font-size: 15px; opacity: .9; }
+.final .btn-big { border-color: #fbeee0; box-shadow: 4px 4px 0 #141414; }
+@media (max-width: 520px) { .final { grid-template-columns: 1fr; justify-items: center; text-align: center; } }
 
 /* the profile sheet */
 .sheet { position: fixed; inset: 0; z-index: 20; display: grid; place-items: center; padding: 16px; background: rgba(20,20,20,.5); }
@@ -141,7 +211,14 @@ body { overflow-x: hidden; }
 .nav2 .btn-big { flex: 1; }
 .err { font-family: var(--pixel); font-size: 13.5px; color: #c2414b; margin: 0; }
 .done { display: grid; justify-items: center; gap: 8px; text-align: center; }
-.done .k { width: 150px; height: 150px; }
+.move-in { width: 100%; aspect-ratio: 300 / 200; border-radius: 20px; overflow: hidden; border: 2px solid var(--track); }
+.move-in svg { width: 100%; height: 100%; display: block; }
+.move-in .hide { display: none; }
+.move-in .door { transition: transform .9s cubic-bezier(.6,0,.3,1); transform-box: view-box; }
+.move-in .door.l { transform-origin: 110px 120px; } .move-in .door.r { transform-origin: 190px 120px; }
+.move-in.open .door { transform: scaleX(.06); }
+.done h3, .done p { transition: opacity .5s, translate .5s cubic-bezier(.34,1.56,.64,1); }
+.done.wait h3, .done.wait p { opacity: 0; translate: 0 10px; }
 .done h3 { margin: 0; font-family: var(--display); font-weight: 900; font-size: 30px; }
 .done p { margin: 0; font-family: var(--pixel); font-size: 15px; color: var(--muted); }
 .help { display: grid; gap: 10px; font-family: var(--body); font-size: 15px; line-height: 1.5; }
@@ -191,34 +268,68 @@ body { overflow-x: hidden; }
       <p class="kali-says">« Salut, moi c'est Kali ! Ma créatrice m'a dessinée pour t'accompagner tout au long de ton apprentissage. Mon nom vient de <span class="nowrap">KalaLab</span> : ma créatrice a gardé le début, « Kala », et c'est devenu Kali ! Je suis là pour ta série de jours, tes objectifs et tes badges. À chaque niveau, je reçois une nouvelle tenue. Touche-moi, je saute de joie ! »</p></div>
   </section>
 
-  <section class="why sticker reveal">
-    <h2>Pourquoi KalaLab ?</h2>
-    <p>KalaLab est un site <b>ivoirien</b> pour apprendre l'anglais autrement : avec des couleurs, des animations, des jeux, et Kali pour t'encourager.</p>
-    <p>Il existe encore peu de sites ivoiriens pour apprendre l'anglais, et ils sont rarement amusants. KalaLab veut apporter de la nouveauté et de la fraîcheur, et donner envie aux élèves et aux étudiants de progresser, un peu chaque jour.</p>
-    <p>Tu es en Côte d'Ivoire, ailleurs en Afrique, en Europe ou à l'autre bout du monde ? Tu apprends l'anglais ? Alors KalaLab est fait pour toi.</p>
-    <p class="hi">Akwaba, tout le monde est le bienvenu !</p>
-    <h3 class="sub">D'où vient le nom ?</h3>
-    <p><b class="nowrap">KalaLab</b>, c'est apprendre comme dans un laboratoire : un endroit où l'on essaie, où l'on se trompe, et où l'on apprend.</p>
-    <h3 class="sub">Et demain ?</h3>
-    <p>Aujourd'hui, c'est l'anglais. Demain, peut-être :</p>
-    <div class="soon-list" aria-label="Idées pour la suite"><span>l'espagnol</span><span>l'allemand</span><span>les mathématiques</span><span>la philosophie</span><span>l'informatique</span></div>
+  <section class="why reveal">
+    <h2 class="center-h">Pourquoi KalaLab ?</h2>
+    <div class="reasons">
+      <div class="reason sticker r1"><span class="rico" data-art="ivoire"></span><b>Un site ivoirien</b><span>Pour apprendre l'anglais autrement : des couleurs, des animations, des jeux, et Kali pour t'encourager.</span></div>
+      <div class="reason sticker r2"><span class="rico" data-art="fresh"></span><b>De la fraîcheur</b><span>Il existe encore peu de sites ivoiriens pour apprendre l'anglais, et ils sont rarement amusants. KalaLab veut changer ça.</span></div>
+      <div class="reason sticker r3"><span class="rico" data-art="grow"></span><b>Pour élèves et étudiants</b><span>Donner envie de progresser, un peu chaque jour, quel que soit ton niveau.</span></div>
+    </div>
+    <p class="for-you">Tu es en Côte d'Ivoire, ailleurs en Afrique, en Europe ou à l'autre bout du monde ? Tu apprends l'anglais ?<br><b>Alors KalaLab est fait pour toi.</b></p>
+  </section>
+
+  <section class="akwaba reveal" id="akwaba" aria-label="Akwaba, tout le monde est le bienvenu !">
+    <div class="ak-deco" id="akDeco" aria-hidden="true"></div>
+    <p class="ak-big" aria-hidden="true"><span class="ak-word" id="akWord"></span><span class="ak-comma">,</span></p>
+    <p class="ak-line">tout le monde est le bienvenu !</p>
+    <p class="ak-hint" aria-hidden="true">Touche pour dire bonjour</p>
+  </section>
+
+  <section class="twin reveal">
+    <div class="tw sticker">
+      <h3>D'où vient le nom ?</h3>
+      <p class="name-eq"><span class="pill p1">Kala</span><span class="op">+</span><span class="pill p2">Lab</span></p>
+      <p><b class="nowrap">KalaLab</b>, c'est apprendre comme dans un laboratoire : un endroit où l'on essaie, où l'on se trompe, et où l'on apprend.</p>
+    </div>
+    <div class="tw sticker">
+      <h3>Et demain ?</h3>
+      <p>Aujourd'hui, c'est l'anglais. Demain, peut-être :</p>
+      <div class="soon-list" aria-label="Idées pour la suite"><span>l'espagnol</span><span>l'allemand</span><span>les mathématiques</span><span>la philosophie</span><span>l'informatique</span></div>
+    </div>
   </section>
 
   <section class="maker sticker reveal">
-    <div class="who"><span class="ph">J</span><div><h2>La créatrice de KalaLab</h2><p class="role">Joyce, étudiante en Master 2, Côte d'Ivoire</p></div></div>
-    <p>Je m'appelle <b>Bohoui Thyna Joyce Cléopâtre</b>. Je suis en Master 2 d'études du développement, spécialité suivi-évaluation des projets et programmes de développement, et je prépare la soutenance de mon mémoire. Je suis aussi stagiaire en suivi, évaluation et qualité à l'Observatoire ivoirien des politiques publiques (OIPP).</p>
-    <p>L'anglais n'a jamais été facile pour moi. Au lycée, j'avais beaucoup de lacunes : je comprenais mal les cours et j'avais du mal à m'exprimer. J'ai travaillé, pas à pas. Aujourd'hui, je me suis bien améliorée : mon niveau est entre B1 et B2. Et je continue d'apprendre, moi aussi, avec KalaLab.</p>
-    <p>Mon projet : partir en Irlande. D'abord un cours d'anglais au Cork English College, puis un programme en intelligence artificielle et cloud computing à la Technological University of the Shannon (TUS). L'anglais est au cœur de mon parcours : KalaLab, c'est pour m'aider moi, et pour aider les autres.</p>
-    <p>Tout a commencé avec Mia. Ma tante, élève infirmière en France, m'a confié le texte de son oral d'anglais, et j'ai créé Mia pour l'aider à bien le prononcer. Puis mes petites sœurs m'ont confié leurs cahiers d'anglais. Alors je me suis dit : pourquoi ne pas aller plus loin ? Créer KalaLab, qui réunit Kali, Mia et d'autres idées pour apprendre, et mettre toute cette créativité à la portée du plus grand nombre.</p>
-    <p class="claude">J'ai construit KalaLab avec l'aide de Claude, une intelligence artificielle. C'est la preuve que, si on en a vraiment envie, chacun peut créer un site pour aider le plus grand nombre. L'intelligence artificielle peut servir à faire du bien autour de soi.</p>
-    <p>Je m'intéresse aux sciences, à l'environnement et à la société. Je sais que l'IA a aussi un coût pour la planète, notamment en énergie. Mais elle existe déjà, et je crois qu'il faut apprendre à la connaître pour pouvoir l'améliorer et réduire ses effets négatifs.</p>
+    <div class="maker-top">
+      <span class="ph"><span>J</span><img src="images/joyce.jpg" alt="Joyce, créatrice de KalaLab" onerror="this.remove()"></span>
+      <div>
+        <p class="eyebrow">La créatrice de KalaLab</p>
+        <h2>Bohoui Thyna Joyce Cléopâtre</h2>
+        <div class="facts"><span>Master 2 · études du développement</span><span>Stagiaire à l'OIPP</span><span>Anglais : B1–B2</span><span>Objectif : l'Irlande</span></div>
+      </div>
+    </div>
+    <div class="maker-body">
+      <p>Je suis en Master 2 d'études du développement, spécialité suivi-évaluation des projets et programmes de développement, et je prépare la soutenance de mon mémoire. Je suis aussi stagiaire en suivi, évaluation et qualité à l'Observatoire ivoirien des politiques publiques (OIPP).</p>
+      <p>L'anglais n'a jamais été facile pour moi. Au lycée, j'avais beaucoup de lacunes : je comprenais mal les cours et j'avais du mal à m'exprimer. J'ai travaillé, pas à pas. Aujourd'hui, je me suis bien améliorée : mon niveau est entre B1 et B2. Et je continue d'apprendre, moi aussi, avec KalaLab.</p>
+      <p>Mon projet : partir en Irlande. D'abord un cours d'anglais au Cork English College, puis un programme en intelligence artificielle et cloud computing à la Technological University of the Shannon (TUS). L'anglais est au cœur de mon parcours : KalaLab, c'est pour m'aider moi, et pour aider les autres.</p>
+    </div>
+    <h3 class="story-h">L'histoire de KalaLab</h3>
+    <ol class="story">
+      <li><span class="dot">1</span><div><b>Mia</b><span>Ma tante, élève infirmière en France, m'a confié le texte de son oral d'anglais. J'ai créé Mia pour l'aider à bien le prononcer.</span></div></li>
+      <li><span class="dot">2</span><div><b>Mes petites sœurs</b><span>Elles m'ont confié leurs cahiers d'anglais. Leurs leçons sont devenues les premiers cours.</span></div></li>
+      <li><span class="dot">3</span><div><b>KalaLab</b><span>Alors je me suis dit : pourquoi ne pas aller plus loin ? Créer KalaLab, qui réunit Kali, Mia et d'autres idées pour apprendre, et mettre toute cette créativité à la portée du plus grand nombre.</span></div></li>
+    </ol>
+    <div class="ai-box">
+      <b>Fait avec l'IA, en conscience</b>
+      <p>J'ai construit KalaLab avec l'aide de Claude, une intelligence artificielle. C'est la preuve que, si on en a vraiment envie, chacun peut créer un site pour aider le plus grand nombre. L'intelligence artificielle peut servir à faire du bien autour de soi.</p>
+      <p>Je m'intéresse aux sciences, à l'environnement et à la société. Je sais que l'IA a aussi un coût pour la planète, notamment en énergie. Mais elle existe déjà, et je crois qu'il faut apprendre à la connaître pour pouvoir l'améliorer et réduire ses effets négatifs.</p>
+    </div>
   </section>
 
   <section class="sect reveal">
     <div class="promises">
-      <div class="prom"><i data-ic="star"></i><b>Gratuit</b><span>Pour tout le monde</span></div>
-      <div class="prom"><i data-ic="check"></i><b>Sans pub</b><span>Rien ne te dérange</span></div>
-      <div class="prom"><i data-ic="lock"></i><b>Sans compte</b><span>Tout reste sur ton appareil</span></div>
+      <div class="prom sticker pr1"><i data-ic="star"></i><b>Gratuit</b><span>Pour tout le monde</span></div>
+      <div class="prom sticker pr2"><i data-ic="check"></i><b>Sans pub</b><span>Rien ne te dérange</span></div>
+      <div class="prom sticker pr3"><i data-ic="lock"></i><b>Sans compte</b><span>Tout reste sur ton appareil</span></div>
     </div>
   </section>
 
@@ -227,7 +338,14 @@ body { overflow-x: hidden; }
     <p id="installHow"></p>
   </div>
 
-  <div class="cta" style="justify-self:center"><button class="btn-big" id="start2">Créer mon profil</button></div>
+  <section class="final sticker reveal">
+    <span class="k" id="finalKali"></span>
+    <div>
+      <p class="final-big">On commence ?</p>
+      <p class="final-small">Crée ton profil en une minute : Kali t'attend.</p>
+      <button class="btn-big" id="start2">Créer mon profil</button>
+    </div>
+  </section>
   <p class="foot">KalaLab n'a ni compte ni mot de passe : ton prénom et ta progression restent sur cet appareil.</p>
 </div>
 
@@ -254,9 +372,9 @@ body { overflow-x: hidden; }
         <div class="row-btns" style="display:flex;gap:8px;flex-wrap:wrap;justify-content:center"><label class="small-btn" for="photoIn">Choisir une photo</label><input type="file" id="photoIn" accept="image/*" hidden><button class="small-btn" id="skipPhoto">Plus tard</button></div></div>
     </div>
     <div class="step done" id="s4" hidden>
-      <span class="k" id="doneKali"></span>
+      <div class="move-in" id="moveIn" role="img" aria-label="La porte de l'arche s'ouvre : Kali arrive avec ses cartons de déménagement"></div>
       <h3 id="doneTitle">Bienvenue !</h3>
-      <p>Ton profil est prêt. Ta première leçon t'attend.</p>
+      <p id="doneText">Kali emménage chez toi ! Ta première leçon t'attend.</p>
     </div>
     <div class="step help" id="sHave" hidden>
       <p>Ta progression est sur un autre appareil ? Récupère-la en 3 gestes :</p>
@@ -415,6 +533,40 @@ let scT; addEventListener("resize", () => { clearTimeout(scT); scT = setTimeout(
 $("#kaliSect").innerHTML = kali("diplomee");
 $("#kaliSect").addEventListener("click", () => kaliCheer($("#kaliSect .kali")));
 
+// ---- small drawings for the three reasons
+const ART = {
+  // a little flag in the colours of Côte d'Ivoire, waving
+  ivoire: `<svg viewBox="0 0 60 60"><path d="M12 6 V56" stroke="#141414" stroke-width="4" stroke-linecap="round"/><g class="wavef"><path d="M14 8 Q24 4 32 8 T50 8 V34 Q42 30 32 34 T14 34 Z" fill="#fff" stroke="#141414" stroke-width="3" stroke-linejoin="round"/>
+    <path d="M14 8 Q19 6 26 7 V33 Q19 32 14 34 Z" fill="#f77f00"/><path d="M38 8 Q44 9 50 8 V34 Q44 31 38 33 Z" fill="#009e60"/><path d="M14 8 Q24 4 32 8 T50 8 V34 Q42 30 32 34 T14 34 Z" fill="none" stroke="#141414" stroke-width="3" stroke-linejoin="round"/></g><circle cx="12" cy="6" r="4" fill="#ffd27a" stroke="#141414" stroke-width="2.5"/></svg>`,
+  // a fresh sprout with sparkles
+  fresh: `<svg viewBox="0 0 60 60"><path d="M30 54 V30" stroke="#141414" stroke-width="4" stroke-linecap="round"/><path d="M30 34 C18 34 12 24 14 16 C24 16 30 24 30 34 Z" fill="#7cc48f" stroke="#141414" stroke-width="3" stroke-linejoin="round"/>
+    <path d="M30 30 C40 30 48 22 46 12 C36 12 30 20 30 30 Z" fill="#a9e0c8" stroke="#141414" stroke-width="3" stroke-linejoin="round"/><path d="M18 52 h24" stroke="#141414" stroke-width="4" stroke-linecap="round"/>
+    <path class="tw1" d="M50 30 l2 5 5 2 -5 2 -2 5 -2 -5 -5 -2 5 -2z" fill="#ffd27a" stroke="#141414" stroke-width="1.8"/><path class="tw2" d="M8 30 l1.5 3.5 3.5 1.5 -3.5 1.5 -1.5 3.5 -1.5 -3.5 -3.5 -1.5 3.5 -1.5z" fill="#fff" stroke="#141414" stroke-width="1.6"/></svg>`,
+  // steps going up, with a star at the top
+  grow: `<svg viewBox="0 0 60 60"><path d="M6 54 H18 V42 H30 V30 H42 V18 H54 V54 Z" fill="#c9b8f0" stroke="#141414" stroke-width="3" stroke-linejoin="round"/>
+    <path class="tw1" d="M48 2 l3 6.5 7 1 -5 5 1.2 7 -6.2 -3.4 -6.2 3.4 1.2 -7 -5 -5 7 -1z" fill="#ffd27a" stroke="#141414" stroke-width="2.4" stroke-linejoin="round"/></svg>`,
+};
+document.querySelectorAll("[data-art]").forEach((el) => { el.innerHTML = ART[el.dataset.art] || ""; });
+
+// ---- the Akwaba banner: the letters jump, the flowers hop; tap it to say hello again
+const akw = $("#akwaba");
+$("#akWord").innerHTML = [..."Akwaba"].map((c, i) => `<span style="--i:${i}">${c}</span>`).join("");
+const fl = (c) => `<svg viewBox="-14 -34 28 36">${flower(0, 0, c)}</svg>`;
+const star = (c) => `<svg viewBox="-11 -11 22 22"><path d="M0 -10 l3 7 7 3 -7 3 -3 7 -3 -7 -7 -3 7 -3z" fill="${c}" stroke="#141414" stroke-width="2" stroke-linejoin="round"/></svg>`;
+$("#akDeco").innerHTML = `<span class="af af1">${fl("#fbeee0")}</span><span class="af af2">${fl("#ffd27a")}</span><span class="af af3">${fl("#c9b8f0")}</span><span class="af af4">${fl("#fbeee0")}</span>`
+  + `<span class="sp sp1">${star("#fff")}</span><span class="sp sp2">${star("#ffd27a")}</span><span class="sp sp3">${star("#fff")}</span><span class="sp sp4">${star("#fbeee0")}</span>`;
+function akWave(x, y) {
+  akw.classList.remove("wave"); void akw.offsetWidth; akw.classList.add("wave");
+  if (x != null) confetti(x, y);
+}
+akw.addEventListener("click", (e) => akWave(e.clientX, e.clientY));
+new IntersectionObserver(([e], o) => { if (e.isIntersecting) { setTimeout(() => akWave(), 350); o.disconnect(); } }, { threshold: .6 }).observe(akw);
+
+// ---- last call: Kali waves when you get there
+$("#finalKali").innerHTML = kali("bonjour");
+$("#finalKali").addEventListener("click", () => kaliCheer($("#finalKali .kali")));
+new IntersectionObserver(([e]) => { if (e.isIntersecting) kaliWave($("#finalKali .kali")); }, { threshold: .7 }).observe($("#finalKali"));
+
 // ---- sections slide in as you scroll
 const io = new IntersectionObserver((es) => es.forEach((e) => { if (e.isIntersecting) { e.target.classList.add("in"); io.unobserve(e.target); } }), { threshold: .15 });
 document.querySelectorAll(".reveal").forEach((el) => io.observe(el));
@@ -479,8 +631,64 @@ $("#next").addEventListener("click", () => {
   if (step === 1) { const v = esc($("#first").value).replace(/\s+/g, " ").trim(); if (!v) { $("#err1").hidden = false; $("#first").focus(); return; } $("#err1").hidden = true; return show(2); }
   if (step === 2) { if (!genre) { $("#err2").hidden = false; return; } return show(3); }
   if (step === 3) { avatar(); return show(4); }
-  if (step === 4) { save(); return show(5); }
+  if (step === 4) { save(); show(5); return moveIn(); }
 });
+// ---- moving day: the door of the arch opens, Kali comes out carrying a box, puts it down, a second box slides out, she waves
+function moveIn() {
+  const GY = 178, K = 92, C = 150;
+  const box = (x, w, hh, cls = "") => `<g class="${cls}">${kaliBox(x - w / 2, GY - hh, w, hh)}</g>`;
+  const inside = (o) => kali(o).replace(/^<svg[^>]*>|<\/svg>$/g, "");
+  $("#moveIn").innerHTML = `<svg viewBox="0 0 300 200" aria-hidden="true">
+    <defs><linearGradient id="mvSky" x1="0" y1="0" x2="0" y2="1"><stop offset="0" class="kc-s1"/><stop offset="1" class="kc-s2"/></linearGradient>
+      <clipPath id="mvIn"><path d="M110 ${GY + 2} V100 A40 40 0 0 1 190 100 V${GY + 2} Z"/></clipPath></defs>
+    <rect width="300" height="200" fill="url(#mvSky)"/>
+    ${cloud(16, 40, "")}${cloud(232, 62, "two")}
+    <path class="kc-h1" d="M-10 ${GY} Q80 ${GY - 6} 150 ${GY} T310 ${GY - 2} V210 H-10 Z" stroke="#141414" stroke-width="3"/>
+    <path d="M100 ${GY + 2} V100 A50 50 0 0 1 200 100 V${GY + 2} Z" fill="#b9a6e0" stroke="#141414" stroke-width="3.5" stroke-linejoin="round"/>
+    <path d="M110 ${GY + 2} V100 A40 40 0 0 1 190 100 V${GY + 2} Z" fill="#2e2350" stroke="#141414" stroke-width="3"/>
+    <g fill="#fbeee0" opacity=".8"><circle cx="128" cy="96" r="1.6"/><circle cx="168" cy="88" r="1.3"/><circle cx="150" cy="118" r="1.4"/><circle cx="174" cy="134" r="1.2"/></g>
+    <g clip-path="url(#mvIn)"><g id="mvKin" transform="translate(-999 0)"><svg class="kali o-demenage" width="${K}" height="${K}" viewBox="-14 -18 228 230">${inside("demenage")}</svg></g></g>
+    <g class="door l"><path d="M110 ${GY + 2} V100 A40 40 0 0 1 150 60 V${GY + 2} Z" fill="#8e7cc3" stroke="#141414" stroke-width="3" stroke-linejoin="round"/><path d="M118 ${GY - 6} V104 M130 ${GY - 6} V88 M142 ${GY - 6} V72" stroke="#141414" stroke-width="1.6" opacity=".3"/><circle cx="143" cy="128" r="3.2" fill="#ffd27a" stroke="#141414" stroke-width="2"/></g>
+    <g class="door r"><path d="M190 ${GY + 2} V100 A40 40 0 0 0 150 60 V${GY + 2} Z" fill="#8e7cc3" stroke="#141414" stroke-width="3" stroke-linejoin="round"/><path d="M182 ${GY - 6} V104 M170 ${GY - 6} V88 M158 ${GY - 6} V72" stroke="#141414" stroke-width="1.6" opacity=".3"/><circle cx="157" cy="128" r="3.2" fill="#ffd27a" stroke="#141414" stroke-width="2"/></g>
+    <rect x="90" y="${GY - 3}" width="120" height="9" rx="4.5" fill="#e7d9c4" stroke="#141414" stroke-width="2.5"/>
+    ${box(198, 40, 30, "mvBox1 hide")}${box(102, 34, 26, "mvBox3 hide")}
+    <g id="mvKout" transform="translate(-999 0)"><svg class="kali o-demenage" width="${K}" height="${K}" viewBox="-14 -18 228 230">${inside("demenage")}</svg></g>
+    ${flower(26, GY + 16, "var(--petal)")}${flower(272, GY + 14, "#ffd27a")}${tuft(60, GY + 18)}${tuft(240, GY + 20)}
+  </svg>`;
+  const stage = $("#moveIn"), kin = $("#mvKin"), kout = $("#mvKout"), done = $("#s4");
+  const set = (g, x, s, t, walk) => { const hop = walk ? -Math.abs(Math.sin(t * 9)) * 3 : 0; g.setAttribute("transform", `translate(${(x - K * s / 2).toFixed(1)} ${(GY + 2 - K * s * .887 + hop).toFixed(1)}) scale(${s.toFixed(3)})`); };
+  const show = (sel, on) => $(sel).classList.toggle("hide", !on);
+  const finish = () => {
+    kin.setAttribute("transform", "translate(-999 0)");
+    kout.innerHTML = `<svg class="kali o-bonjour" width="${K}" height="${K}" viewBox="-14 -18 228 230">${inside("bonjour")}</svg>`;
+    set(kout, 236, 1, 0, false); show(".mvBox1", true); show(".mvBox3", true); $(".mvBox3").removeAttribute("transform");
+    done.classList.remove("wait");
+  };
+  stage.classList.remove("open"); done.classList.add("wait");
+  if (reduce) { stage.classList.add("open"); finish(); return; }
+  setTimeout(() => stage.classList.add("open"), 350);
+  const t0 = performance.now() + 1100, lerp = (a, b, k) => a + (b - a) * Math.min(1, Math.max(0, k));
+  let phase = 0;
+  (function frame(now) {
+    if ($("#s4").hidden) return;
+    const t = (now - t0) / 1000;
+    if (t < 0) { requestAnimationFrame(frame); return; }
+    if (t < 1.3) { set(kin, C, lerp(.55, 1, t / 1.3), t, true); }                                       // she comes out of the door, growing closer
+    else if (t < 2.4) { kin.setAttribute("transform", "translate(-999 0)"); set(kout, lerp(C, 236, (t - 1.3) / 1.1), 1, t, true); }   // walks to the right
+    else if (phase === 0) {                                                                                  // puts the box down
+      phase = 1; kout.innerHTML = `<svg class="kali o-bonjour" width="${K}" height="${K}" viewBox="-14 -18 228 230">${inside("bonjour")}</svg>`;
+      set(kout, 236, 1, 0, false); show(".mvBox1", true);
+    } else if (t < 3.6) { const k = (t - 2.6) / 1; show(".mvBox3", k > 0); $(".mvBox3").setAttribute("transform", `translate(${lerp(48, 0, k).toFixed(1)} 0)`); }   // a second box slides out of the door
+    else if (phase === 1) {
+      phase = 2; $(".mvBox3").removeAttribute("transform"); done.classList.remove("wait");
+      const k = $("#mvKout .kali"); kaliWave(k); setTimeout(() => kaliCheer(k), 1500);
+      const r = stage.getBoundingClientRect(); confetti(r.left + r.width * .78, r.top + r.height * .35);
+      return;
+    }
+    requestAnimationFrame(frame);
+  })(performance.now());
+  setTimeout(() => { if (done.classList.contains("wait")) finish(); }, 7000);
+}
 // the profile: also shared with Mia's page, so Mia never asks for the name again
 function save() {
   const v = esc($("#first").value).replace(/\s+/g, " ").trim().slice(0, 30);
@@ -489,8 +697,6 @@ function save() {
   KALI_SKIN = skin; KALI_BOY = genre === "m";
   try { const m = JSON.parse(localStorage.getItem("mia.me") || "null") || {}; m.first = v; localStorage.setItem("mia.me", JSON.stringify(m)); } catch (e) {}
   $("#doneTitle").textContent = `Bienvenue, ${v} !`;
-  $("#doneKali").innerHTML = kali("fete");
-  setTimeout(() => { kaliCheer($("#doneKali .kali")); const r = $("#doneKali").getBoundingClientRect(); confetti(r.left + r.width / 2, r.top + r.height / 3); }, 250);
 }
 
 // ---- install (the card stays on this page, even after installing)

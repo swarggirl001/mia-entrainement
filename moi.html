@@ -94,6 +94,8 @@
 .tile-i:active { transform: scale(.94); }
 .tile-i .th { width: 70px; height: 52px; display: block; border-radius: 12px; background: var(--chip); overflow: hidden; }
 .tile-i .th .kali { overflow: hidden; filter: none; }
+.tile-i .th.it { display: grid; place-items: center; padding: 6px 8px; box-sizing: border-box; }
+.tile-i .th.it svg { overflow: visible; filter: drop-shadow(2px 2px 0 rgba(20,20,20,.25)); }
 .tile-i .th .kali * { animation: none !important; }
 .tile-i[aria-pressed="true"] { border: var(--bw) solid #141414; background: var(--lilac); color: #141414; box-shadow: 3px 3px 0 var(--shadow); }
 .tile-i .on { position: absolute; top: -7px; right: -7px; width: 24px; height: 24px; border-radius: 50%; background: var(--accent); border: 2px solid #141414; display: grid; place-items: center; }
@@ -222,7 +224,6 @@
           <div class="field"><span class="lab" id="genreLab">Je suis</span>
             <div class="seg2" role="group" aria-labelledby="genreLab"><button data-genre="f">une fille</button><button data-genre="m">un garçon</button></div></div>
           <div class="row-btns"><label class="small-btn main" for="photoIn">Choisir une photo</label><input type="file" id="photoIn" accept="image/*" hidden><button class="small-btn" id="photoDel" hidden>Enlever la photo</button></div>
-          <p class="note">Le prénom et la photo restent sur cet appareil.</p>
         </section>
         <section class="panel sticker">
           <h2>Affichage</h2>
@@ -260,7 +261,6 @@
       </div>
     </div>
   </div>
-  <p class="foot">Tout ce qui est ici reste sur cet appareil. KalaLab n'a ni compte ni mot de passe.</p>
 </div>
 
 <nav class="nav" aria-label="Menu">
@@ -426,7 +426,6 @@ document.querySelectorAll("[data-genre]").forEach((b) => b.addEventListener("cli
 paintGenre();
 
 // ---- Kali's dressing room: accessories (unlocked one by one, a limited number at once), colours, outfits
-const CROP = { "tête": "50 12 100 66", yeux: "52 62 96 52", cou: "48 112 128 68", oreilles: "2 92 66 62", bras: "30 130 60 48", pieds: "60 154 80 46", dos: "26 110 148 100", main: "112 108 86 96" };
 const crop = (svg, vb) => svg.replace(/viewBox="[^"]+"/, `viewBox="${vb}"`);
 let dTab = "items";
 function syncKali() { KALI_BOY = KL.read("genre", "f") === "m"; KALI_SKIN = KL.read("kaliColor", "lilas"); KALI_EXTRAS = KL.read("kaliItems", []); }
@@ -444,7 +443,7 @@ function paintOutfits() {
   const lock = (need) => `<span class="lock">${icon("lock")}</span>`;
   $("#dt-items").innerHTML = KALI_ITEMS.map(([id, name, slot]) => {
     const need = KLP.ITEM_LV[id] || 99, open = n >= need, on = KALI_EXTRAS.includes(id);
-    return `<button class="tile-i ${open ? "" : "locked"}" data-item="${id}" ${open ? `aria-pressed="${on}"` : 'aria-disabled="true"'}><span class="th">${crop(kali("bonjour", name, KALI_SKIN, [id], KALI_BOY), CROP[slot])}</span>${open ? "" : lock(need)}<span>${open ? name : "Niveau " + need}</span>${on ? `<span class="on">${icon("check")}</span>` : ""}</button>`;
+    return `<button class="tile-i ${open ? "" : "locked"}" data-item="${id}" ${open ? `aria-pressed="${on}"` : 'aria-disabled="true"'}><span class="th it">${kali("bonjour", name, KALI_SKIN, [id], KALI_BOY, id)}</span>${open ? "" : lock(need)}<span>${open ? name : "Niveau " + need}</span>${on ? `<span class="on">${icon("check")}</span>` : ""}</button>`;
   }).join("");
   $("#dt-colors").innerHTML = Object.entries(KALI_SKINS).map(([k, s]) => {
     const open = n >= s.lv, on = k === KALI_SKIN;
