@@ -265,7 +265,7 @@ body { overflow-x: hidden; }
   <section class="kali-sect sticker reveal">
     <span class="k" id="kaliSect"></span>
     <div><b>Kali t'accompagne</b>
-      <p class="kali-says">« Salut, moi c'est Kali ! Ma créatrice m'a dessinée pour t'accompagner tout au long de ton apprentissage. Mon nom vient de <span class="nowrap">KalaLab</span> : ma créatrice a gardé le début, « Kala », et c'est devenu Kali ! Je suis là pour ta série de jours, tes objectifs et tes badges. À chaque niveau, je reçois une nouvelle tenue. Touche-moi, je saute de joie ! »</p></div>
+      <p class="kali-says">« Salut, moi c'est Kali ! Ma créatrice m'a dessinée pour t'accompagner tout au long de ton apprentissage. Mon nom vient de <span class="nowrap">KalaLab</span> : ma créatrice a gardé le début, « Kala », et c'est devenu Kali ! Et si je suis une éléphante, c'est parce que l'éléphant est le symbole de la Côte d'Ivoire ! Je suis là pour ta série de jours, tes objectifs et tes badges. À chaque niveau, je reçois de nouvelles tenues, couleurs et accessoires. Touche-moi, je saute de joie ! »</p></div>
   </section>
 
   <section class="why reveal">
@@ -656,7 +656,9 @@ function moveIn() {
     ${flower(26, GY + 16, "var(--petal)")}${flower(272, GY + 14, "#ffd27a")}${tuft(60, GY + 18)}${tuft(240, GY + 20)}
   </svg>`;
   const stage = $("#moveIn"), kin = $("#mvKin"), kout = $("#mvKout"), done = $("#s4");
-  const set = (g, x, s, t, walk) => { const hop = walk ? -Math.abs(Math.sin(t * 9)) * 3 : 0; g.setAttribute("transform", `translate(${(x - K * s / 2).toFixed(1)} ${(GY + 2 - K * s * .887 + hop).toFixed(1)}) scale(${s.toFixed(3)})`); };
+  // her feet sit a little into the grass (ground() follows the hill line), with only a small bounce while she walks
+  const ground = (x) => { const t = x <= 150 ? x / 150 : (x - 150) / 160, a = x <= 150 ? [GY, GY - 6, GY] : [GY, GY + 6, GY - 2]; return (1 - t) ** 2 * a[0] + 2 * (1 - t) * t * a[1] + t * t * a[2]; };
+  const set = (g, x, s, t, walk) => { const hop = walk ? -Math.abs(Math.sin(t * 9)) * 1.2 : 0, gy = s < 1 ? GY + 2 : Math.max(GY + 2, ground(x) + 3); g.setAttribute("transform", `translate(${(x - K * s / 2).toFixed(1)} ${(gy - K * s * .887 + hop).toFixed(1)}) scale(${s.toFixed(3)})`); };
   const show = (sel, on) => $(sel).classList.toggle("hide", !on);
   const finish = () => {
     kin.setAttribute("transform", "translate(-999 0)");
@@ -694,7 +696,7 @@ function save() {
   const v = esc($("#first").value).replace(/\s+/g, " ").trim().slice(0, 30);
   const me = KL.read("me", {}); me.first = v; KL.write("me", me);
   KL.write("genre", genre); KL.write("kaliColor", skin); KL.write("profile", { created: KL.today() });
-  KALI_SKIN = skin; KALI_BOY = genre === "m";
+  KALI_SKIN = skin; KALI_BOY = kaliLook();
   try { const m = JSON.parse(localStorage.getItem("mia.me") || "null") || {}; m.first = v; localStorage.setItem("mia.me", JSON.stringify(m)); } catch (e) {}
   $("#doneTitle").textContent = `Bienvenue, ${v} !`;
 }

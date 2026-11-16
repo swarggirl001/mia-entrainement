@@ -25,15 +25,21 @@ const KALI_ITEMS = [["couronne", "Couronne", "tête"], ["solaires", "Lunettes de
 // the saved choices: her colour, a cap instead of a bow for a boy, the things she wears
 const kaliSaved = (k, d) => { try { const v = localStorage.getItem("kalalab." + k); return v == null ? d : JSON.parse(v); } catch (e) { return d; } };
 let KALI_SKIN = kaliSaved("kaliColor", "lilas");
-let KALI_BOY = kaliSaved("genre", "f") === "m";
+// her look, chosen like a game character: what she wears on her head, lashes or not, rosy cheeks or not
+// (older profiles only have "genre": a boy gets the cap by default, everything can be changed)
+const kaliLook = () => Object.assign({ top: kaliSaved("genre", "f") === "m" ? "casquette" : "noeud", cils: true, joues: true }, kaliSaved("kaliLook", {}));
+let KALI_BOY = kaliLook();
 let KALI_EXTRAS = kaliSaved("kaliItems", []);
 
 // a moving box (for her moving day)
 function kaliBox(x, y, w, hh, I = KALI_INK) {
+  const hs = Math.min(1, hh / 44);   // the heart keeps inside the box, whatever its size
   return `<g class="box"><rect x="${x}" y="${y}" width="${w}" height="${hh}" rx="4" fill="#d9a46a" stroke="${I}" stroke-width="3.5"/><path d="M${x} ${y + 12} H${x + w}" stroke="${I}" stroke-width="2.5" opacity=".35"/>
-    <rect x="${x + w / 2 - 6}" y="${y}" width="12" height="${hh * .55}" fill="#f3d9a4" stroke="${I}" stroke-width="2"/><path transform="translate(${x + w * .22} ${y + hh * .62})" d="M0 4 C0 -1 6 -1 6 3 C6 -1 12 -1 12 4 C12 8 7 11 6 13 C5 11 0 8 0 4Z" fill="#ff86ab" stroke="${I}" stroke-width="1.8" style="transform-box:view-box"/></g>`;
+    <rect x="${x + w / 2 - 6}" y="${y}" width="12" height="${hh * .55}" fill="#f3d9a4" stroke="${I}" stroke-width="2"/><path transform="translate(${(x + w * .27 - 6 * hs).toFixed(1)} ${(y + hh * .7 - 6.5 * hs).toFixed(1)}) scale(${hs.toFixed(2)})" d="M0 4 C0 -1 6 -1 6 3 C6 -1 12 -1 12 4 C12 8 7 11 6 13 C5 11 0 8 0 4Z" fill="#ff86ab" stroke="${I}" stroke-width="${(1.8 / hs).toFixed(2)}" style="transform-box:view-box"/></g>`;
 }
 function kali(outfit = "bonjour", label = "Kali, l'éléphante de KalaLab", skin = KALI_SKIN, extras = KALI_EXTRAS, boy = KALI_BOY, only = null) {
+  // "boy" is the look: an object {top, cils, joues}, or true/false from older code (true = cap)
+  const L = boy && typeof boy === "object" ? Object.assign({ top: "noeud", cils: true, joues: true }, boy) : { top: boy ? "casquette" : "noeud", cils: true, joues: true };
   const I = KALI_INK, C = Object.assign({}, KALI, KALI_SKINS[skin] || KALI_SKINS.lilas), o = KALI_OUTFITS.includes(outfit) ? outfit : "bonjour";
   const tube = (d, w = 17, inner = 10.5, col = C.body) => `<path d="${d}" fill="none" stroke="${I}" stroke-width="${w}" stroke-linecap="round" stroke-linejoin="round"/><path d="${d}" fill="none" stroke="${col}" stroke-width="${inner}" stroke-linecap="round" stroke-linejoin="round"/>`;
   const has = (id) => (extras || []).includes(id), gold = "#f1c24e";
@@ -63,13 +69,13 @@ function kali(outfit = "bonjour", label = "Kali, l'éléphante de KalaLab", skin
     <g class="armR">${tube("M130 139 L143 167")}<path d="M140 170 h3 M144 167 h3" stroke="${C.light}" stroke-width="2.5" stroke-linecap="round"/>${handR}</g>`;
 
   // eyes: open, asleep, or looking around (the pupils move)
-  const lashes = (x, s) => `<path d="M${x + s * 5.5} 84 l${s * 6} -3.5 M${x + s * 6.5} 88.5 l${s * 6.5} -0.5" stroke="${I}" stroke-width="2.3" stroke-linecap="round"/>`;
+  const lashes = (x, s) => !L.cils ? "" : `<path d="M${x + s * 5.5} 84 l${s * 6} -3.5 M${x + s * 6.5} 88.5 l${s * 6.5} -0.5" stroke="${I}" stroke-width="2.3" stroke-linecap="round"/>`;
   const heartEye = (x) => `<g transform="translate(${x - 9} 81)"><path class="pe" d="M0 6 C0 -1 9 -1 9 5 C9 -1 18 -1 18 6 C18 12 11 16 9 19 C7 16 0 12 0 6Z" fill="#ff6f96" stroke="${I}" stroke-width="2.5" stroke-linejoin="round"/></g>`;
   const starEye = (x) => `<g transform="translate(${x} 89)"><path class="pe" d="M0 -11 l3.2 6.8 7.4 1 -5.4 5.2 1.3 7.4 -6.5 -3.6 -6.5 3.6 1.3 -7.4 -5.4 -5.2 7.4 -1z" fill="${C.butter}" stroke="${I}" stroke-width="2.5" stroke-linejoin="round"/></g>`;
   const eyes = o === "adore" ? `<g class="eyes2">${heartEye(82)}${heartEye(118)}</g>`
     : o === "fiere" ? `<g class="eyes2">${starEye(82)}${starEye(118)}</g>`
     : o === "dodo"
-    ? `<g class="eyes sleep"><path d="M75 90 q7 6 14 0 M111 90 q7 6 14 0" fill="none" stroke="${I}" stroke-width="3.5" stroke-linecap="round"/><path d="M76 92 l-5 3 M79.5 94.5 l-3 4.5 M124 92 l5 3 M120.5 94.5 l3 4.5" stroke="${I}" stroke-width="2.3" stroke-linecap="round"/></g>`
+    ? `<g class="eyes sleep"><path d="M75 90 q7 6 14 0 M111 90 q7 6 14 0" fill="none" stroke="${I}" stroke-width="3.5" stroke-linecap="round"/>${L.cils ? `<path d="M76 92 l-5 3 M79.5 94.5 l-3 4.5 M124 92 l5 3 M120.5 94.5 l3 4.5" stroke="${I}" stroke-width="2.3" stroke-linecap="round"/>` : ""}</g>`
     : `<g class="eyes"><g class="pupils"><ellipse cx="82" cy="89" rx="6.5" ry="8.5" fill="${I}"/><ellipse cx="118" cy="89" rx="6.5" ry="8.5" fill="${I}"/>
        <circle cx="84.5" cy="85.5" r="2.7" fill="#fff"/><circle cx="120.5" cy="85.5" r="2.7" fill="#fff"/><circle cx="80.5" cy="92" r="1.2" fill="#fff"/><circle cx="116.5" cy="92" r="1.2" fill="#fff"/></g>${lashes(82, -1)}${lashes(118, 1)}</g>`;
   const mouth = o === "dodo" ? `<ellipse cx="92" cy="119" rx="3" ry="2.5" fill="${I}"/>`
@@ -104,7 +110,7 @@ function kali(outfit = "bonjour", label = "Kali, l'éléphante de KalaLab", skin
   const cap = `<g class="capb"><path d="M56 70 Q56 28 100 28 Q144 28 144 70 Q100 58 56 70 Z" fill="${C.bow}" stroke="${I}" stroke-width="3.5" stroke-linejoin="round"/>
     <path d="M100 30 V62 M76 36 Q72 50 72 64 M124 36 Q128 50 128 64" fill="none" stroke="${I}" stroke-width="2" opacity=".35"/><circle cx="100" cy="29" r="4" fill="${C.butter}" stroke="${I}" stroke-width="2.5"/>
     <path d="M58 68 Q100 54 148 64 Q164 68 158 76 Q140 74 100 70 Q74 70 58 76 Z" fill="${C.butter}" stroke="${I}" stroke-width="3.5" stroke-linejoin="round"/></g>`;
-  const top = has("couronne") ? crown : boy ? cap : bow;
+  const top = has("couronne") ? crown : L.top === "casquette" ? cap : L.top === "rien" ? "" : bow;
   const head = {
     bonjour: top,
     casquette: has("couronne") ? crown : cap,
@@ -113,7 +119,7 @@ function kali(outfit = "bonjour", label = "Kali, l'éléphante de KalaLab", skin
     demenage: top, triste: top, surprise: top, adore: top, reflechit: top, fiere: top,
     froid: `${top}<g class="muffs"><path d="M54 84 C54 34, 146 34, 146 84" fill="none" stroke="${I}" stroke-width="8" stroke-linecap="round"/><path d="M54 84 C54 34, 146 34, 146 84" fill="none" stroke="${C.bow}" stroke-width="3.5" stroke-linecap="round"/><circle cx="50" cy="92" r="13" fill="#fff" stroke="${I}" stroke-width="3.5"/><circle cx="150" cy="92" r="13" fill="#fff" stroke="${I}" stroke-width="3.5"/></g>`,
     chaud: has("couronne") ? crown : cap,
-    dj: `${boy || has("couronne") ? "" : bow}<g class="phones"><path d="M54 92 C52 30, 148 30, 146 92" fill="none" stroke="${I}" stroke-width="8" stroke-linecap="round"/><path d="M54 92 C52 30, 148 30, 146 92" fill="none" stroke="${C.mint}" stroke-width="3" stroke-linecap="round"/>
+    dj: `${L.top !== "noeud" || has("couronne") ? "" : bow}<g class="phones"><path d="M54 92 C52 30, 148 30, 146 92" fill="none" stroke="${I}" stroke-width="8" stroke-linecap="round"/><path d="M54 92 C52 30, 148 30, 146 92" fill="none" stroke="${C.mint}" stroke-width="3" stroke-linecap="round"/>
       <rect x="42" y="78" width="20" height="32" rx="9" fill="${C.bow}" stroke="${I}" stroke-width="4"/><rect x="138" y="78" width="20" height="32" rx="9" fill="${C.bow}" stroke="${I}" stroke-width="4"/>
       <circle cx="52" cy="94" r="4" fill="${C.mint}"/><circle cx="148" cy="94" r="4" fill="${C.mint}"/></g>`,
     lecture: `${top}<g class="glasses"><circle cx="82" cy="89" r="12" fill="#fff" fill-opacity=".25" stroke="${I}" stroke-width="3.5"/><circle cx="118" cy="89" r="12" fill="#fff" fill-opacity=".25" stroke="${I}" stroke-width="3.5"/><path d="M94 88 q6 -4 12 0" fill="none" stroke="${I}" stroke-width="3.5"/></g>`,
@@ -192,8 +198,8 @@ function kali(outfit = "bonjour", label = "Kali, l'éléphante de KalaLab", skin
     <g class="head">
       <ellipse cx="100" cy="92" rx="50" ry="46" fill="${C.body}" stroke="${I}" stroke-width="4"/>
       <ellipse cx="82" cy="66" rx="16" ry="8" fill="#fff" opacity=".35" transform="rotate(-18 82 66)"/>
-      <g class="blush"><ellipse cx="72" cy="107" rx="13" ry="8.5" fill="url(#kblush)"/><ellipse cx="128" cy="107" rx="13" ry="8.5" fill="url(#kblush)"/>
-        <path d="M66 105 l-2.5 4 M71 105 l-2.5 4 M76 105 l-2.5 4 M126 105 l-2.5 4 M131 105 l-2.5 4 M136 105 l-2.5 4" stroke="#e8789c" stroke-width="1.6" stroke-linecap="round" opacity=".55"/></g>
+      ${L.joues ? `<g class="blush"><ellipse cx="72" cy="107" rx="13" ry="8.5" fill="url(#kblush)"/><ellipse cx="128" cy="107" rx="13" ry="8.5" fill="url(#kblush)"/>
+        <path d="M66 105 l-2.5 4 M71 105 l-2.5 4 M76 105 l-2.5 4 M126 105 l-2.5 4 M131 105 l-2.5 4 M136 105 l-2.5 4" stroke="#e8789c" stroke-width="1.6" stroke-linecap="round" opacity=".55"/></g>` : ""}
       ${eyes}${mouth}${mood}${faceItems}
       ${head}
     </g>
