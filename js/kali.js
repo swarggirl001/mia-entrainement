@@ -2,10 +2,21 @@
 // each with its own animation (CSS classes .o-<outfit> on the <svg>, see KALI_CSS).
 const KALI_INK = "#141414";
 const KALI = { body: "#c9b8f0", inner: "#f7c9d9", light: "#fbeee0", bow: "#7b68c4", cheek: "#ff9fb8", butter: "#ffd27a", blue: "#a9c2f5", mint: "#a9e0c8", peach: "#f7b9a0", rose: "#f5a3bd" };
-const KALI_OUTFITS = ["bonjour", "dj", "lecture", "diplomee", "sport", "dodo", "detective", "fete"];
+const KALI_OUTFITS = ["bonjour", "dj", "lecture", "diplomee", "sport", "dodo", "detective", "fete", "casquette", "foot"];
+// her colours: body, inside of the ears and belly, and the colour of her bow or cap
+const KALI_SKINS = {
+  lilas: { name: "Lilas", body: "#c9b8f0", inner: "#f7c9d9", bow: "#7b68c4" },
+  ciel: { name: "Bleu ciel", body: "#a9c8f2", inner: "#f7c9d9", bow: "#3f6fc4" },
+  menthe: { name: "Menthe", body: "#a9e0c8", inner: "#f7d3c4", bow: "#2f8a63" },
+  rose: { name: "Rose", body: "#f5b8cc", inner: "#fde0ea", bow: "#d0507c" },
+  caramel: { name: "Caramel", body: "#f2c39b", inner: "#fde3d0", bow: "#b0643a" },
+  soleil: { name: "Soleil", body: "#ffe08a", inner: "#fbd0c0", bow: "#e0782f" },
+  gris: { name: "Gris éléphant", body: "#c3c7cf", inner: "#f7c9d9", bow: "#5b6170" },
+};
+let KALI_SKIN = "lilas";   // a page can set it from the saved choice
 
-function kali(outfit = "bonjour", label = "Kali, l'éléphante de KalaLab") {
-  const I = KALI_INK, C = KALI, o = KALI_OUTFITS.includes(outfit) ? outfit : "bonjour";
+function kali(outfit = "bonjour", label = "Kali, l'éléphante de KalaLab", skin = KALI_SKIN) {
+  const I = KALI_INK, C = Object.assign({}, KALI, KALI_SKINS[skin] || KALI_SKINS.lilas), o = KALI_OUTFITS.includes(outfit) ? outfit : "bonjour";
   const tube = (d, w = 17, inner = 10.5, col = C.body) => `<path d="${d}" fill="none" stroke="${I}" stroke-width="${w}" stroke-linecap="round" stroke-linejoin="round"/><path d="${d}" fill="none" stroke="${col}" stroke-width="${inner}" stroke-linecap="round" stroke-linejoin="round"/>`;
   const ear = (s) => `<g class="ear${s > 0 ? "L" : "R"}">
     <path d="M${100 - s * 28} 60 C${100 - s * 72} 30, ${100 - s * 100} 64, ${100 - s * 90} 106 C${100 - s * 84} 136, ${100 - s * 50} 138, ${100 - s * 32} 114 Z" fill="${C.body}" stroke="${I}" stroke-width="4" stroke-linejoin="round"/>
@@ -28,8 +39,13 @@ function kali(outfit = "bonjour", label = "Kali, l'éléphante de KalaLab") {
 
   // headwear
   const bow = `<g class="bow"><path d="M100 46 C88 34, 76 40, 80 50 C83 58, 94 54, 100 48 C106 54, 117 58, 120 50 C124 40, 112 34, 100 46 Z" fill="${C.bow}" stroke="${I}" stroke-width="3.5" stroke-linejoin="round"/><circle cx="100" cy="47" r="5" fill="${C.butter}" stroke="${I}" stroke-width="3"/></g>`;
+  const cap = `<g class="capb"><path d="M56 70 Q56 28 100 28 Q144 28 144 70 Q100 58 56 70 Z" fill="${C.bow}" stroke="${I}" stroke-width="3.5" stroke-linejoin="round"/>
+    <path d="M100 30 V62 M76 36 Q72 50 72 64 M124 36 Q128 50 128 64" fill="none" stroke="${I}" stroke-width="2" opacity=".35"/><circle cx="100" cy="29" r="4" fill="${C.butter}" stroke="${I}" stroke-width="2.5"/>
+    <path d="M58 68 Q100 54 148 64 Q164 68 158 76 Q140 74 100 70 Q74 70 58 76 Z" fill="${C.butter}" stroke="${I}" stroke-width="3.5" stroke-linejoin="round"/></g>`;
   const head = {
     bonjour: bow,
+    casquette: cap,
+    foot: cap,
     dj: `${bow}<g class="phones"><path d="M54 92 C52 30, 148 30, 146 92" fill="none" stroke="${I}" stroke-width="8" stroke-linecap="round"/><path d="M54 92 C52 30, 148 30, 146 92" fill="none" stroke="${C.mint}" stroke-width="3" stroke-linecap="round"/>
       <rect x="42" y="78" width="20" height="32" rx="9" fill="${C.bow}" stroke="${I}" stroke-width="4"/><rect x="138" y="78" width="20" height="32" rx="9" fill="${C.bow}" stroke="${I}" stroke-width="4"/>
       <circle cx="52" cy="94" r="4" fill="${C.mint}"/><circle cx="148" cy="94" r="4" fill="${C.mint}"/></g>`,
@@ -47,6 +63,9 @@ function kali(outfit = "bonjour", label = "Kali, l'éléphante de KalaLab") {
 
   // things in front of her body
   const front = {
+    foot: `<g class="ball"><circle cx="100" cy="158" r="18" fill="#fff" stroke="${I}" stroke-width="3.5"/><path d="M100 151 l7 5 -3 8 h-8 l-3 -8z" fill="${I}"/>
+      <path d="M100 151 v-9 M107 156 l8 -3 M104 164 l5 7 M96 164 l-5 7 M93 156 l-8 -3" stroke="${I}" stroke-width="2.2"/>
+      <circle cx="80" cy="160" r="7" fill="${C.body}" stroke="${I}" stroke-width="3.5"/><circle cx="120" cy="160" r="7" fill="${C.body}" stroke="${I}" stroke-width="3.5"/></g>`,
     lecture: `<g class="book"><path d="M66 146 Q84 140 100 148 Q116 140 134 146 V174 Q116 168 100 176 Q84 168 66 174 Z" fill="${C.light}" stroke="${I}" stroke-width="4" stroke-linejoin="round"/>
       <path d="M100 148 V176" stroke="${I}" stroke-width="3"/><path d="M73 153 h20 M73 160 h18 M73 167 h16 M107 153 h20 M109 160 h18" stroke="${I}" stroke-width="2" opacity=".35"/>
       <path class="page" d="M100 148 Q116 140 134 146 V174 Q116 168 100 176 Z" fill="#fff" stroke="${I}" stroke-width="3" stroke-linejoin="round"/>
@@ -63,6 +82,7 @@ function kali(outfit = "bonjour", label = "Kali, l'éléphante de KalaLab") {
     dodo: [Z(150, 30, 22), Z(172, 8, 16)],
     diplomee: [conf(30, 30, C.butter, 20), conf(170, 40, C.mint, -30), conf(36, 112, C.rose, 50), conf(174, 120, C.blue, 10)],
     fete: [conf(160, 30, C.butter, 20), conf(178, 92, C.mint, -30), conf(150, 8, C.blue, 50)],
+    foot: [`<g transform="translate(160 40)"><path d="M0 0 l3 7 7 3 -7 3 -3 7 -3-7 -7-3 7-3z" fill="${C.butter}" stroke="${I}" stroke-width="2.5" stroke-linejoin="round"/></g>`],
     sport: [`<g transform="translate(156 52)"><path d="M0 0 q6 10 0 14 q-6 -4 0 -14 z" fill="#bfe6ff" stroke="${I}" stroke-width="2.5"/></g>`],
     detective: [`<g transform="translate(28 40)"><text font-family="Bagel Fat One, Arial Black, sans-serif" font-size="26" fill="${C.butter}" stroke="${I}" stroke-width="2.5" paint-order="stroke">?</text></g>`],
   }[o] || [];
@@ -134,6 +154,8 @@ const KALI_CSS = `
 @keyframes k-groove { 0%,100% { transform: rotate(-5deg); } 50% { transform: rotate(5deg); } }
 @keyframes k-danceL { 0%,100% { transform: rotate(10deg); } 50% { transform: rotate(70deg); } }
 @keyframes k-danceR { 0%,100% { transform: rotate(-70deg); } 50% { transform: rotate(-10deg); } }
+.kali.o-foot .ball { animation: k-bounce .7s ease-in-out infinite; }
+.kali.o-casquette .capb, .kali.o-foot .capb { transform-origin: 50% 100%; animation: k-bow 3s ease-in-out infinite; }
 @keyframes k-bounce { 0%,100% { transform: translateY(0); } 50% { transform: translateY(-5px); } }
 
 /* lecture: arms hold the book, a page turns, she nods */

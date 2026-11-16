@@ -45,8 +45,11 @@ const KLP = {
     const cur = L[n - 1], next = L[n] ?? null, fem = KL.read("genre", "f") !== "m";
     return { n, xp, cur, next, pct: next ? Math.round(100 * (xp - cur) / (next - cur)) : 100, title: KLP.TITLES[n - 1][fem ? 0 : 1] };
   },
-  // [outfit, name, level that unlocks it]
-  OUTFITS: [["bonjour", "Bonjour", 1], ["lecture", "Lectrice", 2], ["dj", "DJ", 3], ["sport", "Sportive", 4], ["detective", "Détective", 5], ["diplomee", "Diplômée", 6], ["fete", "Fête", 7], ["dodo", "Dodo", 8]],
+  // [outfit, name for a girl, name for a boy, level that unlocks it]
+  OUTFIT_LIST: [["bonjour", "Bonjour", "Bonjour", 1], ["lecture", "Lectrice", "Lecteur", 2], ["dj", "DJ", "DJ", 3], ["sport", "Sportive", "Sportif", 4], ["detective", "Détective", "Détective", 5],
+    ["diplomee", "Diplômée", "Diplômé", 6], ["fete", "Fête", "Fête", 7], ["dodo", "Dodo", "Dodo", 8]],
+  // [outfit, name, level], named for the girl or boy using KalaLab
+  get OUTFITS() { const m = KL.read("genre", "f") === "m"; return KLP.OUTFIT_LIST.map(([o, f, b, n]) => [o, m ? b : f, n]); },
   outfitOpen(o, n = KLP.level().n) { const f = KLP.OUTFITS.find((x) => x[0] === o); return !!f && n >= f[2]; },
   // base64 that is safe in a link, for UTF-8 text
   enc(obj) { return btoa(unescape(encodeURIComponent(JSON.stringify(obj)))).replace(/\+/g, "-").replace(/\//g, "_").replace(/=+$/, ""); },
