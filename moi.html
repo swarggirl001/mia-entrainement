@@ -1,0 +1,379 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Moi · KalaLab</title>
+<meta name="description" content="Ton espace KalaLab : prénom, photo, tenue de Kali, chiffres, badges et liens de progression.">
+<meta name="theme-color" content="#fbfaf7" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#262d3b" media="(prefers-color-scheme: dark)">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="icon" href="icons/kalalab-192.png">
+<link rel="apple-touch-icon" href="icons/kalalab-apple-touch.png">
+<script>
+  try { const t = localStorage.getItem("kalalab.theme"); if (t === "dark" || t === "light") document.documentElement.dataset.theme = t; } catch (e) {}
+</script>
+<link rel="stylesheet" href="css/kalalab.css">
+<style>
+/* Layout: one column of sticker cards on phones; two columns on computers (profile and settings on the left, numbers and badges on the right). */
+.me-grid { display: grid; gap: 18px; }
+.me-col { display: grid; gap: 18px; align-content: start; }
+@media (min-width: 900px) { .me-grid { grid-template-columns: 1fr 1.15fr; align-items: start; } }
+.panel { background: var(--card); padding: 16px; display: grid; gap: 12px; }
+.panel h2 { margin: 0; font-family: var(--title); font-weight: 400; font-size: 22px; }
+.panel .note { font-family: var(--pixel); font-size: 14px; color: var(--muted); margin: 0; }
+.page-title { font-family: var(--display); font-weight: 900; font-size: clamp(30px, 8vw, 48px); margin: 6px 0 0; line-height: 1.05; }
+.page-title span { color: var(--accent); }
+
+/* profile */
+.profile { display: grid; grid-template-columns: auto 1fr; gap: 14px; align-items: center; position: relative; }
+.avatar { width: 92px; height: 92px; border-radius: 50%; border: var(--bw) solid #141414; background: var(--lilac); display: grid; place-items: center; overflow: hidden;
+  font-family: var(--display); font-weight: 900; font-size: 40px; color: #2e2350; box-shadow: 4px 4px 0 var(--shadow); }
+.avatar img { width: 100%; height: 100%; object-fit: cover; }
+.photo-actions { display: flex; flex-wrap: wrap; gap: 8px; grid-column: 1 / -1; }
+.small-btn { font-family: var(--pixel); font-weight: 600; font-size: 14px; padding: 7px 12px; border-radius: 12px; border: 2px solid var(--line); background: var(--chip); color: var(--fg); cursor: pointer; }
+.small-btn.main { background: var(--accent); color: #141414; border-color: #141414; }
+.field { display: grid; gap: 6px; }
+.field label, .field .lab { font-family: var(--pixel); font-weight: 600; font-size: 14px; color: var(--muted); }
+.field input[type=text] { font: inherit; font-family: var(--title); font-size: 20px; padding: 8px 12px; border-radius: 12px; border: var(--bw) solid var(--line); background: var(--bg); color: var(--fg); width: 100%; min-width: 0; }
+.field input[type=text]:focus { outline: 3px solid var(--accent); outline-offset: 2px; }
+.seg2 { display: inline-flex; flex-wrap: wrap; border: var(--bw) solid var(--line); border-radius: 14px; overflow: hidden; background: var(--chip); width: max-content; max-width: 100%; }
+.seg2 button { font-family: var(--pixel); font-weight: 600; font-size: 15px; padding: 8px 14px; border: 0; background: none; color: var(--fg); cursor: pointer; }
+.seg2 button[aria-pressed="true"] { background: var(--accent); color: #141414; }
+
+/* outfits */
+.outfits { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; }
+.outfit-btn { display: grid; justify-items: center; gap: 2px; padding: 8px 4px 6px; border-radius: 16px; border: 2px solid var(--track); background: var(--bg); cursor: pointer; color: var(--fg); }
+.outfit-btn .k { width: 70px; height: 70px; }
+.outfit-btn span { font-family: var(--pixel); font-size: 12.5px; font-weight: 600; }
+.outfit-btn[aria-pressed="true"] { border: var(--bw) solid #141414; background: var(--lilac); color: #141414; box-shadow: 3px 3px 0 var(--shadow); }
+.outfit-btn .k .kali { animation: none; }
+.outfit-btn:not([aria-pressed="true"]) .kali * { animation-play-state: paused !important; }
+
+/* numbers */
+.stats { display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px; }
+.stat { border-radius: 16px; padding: 10px 12px; background: var(--bg); border: 2px solid var(--track); display: grid; gap: 2px; }
+.stat b { font-family: var(--display); font-weight: 900; font-size: 30px; line-height: 1; font-variant-numeric: tabular-nums; }
+.stat span { font-family: var(--pixel); font-size: 13px; color: var(--muted); }
+.stat:nth-child(4n+1) { background: var(--t1); color: #141414; } .stat:nth-child(4n+2) { background: var(--t2); color: #141414; } .stat:nth-child(4n+3) { background: var(--t3); color: #141414; }
+.stat:nth-child(-n+3) span, .stat:nth-child(4n+1) span, .stat:nth-child(4n+2) span, .stat:nth-child(4n+3) span { color: #3b3b3b; }
+@media (min-width: 560px) { .stats { grid-template-columns: repeat(4, 1fr); } }
+
+/* lessons */
+.lessons-list { display: grid; gap: 8px; }
+.lrow { display: grid; grid-template-columns: 1fr auto; gap: 4px 10px; align-items: center; }
+.lrow .lt { font-family: var(--title); font-size: 15px; }
+.lrow .lt small { display: block; font-family: var(--pixel); font-size: 12.5px; color: var(--muted); }
+.lrow .lp { font-family: var(--body); font-weight: 700; font-size: 14px; font-variant-numeric: tabular-nums; }
+.lrow .bar { grid-column: 1 / -1; height: 8px; border-radius: 99px; background: var(--track); overflow: hidden; }
+.lrow .bar i { display: block; height: 100%; background: var(--accent); border-radius: 99px; }
+
+/* badges, with how to win them */
+.badge-list { display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px; }
+.bitem { display: grid; grid-template-columns: 54px 1fr; gap: 8px; align-items: center; padding: 6px; border-radius: 14px; }
+.bitem svg { width: 54px; height: auto; }
+.bitem b { font-family: var(--title); font-weight: 400; font-size: 15px; display: block; }
+.bitem span { font-family: var(--pixel); font-size: 12.5px; color: var(--muted); }
+.bitem.locked svg { filter: grayscale(1); opacity: .45; }
+.bitem.got { background: color-mix(in srgb, var(--t3) 40%, transparent); }
+
+/* share links */
+.linkbox { display: grid; gap: 8px; }
+.linkbox input { font: 13px/1.3 var(--body); padding: 8px 10px; border-radius: 10px; border: 2px solid var(--track); background: var(--bg); color: var(--muted); width: 100%; min-width: 0; }
+.row-btns { display: flex; flex-wrap: wrap; gap: 8px; }
+.warn { font-family: var(--pixel); font-size: 13px; color: var(--fg); background: var(--butter); border-radius: 10px; padding: 6px 10px; }
+:root[data-theme="dark"] .warn { color: #141414; }
+@media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) .warn { color: #141414; } }
+.danger { border-color: #c2414b !important; }
+.danger .small-btn.red { background: #fde2e2; color: #8a1f28; border-color: #c2414b; }
+.confirm { display: grid; gap: 8px; padding: 10px 12px; border-radius: 12px; background: #fde2e2; color: #5c1219; font-family: var(--pixel); font-size: 14px; }
+
+/* someone else's progress (a "voir" link) and a transfer link */
+.banner { background: var(--lilac); color: #141414; padding: 14px 16px; display: grid; gap: 8px; }
+.banner h2 { margin: 0; font-family: var(--title); font-weight: 400; font-size: 22px; }
+.banner p { margin: 0; font-family: var(--pixel); font-size: 14px; }
+[data-mode="voir"] .mine { display: none !important; }
+</style>
+</head>
+<body>
+<div class="app">
+  <header class="top">
+    <svg class="mark" viewBox="0 0 300 300" aria-hidden="true"><rect width="300" height="300" rx="66" fill="#b9a6e0"/><path d="M68 266 v-122 a82 82 0 0 1 164 0 v122z" fill="#fbeee0"/><path d="M84 266 v-120 a66 66 0 0 1 132 0 v120" fill="none" stroke="#b9a6e0" stroke-width="3"/><text x="150" y="186" text-anchor="middle" font-family="Cikutra" font-weight="900" font-size="54" fill="#2e2350">Kala</text><text x="150" y="238" text-anchor="middle" font-family="Cikutra" font-weight="900" font-size="46" fill="#8e7cc3">Lab</text></svg>
+    <div class="brand">Kala<span>Lab</span></div>
+    <nav class="topnav" aria-label="Menu">
+      <a href="./">Accueil</a><a href="anglais/">Cours</a><button data-soon="Mes mots">Mes mots</button><a aria-current="page" href="moi.html">Moi</a>
+    </nav>
+    <div class="spacer"></div>
+    <div class="pill" title="Jours d'affilée"><span class="flame"><i data-ic="flame"></i></span> <span id="streakN">0</span>&nbsp;<span id="streakWord">jour</span></div>
+    <button class="theme" id="theme" aria-label="Passer en mode sombre"></button>
+  </header>
+
+  <!-- arriving with a transfer link -->
+  <section class="banner sticker" id="transferBox" hidden>
+    <h2>Récupérer une progression</h2>
+    <p id="transferText"></p>
+    <div class="row-btns"><button class="small-btn main" id="transferYes">Oui, récupérer</button><button class="small-btn" id="transferNo">Non, garder la mienne</button></div>
+  </section>
+
+  <!-- arriving with a "see my progress" link -->
+  <section class="banner sticker" id="viewBox" hidden>
+    <h2 id="viewTitle">La progression de …</h2>
+    <p id="viewText"></p>
+    <div class="row-btns"><a class="small-btn" href="moi.html" style="text-decoration:none">Revenir à mon espace</a></div>
+  </section>
+
+  <h1 class="page-title mine">Mon <span>espace</span></h1>
+
+  <div class="me-grid">
+    <div class="me-col">
+      <section class="panel sticker mine" aria-labelledby="pTitle">
+        <h2 id="pTitle">Mon profil</h2>
+        <div class="profile">
+          <div class="avatar" id="avatar" aria-hidden="true"></div>
+          <div class="field">
+            <label for="first">Mon prénom</label>
+            <input type="text" id="first" maxlength="30" autocomplete="given-name" placeholder="Écris ton prénom">
+          </div>
+          <div class="photo-actions">
+            <label class="small-btn main" for="photoIn">Choisir une photo</label>
+            <input type="file" id="photoIn" accept="image/*" hidden>
+            <button class="small-btn" id="photoDel" hidden>Enlever la photo</button>
+          </div>
+        </div>
+        <div class="field">
+          <span class="lab" id="genreLab">Kali te parle</span>
+          <div class="seg2" role="group" aria-labelledby="genreLab"><button data-genre="f">au féminin</button><button data-genre="m">au masculin</button></div>
+        </div>
+        <p class="note">Le prénom et la photo restent sur ce téléphone. Ils ne sont envoyés à personne.</p>
+      </section>
+
+      <section class="panel sticker mine" aria-labelledby="oTitle">
+        <h2 id="oTitle">Kali sur mon accueil</h2>
+        <p class="note">Choisis la tenue de Kali pour la journée. Le soir, elle met toujours son bonnet de nuit.</p>
+        <div class="outfits" id="outfits"></div>
+      </section>
+
+      <section class="panel sticker mine" aria-labelledby="sTitle">
+        <h2 id="sTitle">Réglages</h2>
+        <div class="field"><span class="lab" id="themeLab">Thème</span>
+          <div class="seg2" role="group" aria-labelledby="themeLab"><button data-th="auto">Comme le téléphone</button><button data-th="light">Clair</button><button data-th="dark">Sombre</button></div></div>
+        <div class="field"><span class="lab" id="cornerLab">Le coin de Kali sur l'accueil</span>
+          <div class="seg2" role="group" aria-labelledby="cornerLab"><button data-corner="1">Oui</button><button data-corner="0">Non</button></div></div>
+      </section>
+    </div>
+
+    <div class="me-col">
+      <section class="panel sticker" aria-labelledby="nTitle">
+        <h2 id="nTitle">Mes chiffres</h2>
+        <div class="stats" id="stats"></div>
+      </section>
+
+      <section class="panel sticker" aria-labelledby="lTitle">
+        <h2 id="lTitle">Mes leçons d'anglais</h2>
+        <div class="lessons-list" id="lessons"></div>
+      </section>
+
+      <section class="panel sticker" aria-labelledby="bTitle">
+        <h2 id="bTitle">Mes badges <small class="note" id="badgeCount" style="font-size:14px"></small></h2>
+        <div class="badge-list" id="badgeList"></div>
+      </section>
+
+      <section class="panel sticker mine" aria-labelledby="shTitle">
+        <h2 id="shTitle">Montrer ma progression</h2>
+        <p class="note">Un lien à envoyer à un parent ou à ton prof. Il montre tes chiffres, tes leçons et tes badges, sans rien pouvoir changer.</p>
+        <div class="linkbox"><button class="small-btn main" id="mkView" style="justify-self:start">Créer le lien</button>
+          <div id="viewLinkBox" hidden><input id="viewLink" readonly aria-label="Lien pour montrer ta progression"><div class="row-btns" style="margin-top:8px"><button class="small-btn" data-copy="viewLink">Copier</button><button class="small-btn" data-share="viewLink">Partager</button></div></div></div>
+      </section>
+
+      <section class="panel sticker mine" aria-labelledby="trTitle">
+        <h2 id="trTitle">Continuer sur un autre téléphone</h2>
+        <p class="note">Ouvre ce lien sur l'autre téléphone ou l'ordinateur : il y retrouve ta série, tes objectifs, tes badges, tes leçons et ton jeu de rôle de Mia. La photo ne voyage pas.</p>
+        <div class="linkbox"><button class="small-btn main" id="mkTransfer" style="justify-self:start">Créer le lien</button>
+          <div id="trLinkBox" hidden><p class="warn">Ce lien contient toute ta progression : envoie-le seulement à toi-même.</p><input id="trLink" readonly aria-label="Lien pour continuer sur un autre appareil"><div class="row-btns" style="margin-top:8px"><button class="small-btn" data-copy="trLink">Copier</button><button class="small-btn" data-share="trLink">Partager</button></div></div></div>
+      </section>
+
+      <section class="panel sticker mine danger" aria-labelledby="dTitle">
+        <h2 id="dTitle">Tout effacer</h2>
+        <p class="note">Efface ton prénom, ta photo, ta série, tes badges et ta progression sur ce téléphone.</p>
+        <button class="small-btn red" id="wipe" style="justify-self:start">Tout effacer</button>
+        <div class="confirm" id="wipeConfirm" hidden>Tu es sûre ? On ne pourra pas revenir en arrière.
+          <div class="row-btns"><button class="small-btn red" id="wipeYes">Oui, tout effacer</button><button class="small-btn" id="wipeNo">Non</button></div></div>
+      </section>
+    </div>
+  </div>
+  <p class="foot">Tout ce qui est ici reste sur ce téléphone. KalaLab n'a ni compte ni mot de passe.</p>
+</div>
+
+<nav class="nav" aria-label="Menu">
+  <span class="dot" id="dot" style="transform: translateX(300%)"></span>
+  <a href="./"><b><i data-ic="home"></i></b>Accueil</a>
+  <a href="anglais/"><b><i data-ic="books"></i></b>Cours</a>
+  <button data-soon="Mes mots"><b><i data-ic="letters"></i></b>Mes mots</button>
+  <a aria-current="page" href="moi.html"><b id="navMe"><i data-ic="user"></i></b>Moi</a>
+</nav>
+<div class="toast" id="toast" role="status" aria-live="polite"></div>
+
+<script src="js/icons.js"></script>
+<script src="js/kali.js"></script>
+<script src="js/activity.js"></script>
+<script src="anglais/lessons.js"></script>
+<script src="js/progress.js"></script>
+<script>
+"use strict";
+const $ = (s) => document.querySelector(s);
+const root = document.documentElement;
+document.head.insertAdjacentHTML("beforeend", `<style>${KALI_CSS}</style>`);
+paintIcons();
+const esc = (t) => String(t).replace(/[<>&"'`]/g, "");
+// « de Marie » but « d'Aïcha »
+const de = (n) => (/^[aeiouyhàâäéèêëîïôöùûüÿæœ]/i.test(n) ? "d'" : "de ") + n;
+let tt;
+function toast(msg) { const t = $("#toast"); t.textContent = msg; t.classList.add("show"); clearTimeout(tt); tt = setTimeout(() => t.classList.remove("show"), 2200); }
+document.querySelectorAll("[data-soon]").forEach((b) => b.addEventListener("click", () => toast(`« ${b.dataset.soon} » arrive très bientôt`)));
+
+// ---- theme
+const isDark = () => root.dataset.theme ? root.dataset.theme === "dark" : matchMedia("(prefers-color-scheme: dark)").matches;
+const paintTheme = () => { $("#theme").innerHTML = icon(isDark() ? "sun" : "moon"); };
+function setTheme(t) {
+  if (t === "auto") { delete root.dataset.theme; try { localStorage.removeItem("kalalab.theme"); } catch (e) {} }
+  else { root.dataset.theme = t; try { localStorage.setItem("kalalab.theme", t); } catch (e) {} }
+  paintTheme(); document.querySelectorAll("[data-th]").forEach((b) => b.setAttribute("aria-pressed", String(b.dataset.th === (root.dataset.theme || "auto"))));
+}
+$("#theme").addEventListener("click", () => setTheme(isDark() ? "light" : "dark"));
+document.querySelectorAll("[data-th]").forEach((b) => b.addEventListener("click", () => setTheme(b.dataset.th)));
+setTheme(root.dataset.theme || "auto");
+
+// ---- streak pill
+const streak = KL.streak();
+$("#streakN").textContent = streak; $("#streakWord").textContent = streak > 1 ? "jours" : "jour";
+
+// ---- numbers, lessons and badges (from this phone, or from a "voir" link)
+function draw(data) {
+  const T = data.t, P = data.p;
+  const stats = [[data.s, "jours d'affilée"], [data.b, "meilleure série"], [data.days, "jours de travail"], [T.ex || 0, "exercices faits"],
+    [T.words || 0, "mots trouvés"], [T.dict || 0, "dictées réussies"], [T.speak || 0, "phrases au micro"], [T.write || 0, "textes écrits"]];
+  $("#stats").innerHTML = stats.map(([n, l]) => `<div class="stat"><b>${n}</b><span>${l}</span></div>`).join("");
+  $("#lessons").innerHTML = LESSONS.map((L) => { const pc = data.l ? (data.l[L.id] || 0) : KLP.lessonPercent(L, P);
+    return `<div class="lrow"><span class="lt">Unit ${L.unit.replace("u", "")} · ${L.title.replace(/^Lesson \d+ · /, "")}<small>${L.topic}</small></span><span class="lp">${pc}%</span><span class="bar"><i style="width:${pc}%"></i></span></div>`; }).join("");
+  const B = data.badges;
+  $("#badgeList").innerHTML = B.map(([id, ic, name, col, how, got]) => `<div class="bitem ${got ? "got" : "locked"}">${KLP.medal(got ? ic : "lock", col)}<div><b>${name}</b><span>${got ? "Gagné ! " : ""}${how}</span></div></div>`).join("");
+  $("#badgeCount").textContent = `· ${B.filter((b) => b[5]).length} sur ${B.length}`;
+}
+function mine() {
+  const P = KLP.progress();
+  return { n: KL.firstName(), s: streak, b: Math.max(KL.read("bestStreak", 0), streak), days: KL.read("days", []).length, t: KL.read("totals", {}), p: P, badges: KLP.badges(P) };
+}
+
+// ---- arriving with a link?
+const hash = location.hash;
+const viewM = hash.match(/^#voir=([\w-]+)$/), trM = hash.match(/^#transfert=([\w-]+)$/);
+if (viewM) {
+  const v = KLP.dec(viewM[1]);
+  if (v && v.v === 1) {
+    document.body.dataset.mode = "voir";
+    $("#viewBox").hidden = false;
+    const nm = esc(v.n || "quelqu'un").slice(0, 30);
+    $("#viewTitle").textContent = `La progression ${de(nm)}`;
+    $("#viewText").textContent = `Photo de la progression prise le ${new Date(v.d).toLocaleDateString("fr-FR", { day: "numeric", month: "long", year: "numeric" })}. Rien n'est modifié sur ce téléphone.`;
+    const bmap = Object.fromEntries(KLP.badges({}).map((b) => [b[0], b]));
+    draw({ s: v.s | 0, b: v.b | 0, days: v.dy | 0, t: v.t || {}, l: v.l || {}, p: {}, badges: Object.values(bmap).map((b) => [...b.slice(0, 5), (v.g || []).includes(b[0])]) });
+  } else { toast("Ce lien est abîmé : demande-en un nouveau."); draw(mine()); }
+} else {
+  draw(mine());
+  if (trM) {
+    const t = KLP.dec(trM[1]);
+    if (t && t.v === 1 && t.k && typeof t.k === "object") {
+      $("#transferBox").hidden = false;
+      let who = ""; try { who = (JSON.parse(t.k["kalalab.me"] || t.k["mia.me"] || "{}") || {}).first || ""; } catch (e) {}
+      $("#transferText").textContent = `Ce lien contient la progression${who ? " " + de(esc(who)) : ""}. La récupérer remplace celle de ce téléphone.`;
+      $("#transferYes").onclick = () => {
+        try { Object.entries(t.k).forEach(([k, val]) => { if (/^(kalalab\.(?!photo)|anglais-|mia\.)/.test(k) && typeof val === "string") localStorage.setItem(k, val); }); } catch (e) {}
+        history.replaceState(null, "", "moi.html"); location.reload();
+      };
+      $("#transferNo").onclick = () => { history.replaceState(null, "", "moi.html"); $("#transferBox").hidden = true; };
+    } else toast("Ce lien est abîmé : demande-en un nouveau.");
+  }
+}
+
+// ---- profile: first name, photo, how Kali speaks
+const first = $("#first");
+first.value = KL.firstName();
+function avatar() {
+  const p = KL.read("photo", null), ok = p && /^data:image\/(jpeg|png|webp);base64,/.test(p);
+  $("#avatar").innerHTML = ok ? `<img src="${p}" alt="">` : esc((first.value || "?").trim().charAt(0).toUpperCase() || "?");
+  $("#photoDel").hidden = !ok;
+  $("#navMe").innerHTML = ok ? `<img class="me-mini" src="${p}" alt="">` : icon("user");
+}
+avatar();
+let nameTimer;
+first.addEventListener("input", () => { avatar(); clearTimeout(nameTimer); nameTimer = setTimeout(saveName, 500); });
+first.addEventListener("change", saveName);
+function saveName() {
+  const v = esc(first.value).replace(/\s+/g, " ").trim().slice(0, 30);
+  const me = KL.read("me", {}); me.first = v; KL.write("me", me);
+  // Mia's page uses the same first name
+  try { const m = JSON.parse(localStorage.getItem("mia.me") || "null") || {}; m.first = v; localStorage.setItem("mia.me", JSON.stringify(m)); } catch (e) {}
+  toast(v ? `Enregistré : ${v}` : "Prénom effacé");
+}
+$("#photoIn").addEventListener("change", (e) => {
+  const f = e.target.files && e.target.files[0]; if (!f) return;
+  const img = new Image(), url = URL.createObjectURL(f);
+  img.onload = () => {
+    const c = document.createElement("canvas"), s = 240, m = Math.min(img.width, img.height);
+    c.width = c.height = s; c.getContext("2d").drawImage(img, (img.width - m) / 2, (img.height - m) / 2, m, m, 0, 0, s, s);
+    KL.write("photo", c.toDataURL("image/jpeg", .82)); URL.revokeObjectURL(url); avatar(); toast("Photo enregistrée");
+  };
+  img.onerror = () => toast("Cette image ne s'ouvre pas. Essaie une autre photo.");
+  img.src = url;
+});
+$("#photoDel").addEventListener("click", () => { try { localStorage.removeItem("kalalab.photo"); } catch (e) {} avatar(); toast("Photo enlevée"); });
+function paintGenre() { const g = KL.read("genre", "f"); document.querySelectorAll("[data-genre]").forEach((b) => b.setAttribute("aria-pressed", String(b.dataset.genre === g))); }
+document.querySelectorAll("[data-genre]").forEach((b) => b.addEventListener("click", () => { KL.write("genre", b.dataset.genre); paintGenre(); toast(b.dataset.genre === "m" ? "Kali te dira « prêt »" : "Kali te dira « prête »"); }));
+paintGenre();
+
+// ---- Kali's outfit for the home page
+const OUT = [["bonjour", "Bonjour"], ["dj", "DJ"], ["lecture", "Lectrice"], ["diplomee", "Diplômée"], ["sport", "Sportive"], ["detective", "Détective"], ["fete", "Fête"], ["dodo", "Dodo"]];
+function paintOutfits() {
+  const cur = KL.read("outfit", "bonjour");
+  $("#outfits").innerHTML = OUT.map(([o, n]) => `<button class="outfit-btn" data-outfit="${o}" aria-pressed="${o === cur}"><span class="k">${kali(o, "Kali en tenue " + n)}</span><span>${n}</span></button>`).join("");
+  document.querySelectorAll("[data-outfit]").forEach((b) => b.addEventListener("click", () => { KL.write("outfit", b.dataset.outfit); paintOutfits(); kaliCheer(document.querySelector(`[data-outfit="${b.dataset.outfit}"] .kali`)); toast("Kali portera cette tenue sur ton accueil"); }));
+}
+paintOutfits();
+
+// ---- the Kali corner on the home page
+function paintCorner() { const on = KL.read("corner", true); document.querySelectorAll("[data-corner]").forEach((b) => b.setAttribute("aria-pressed", String((b.dataset.corner === "1") === on))); }
+document.querySelectorAll("[data-corner]").forEach((b) => b.addEventListener("click", () => { KL.write("corner", b.dataset.corner === "1"); paintCorner(); }));
+paintCorner();
+
+// ---- links
+const base = location.href.replace(/[#?].*$/, "");
+$("#mkView").addEventListener("click", () => {
+  const P = KLP.progress(), d = mine();
+  const v = { v: 1, n: d.n, s: d.s, b: d.b, dy: d.days, t: d.t, d: Date.now(), l: Object.fromEntries(LESSONS.map((L) => [L.id, KLP.lessonPercent(L, P)])), g: d.badges.filter((b) => b[5]).map((b) => b[0]) };
+  $("#viewLink").value = `${base}#voir=${KLP.enc(v)}`; $("#viewLinkBox").hidden = false;
+});
+$("#mkTransfer").addEventListener("click", () => {
+  const k = {}; try { Object.keys(localStorage).filter((x) => /^(kalalab\.(?!photo)|anglais-|mia\.)/.test(x)).forEach((x) => { k[x] = localStorage.getItem(x); }); } catch (e) {}
+  $("#trLink").value = `${base}#transfert=${KLP.enc({ v: 1, k })}`; $("#trLinkBox").hidden = false;
+});
+document.querySelectorAll("[data-copy]").forEach((b) => b.addEventListener("click", async () => {
+  const inp = document.getElementById(b.dataset.copy);
+  try { await navigator.clipboard.writeText(inp.value); toast("Lien copié"); } catch (e) { inp.select(); toast("Sélectionné : appuie longtemps pour copier"); }
+}));
+document.querySelectorAll("[data-share]").forEach((b) => {
+  if (!navigator.share) { b.hidden = true; return; }
+  b.addEventListener("click", () => navigator.share({ title: "KalaLab", url: document.getElementById(b.dataset.share).value }).catch(() => {}));
+});
+
+// ---- wipe everything on this phone
+$("#wipe").addEventListener("click", () => { $("#wipeConfirm").firstChild.textContent = `Tu es ${KL.read("genre", "f") === "m" ? "sûr" : "sûre"} ? On ne pourra pas revenir en arrière.`; $("#wipeConfirm").hidden = false; $("#wipe").hidden = true; });
+$("#wipeNo").addEventListener("click", () => { $("#wipeConfirm").hidden = true; $("#wipe").hidden = false; });
+$("#wipeYes").addEventListener("click", () => {
+  try { Object.keys(localStorage).filter((x) => /^(kalalab\.|anglais-|mia\.)/.test(x)).forEach((x) => localStorage.removeItem(x)); } catch (e) {}
+  location.reload();
+});
+
+if ("serviceWorker" in navigator && location.protocol === "https:") navigator.serviceWorker.register("sw.js").catch(() => {});
+</script>
+</body>
+</html>
