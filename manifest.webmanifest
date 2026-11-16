@@ -1,7 +1,7 @@
 {
   "name": "Entraînement de Mia",
   "short_name": "Mia",
-  "description": "Bien prononcer les 7 répliques de Mia pour l'oral infirmier d'anglais.",
+  "description": "Bien prononcer l'anglais avec Mia, réplique par réplique.",
   "lang": "fr",
   "start_url": "./",
   "scope": "./",
